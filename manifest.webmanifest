@@ -1,0 +1,16 @@
+{
+  "name": "Bocón Estudio",
+  "short_name": "Bocón",
+  "description": "Lip-sync automático, marionetas PNG, gestos, movimientos y sonidos.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e9f0f2",
+  "theme_color": "#1b2a33",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
