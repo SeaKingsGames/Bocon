@@ -98,6 +98,22 @@ input[type=range]{width:100%;accent-color:var(--blue);min-width:0}
 .undo{display:flex;gap:2px;margin-left:6px;padding-left:8px;border-left:1px solid var(--line)}
 .grow{flex:1}
 .save-state{font:11px/1.2 var(--font-mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.acct-btn.is-pro{color:#f6c64e}
+.pro-chip{display:inline-block;font:700 9.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:#1b1405;background:#f6c64e;border-radius:4px;padding:3px 5px;vertical-align:2px;margin-left:4px}
+.pro-note{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px dashed #b88f2a;background:color-mix(in srgb,#f6c64e 9%,transparent);border-radius:10px;padding:9px 10px;font-size:12.5px;color:var(--ink)}
+.pro-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.pro-list li{display:flex;flex-direction:column;padding-left:22px;position:relative;font-size:13px}
+.pro-list li::before{content:"✦";position:absolute;left:2px;top:0;color:#f6c64e}
+.pro-list li span{color:var(--muted);font-size:12px}
+.pro-list li.soon::before{content:"…";color:var(--muted)}
+.pro-plans{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.pro-plans .pp{display:block;font:700 19px var(--font-body);margin:3px 0 2px;white-space:nowrap}
+.pro-plans .pp small{font-size:11.5px;font-weight:600;color:var(--muted)}
+.pro-plans .opt:has(input:checked){border-color:#f6c64e}
+.acct-row{display:flex;gap:12px;align-items:center}
+.acct-row span:last-child{display:flex;flex-direction:column}
+.acct-row small{color:var(--muted)}
+.acct-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);font:700 18px var(--font-body)}
 .live-btn .dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 30%,transparent)}
 
 /* paneles con pestañas */
@@ -623,6 +639,8 @@ details.sec.hl>summary{color:var(--blue)}
   #peCanvas,#aeCanvas{height:32dvh}
   #oiCanvas{height:46dvh}
   #ctCanvas{height:50dvh}
+  .pro-plans{grid-template-columns:1fr}
+  .pro-plans .opt{padding:9px 10px}
   .qs-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .qs{padding:6px 5px 6px 7px;gap:6px}
   .qs-ic{width:24px;height:24px}
@@ -710,6 +728,7 @@ details.sec.hl>summary{color:var(--blue)}
     </div>
     <span class="grow"></span>
     <span class="save-state" id="saveState"></span>
+    <button type="button" class="btn ghost acct-btn" id="acctBtn" hidden><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg><span class="lbl-txt">Entrar</span></button>
     <button type="button" class="btn ghost live-btn" data-cmd="live" title="Tu personaje habla en tiempo real con tu micrófono"><i class="dot"></i><span class="lbl-txt">En vivo</span></button>
     <button type="button" class="btn primary" data-cmd="export"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>Exportar</button>
   </header>
@@ -7069,6 +7088,173 @@ $('#fileQs').addEventListener('change',async e=>{
   toast(n?`${n===1?'Quedó':'Quedaron'} en tus sonidos rápidos`:'No pude leer ese audio');if(MODAL&&MODAL.qs) openQuickSfx();
 });
 insp.addEventListener('click',e=>{const b=e.target.closest('[data-act="qsFav"]');if(!b) return;const s=selClip();if(s&&addMySfx(s.c.aid)){toast(`«${s.a.name}» quedó en tus sonidos rápidos`);renderInspector();}});
+
+// ===== Cuenta y Bocón Pro =====
+// Sin servidor configurado (dentro de Claude, en tu compu o antes de lanzar) todo queda abierto: modo "dev".
+// Con el servidor (Vercel + Supabase + Mercado Pago) hay plan Gratis y Pro. El servidor decide quién es Pro.
+const PLAN={mode:'dev',cfg:null,sb:null,user:null,info:null,busy:false,go:u=>{location.href=u;}};
+const PLAN_KEY='bocon-plan';
+const isPro=()=>PLAN.mode!=='free';
+function planCache(o){try{if(o) localStorage.setItem(PLAN_KEY,JSON.stringify(o));else return JSON.parse(localStorage.getItem(PLAN_KEY)||'null');}catch(_){return null;}}
+// mientras se pregunta al servidor, se usa lo último que se supo (y sin internet, lo mismo por unos días)
+{const c=planCache();if(c&&c.cfg) PLAN.mode=c.pro&&c.until>Date.now()?'pro':'free';}
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+async function planInit(){
+  if(IN_CLAUDE||location.protocol==='file:'){PLAN.mode='dev';planUI();return;}
+  let cfg=null,net=true;
+  try{const r=await fetch('api/config',{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&j.supabaseUrl&&j.supabaseKey) cfg=j;}}catch(_){net=false;}
+  if(!cfg){
+    const c=planCache();
+    // sin internet: lo último que se supo; sin cuentas configuradas: todo abierto
+    if(!net&&c&&c.cfg) PLAN.mode=c.pro&&c.until>Date.now()?'pro':'free';else{PLAN.mode='dev';planCache({cfg:false});}
+    planUI();return;
+  }
+  PLAN.cfg=cfg;if(PLAN.mode==='dev') PLAN.mode='free';
+  try{if(!window.supabase) await loadScript('vendor/supabase.js');PLAN.sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}
+  catch(e){planUI();return;}
+  PLAN.sb.auth.onAuthStateChange((ev,ses)=>{const u=ses&&ses.user||null,was=PLAN.user&&PLAN.user.id;PLAN.user=u;if((u&&u.id)!==was){if(u) planRefresh();else{PLAN.info=null;planSet(false);}}});
+  try{const {data}=await PLAN.sb.auth.getSession();PLAN.user=data&&data.session&&data.session.user||null;}catch(_){}
+  const back=/[?&]pro=volver/.test(location.search);
+  if(back){try{history.replaceState(history.state,'',location.pathname+location.hash);}catch(_){}}
+  if(PLAN.user) await planRefresh(back);else planSet(false);
+  if(back&&PLAN.user) toast(isPro()?'¡Listo! Ya eres Bocón Pro ✦':'Tu pago se está procesando; en unos minutos se activa tu Pro',isPro()?undefined:{label:'Revisar',run:()=>planRefresh(true,true)});
+}
+async function planToken(){try{const {data}=await PLAN.sb.auth.getSession();return data&&data.session&&data.session.access_token||null;}catch(_){return null;}}
+async function planApi(path,body){
+  const tok=await planToken();if(!tok) throw new Error('Primero entra a tu cuenta');
+  const r=await fetch('api/'+path,{method:body?'POST':'GET',cache:'no-store',headers:Object.assign({Authorization:'Bearer '+tok},body?{'Content-Type':'application/json'}:{}),body:body?JSON.stringify(body):undefined});
+  let j={};try{j=await r.json();}catch(_){}
+  if(!r.ok) throw new Error(j.error||'El servidor no respondió');return j;
+}
+async function planRefresh(force,say){
+  if(!PLAN.sb||!PLAN.user) return;
+  try{PLAN.info=await planApi('estado');planSet(!!PLAN.info.pro);if(say) toast(PLAN.info.pro?'Ya eres Bocón Pro ✦':'Todavía no aparece tu pago');}
+  catch(e){if(say) toast(e.message);planUI();}
+}
+function planSet(pro){
+  const was=PLAN.mode;PLAN.mode=pro?'pro':'free';
+  planCache({cfg:true,pro,until:pro?Date.now()+3*864e5:0,email:PLAN.user&&PLAN.user.email||''});
+  planUI();if(was!==PLAN.mode&&typeof dirty!=='undefined') dirty=true;
+}
+const fmtFecha=s=>{if(!s) return '';const d=new Date(s);return isNaN(d)?'':d.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});};
+const pesos=n=>'$'+Math.round(n).toLocaleString('es-MX');
+// botón de arriba: "Entrar", "Hazte Pro" o "Pro ✦"
+function planUI(){
+  const b=$('#acctBtn');if(!b) return;b.hidden=PLAN.mode==='dev'||!PLAN.cfg;
+  if(b.hidden) return;const pro=PLAN.mode==='pro';
+  b.classList.toggle('is-pro',pro);
+  b.querySelector('.lbl-txt').textContent=pro?'Pro':PLAN.user?'Hazte Pro':'Entrar';
+  b.title=pro?'Tu cuenta Bocón Pro':PLAN.user?'Bocón Pro: sin marca de agua, 1080p y sin fondo':'Entra a tu cuenta';
+}
+// ----- marca de agua del plan gratis -----
+function drawWatermark(c,W,H){
+  const s=Math.min(W,H),fz=Math.max(9,Math.round(s*.032)),pad=fz*.6,parts=[['Hecho con ','#fff'],['Boc','#fff'],['ó','#ff5d50'],['n','#fff']];
+  c.save();c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';c.filter='none';
+  c.font=`${fz}px "Bagel Fat One", "Arial Rounded MT Bold", sans-serif`;c.textBaseline='middle';
+  // en vertical va arriba a la izquierda: abajo y a la derecha TikTok y Reels ponen sus botones y el texto
+  const ws=parts.map(p=>c.measureText(p[0]).width),tw=ws.reduce((a,b)=>a+b,0),bw=tw+pad*2,bh=fz*1.6,vert=H>W*1.2,x=vert?s*.04:W-bw-s*.028,y=vert?H*.075:H-bh-s*.028;
+  rr(c,x,y,bw,bh,bh/2);c.fillStyle='rgba(8,12,15,.58)';c.fill();
+  let xx=x+pad;parts.forEach((p,i)=>{c.fillStyle=p[1];c.fillText(p[0],xx,y+bh/2+fz*.06);xx+=ws[i];});
+  c.restore();
+}
+{
+  // los videos, GIF y el modo en vivo del plan gratis llevan la marquita
+  const fd=frameDrawer;frameDrawer=(scope,tr)=>{const d=fd(scope,tr);return (c,w,h,t)=>{d(c,w,h,t);if(!isPro()) drawWatermark(c,w,h);};};
+  const ds=drawStage;drawStage=function(){ds();if(exportJob&&!exportJob.fast&&!isPro()) drawWatermark(cx2d,cv.width,cv.height);};
+  const ll=liveLoop;liveLoop=function(){ll();if(LIVE&&!isPro()){const c2=$('#liveCanvas');drawWatermark(c2.getContext('2d'),c2.width,c2.height);}};
+  // exportar: lo Pro se ve, pero pide Pro
+  const oe=openExport;openExport=function(){
+    oe();if(isPro()||!MODAL||MODAL.title!=='Exportar') return;const c=$('#mcard');
+    const chip='<span class="pro-chip">Pro</span>';
+    const png=c.querySelector('input[value="png"]');if(png) png.closest('.opt').querySelector('b').insertAdjacentHTML('beforeend',' '+chip);
+    const o1080=c.querySelector('#exRes option[value="1080"]');if(o1080) o1080.textContent+=' · Pro';
+    const gt=c.querySelector('#exGifT');if(gt){const l=gt.closest('label');if(l) l.insertAdjacentHTML('beforeend',' '+chip);}
+    c.querySelector('.mb').insertAdjacentHTML('beforeend',`<div class="pro-note"><span>Plan gratis: 720p con la marquita «Hecho con Bocón». Con <b>Pro</b>: sin marca, 1080p y sin fondo.</span><button type="button" class="btn sm" data-propen="1">Ver Bocón Pro</button></div>`);
+    const ok=c.querySelector('footer .primary'),upd=()=>{const o=exProWanted(c);ok.textContent=o?'Hazte Pro ✦':'Crear';};
+    c.querySelector('.mb').addEventListener('change',upd);upd();
+    c.querySelector('[data-propen]').addEventListener('click',()=>openPro('export'));
+  };
+  const se=startExport;startExport=function(){const c=$('#mcard');if(!isPro()&&exProWanted(c)){openPro('export');return;}se();};
+}
+function exProWanted(c){
+  const f=(c.querySelector('input[name="exFmt"]:checked')||{}).value;
+  if(f==='png') return 'Cuadros PNG sin fondo';
+  if(f==='gif'&&(c.querySelector('#exGifT')||{}).checked) return 'GIF sin fondo';
+  if(f==='mp4'&&(c.querySelector('#exRes')||{}).value==='1080') return 'Video en 1080p';
+  return null;
+}
+// ----- ventanas: Pro y cuenta -----
+const PRO_PERKS=[['Sin marca de agua','en tus videos, GIF y en vivo'],['1080p Full HD','para YouTube y TikTok'],['Sin fondo','GIF transparente y cuadros PNG para CapCut, Premiere o DaVinci']];
+function openPro(why){
+  if(!PLAN.cfg){toast('Bocón Pro todavía no está disponible aquí');return;}
+  const C=PLAN.cfg,u=PLAN.user,info=PLAN.info||{},pro=isPro();
+  const perks=`<ul class="pro-list">${PRO_PERKS.map(p=>`<li><b>${p[0]}</b><span>${p[1]}</span></li>`).join('')}<li class="soon"><b>Muy pronto</b><span>proyectos en la nube, biblioteca de personajes y escenarios, voces con IA</span></li></ul>`;
+  if(pro){
+    openModal({title:'Bocón Pro ✦',body:`<p class="note" style="font-size:13px">${info.cortesia?'Tienes Pro de cortesía.':info.estado==='authorized'?`Tu plan ${esc(info.plan||'')} está activo${info.proximo_cobro?' · próximo cobro el '+fmtFecha(info.proximo_cobro):''}.`:info.pagado_hasta?`Cancelaste tu suscripción; sigues con Pro hasta el ${fmtFecha(info.pagado_hasta)}.`:'Tu Pro está activo.'}</p>${perks}`,
+      actions:[...(info.estado==='authorized'&&!info.cortesia?[{label:'Cancelar suscripción',cls:'danger',run:()=>planCancel()}]:[]),{label:'Listo',cls:'primary'}]});
+    return;
+  }
+  const wanted=why&&why!=='export'?why:null,plans=[];
+  if(C.fundador&&C.fundador.quedan>0) plans.push({k:'fundador',t:'Precio fundador',p:pesos(C.fundador.precio)+' <small>MXN al mes</small>',n:`Te queda para siempre · quedan ${C.fundador.quedan} lugares`});
+  plans.push({k:'mensual',t:'Mensual',p:pesos(C.mensual)+' <small>MXN al mes</small>',n:'Cancelas cuando quieras'});
+  if(C.anual) plans.push({k:'anual',t:'Anual',p:pesos(C.anual)+' <small>MXN al año</small>',n:`Sale en ${pesos(C.anual/12)} al mes · ahorras ${Math.max(0,Math.round((1-C.anual/(C.mensual*12))*100))}%`});
+  const body=`${wanted?`<p class="note" style="font-size:13px"><b>${esc(wanted)}</b> es de Bocón Pro.</p>`:''}${perks}
+    <div class="opts pro-plans" role="radiogroup" aria-label="Plan">${plans.map((p,i)=>`<label class="opt"><input type="radio" name="proPlan" value="${p.k}"${i===0?' checked':''}><span><b>${p.t}</b><span class="pp">${p.p}</span><small>${p.n}</small></span></label>`).join('')}</div>
+    ${C.prueba?`<p class="note">Los primeros <b>${C.prueba} días son gratis</b>; el cobro empieza después.</p>`:''}
+    ${u?`<label class="f"><span>Correo de Mercado Pago</span><input type="text" id="proMail" inputmode="email" autocomplete="email" value="${esc(u.email||'')}"></label><p class="note">Pon el correo de la cuenta de Mercado Pago con la que vas a pagar (tarjeta de crédito o débito). Cancelas cuando quieras desde aquí.</p>`:'<p class="note">Primero entra a tu cuenta (solo tu correo) para que tu Pro quede guardado y lo uses en el celular y en la compu.</p>'}
+    ${C.pagos===false?'<p class="note" style="color:var(--red)">Los pagos todavía no están configurados en el servidor.</p>':''}`;
+  openModal({title:'Bocón Pro ✦',wide:true,body,actions:[{label:'Ahora no'},u?{label:'Suscribirme con Mercado Pago',cls:'primary',keep:true,run:()=>planSubscribe()}:{label:'Entrar',cls:'primary',run:()=>openAccount('pro')}]});
+}
+async function planSubscribe(){
+  if(PLAN.busy) return;const c=$('#mcard'),plan=(c.querySelector('input[name="proPlan"]:checked')||{}).value||'mensual',correo=((c.querySelector('#proMail')||{}).value||'').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)){toast('Revisa el correo de Mercado Pago');return;}
+  const b=c.querySelector('footer .primary');PLAN.busy=true;if(b){b.disabled=true;b.textContent='Abriendo Mercado Pago…';}
+  try{const j=await planApi('suscribir',{plan,correo});if(!j.url) throw new Error('No llegó el enlace de pago');flushSave&&flushSave();PLAN.go(j.url);}
+  catch(e){toast(e.message);if(b){b.disabled=false;b.textContent='Suscribirme con Mercado Pago';}}
+  PLAN.busy=false;
+}
+function planCancel(){
+  confirmModal('Cancelar Bocón Pro','Ya no se te cobrará. Sigues con Pro hasta el final de lo que ya pagaste.','Cancelar suscripción',async()=>{
+    try{PLAN.info=await planApi('cancelar',{});planSet(!!PLAN.info.pro);toast(PLAN.info.pagado_hasta?'Cancelada. Sigues con Pro hasta el '+fmtFecha(PLAN.info.pagado_hasta):'Suscripción cancelada');}catch(e){toast(e.message);}
+  });
+}
+function openAccount(then){
+  if(!PLAN.sb){toast('Las cuentas todavía no están disponibles aquí');return;}
+  const u=PLAN.user;
+  if(u){
+    const info=PLAN.info||{},st=isPro()?(info.cortesia?'Pro (cortesía)':info.estado==='authorized'?'Pro ✦ · '+esc(info.plan||'activo'):info.pagado_hasta?'Pro hasta el '+fmtFecha(info.pagado_hasta):'Pro ✦'):'Gratis';
+    openModal({title:'Tu cuenta',body:`<div class="acct-row"><span class="acct-av">${esc((u.email||'?')[0].toUpperCase())}</span><span><b>${esc(u.email||'')}</b><small>Plan: ${st}</small></span></div>`,
+      actions:[{label:'Salir',run:async()=>{try{await PLAN.sb.auth.signOut();}catch(_){}PLAN.user=null;PLAN.info=null;planSet(false);toast('Saliste de tu cuenta');}},{label:isPro()?'Ver mi Pro':'Hazte Pro ✦',cls:'primary',run:()=>openPro()}]});
+    return;
+  }
+  const C=PLAN.cfg||{};
+  openModal({title:'Entra a Bocón',body:`<p class="note" style="font-size:13px">Sin contraseñas: te mandamos un enlace a tu correo.</p>
+    <label class="f"><span>Tu correo</span><input type="text" id="acMail" inputmode="email" autocomplete="email" placeholder="tucorreo@gmail.com"></label>
+    <div id="acCode" hidden><p class="note">Te lo mandamos a <b id="acTo"></b>. Toca el enlace del correo, o escribe aquí el código que viene en él:</p><label class="f"><span>Código</span><input type="text" id="acOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="10"></label></div>
+    ${C.google?'<div class="btns"><button type="button" class="btn" id="acGoogle">Entrar con Google</button></div>':''}`,
+    actions:[{label:'Cancelar'},{label:'Mandarme el enlace',cls:'primary',keep:true,id:'acGo',run:()=>acStep(then)}],
+    onOpen:c=>{const m=c.querySelector('#acMail');setTimeout(()=>m.focus(),40);m.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();acStep(then);}});
+      c.querySelector('#acOtp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();acStep(then);}});
+      const g=c.querySelector('#acGoogle');if(g) g.addEventListener('click',async()=>{try{await PLAN.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});}catch(e){toast('No se pudo abrir Google');}});}});
+}
+async function acStep(then){
+  const c=$('#mcard'),mail=(c.querySelector('#acMail').value||'').trim(),codeBox=c.querySelector('#acCode'),go=c.querySelector('#acGo');
+  if(codeBox.hidden){
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)){toast('Escribe tu correo');return;}
+    go.disabled=true;
+    try{const {error}=await PLAN.sb.auth.signInWithOtp({email:mail,options:{emailRedirectTo:location.origin+location.pathname}});if(error) throw error;
+      codeBox.hidden=false;c.querySelector('#acTo').textContent=mail;go.textContent='Entrar con el código';setTimeout(()=>c.querySelector('#acOtp').focus(),40);}
+    catch(e){toast(/rate|seconds/i.test(e.message||'')?'Espera un minuto antes de pedir otro correo':'No se pudo mandar el correo');}
+    go.disabled=false;return;
+  }
+  const code=(c.querySelector('#acOtp').value||'').replace(/\s+/g,'');if(!code){toast('Escribe el código del correo');return;}
+  go.disabled=true;
+  try{const {data,error}=await PLAN.sb.auth.verifyOtp({email:mail,token:code,type:'email'});if(error) throw error;PLAN.user=data.user||(data.session&&data.session.user)||PLAN.user;
+    closeModal();await planRefresh();toast('¡Bienvenido! Entraste como '+mail);if(then==='pro'&&!isPro()) openPro();}
+  catch(e){toast('Ese código no funcionó; revisa que sea el último que te llegó');go.disabled=false;}
+}
+$('#acctBtn').addEventListener('click',()=>{if(!PLAN.user) openAccount();else if(isPro()) openAccount();else openPro();});
+planInit();
 
 // ===== Celular: barra de herramientas abajo, paneles como hojas y gestos con dos dedos =====
 const MQ_PHONE=window.matchMedia?matchMedia('(max-width:1000px), (max-height:520px) and (pointer:coarse)'):{matches:false,addEventListener(){}};
