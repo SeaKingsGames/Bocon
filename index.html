@@ -746,6 +746,10 @@ details.sec.hl>summary{color:var(--blue)}
   .ge-r{grid-template-columns:100px minmax(0,1fr) 40px}
 }
 .ve-play{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;margin-bottom:12px}
+.tts-prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:10px}
+.tts-prog>i{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
+@media (max-width:720px){.tts-grid{grid-template-columns:minmax(0,1fr)}}
 .ve-knobs{display:flex;flex-direction:column;gap:7px;max-height:44vh;overflow:auto;padding-right:4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-block:8px}
 .ve-r{grid-template-columns:140px minmax(0,1fr) 64px}
 .chip.mine{border-style:dashed}
@@ -807,6 +811,7 @@ details.sec.hl>summary{color:var(--blue)}
           <span class="lbl">En la línea de tiempo</span>
           <button type="button" data-cmd="addVoice">Voz para el personaje…</button>
           <button type="button" data-cmd="record">Grabar voz con micrófono…</button>
+          <button type="button" data-cmd="tts">Voz desde texto…</button>
           <button type="button" data-cmd="quickSfx">Sonidos rápidos…<kbd>Q</kbd></button>
           <button type="button" data-cmd="addSfx">Sonido o música (archivo)…</button>
           <button type="button" data-cmd="addMove">Movimiento en el cabezal<kbd>M</kbd></button>
@@ -5437,7 +5442,7 @@ function bocaSections(ch){
   h+=sec('boca','Boca',fText('data-f','name','Nombre',ch.name)+fSelect('data-f','mstyle','Estilo',optsOf(BOCA_STYLES),ch.mstyle||'caricatura',true)+`<label class="f"><span>Color</span><span class="val"><input type="color" data-f="lip" value="${ch.lip||bocaCol(ch.mstyle)}"><button type="button" class="btn sm ghost" data-act="lipReset">Normal</button></span></label><p class="note">Pon la boca sobre una cara dibujada sin boca, pégala a esa imagen y agrégale voz. También puedes usar tus propias bocas PNG con "Agregar → Boca".</p>`);
   h+=posSection(ch);
   const clips=ch.clips.map(c=>{const a=S.audio[c.aid];return `<div class="ci${S.sel&&S.sel.id===c.id?' on':''}" data-clip="${c.id}"><span>${esc(a?a.name:'audio')}</span><small>${tc(c.start).slice(1).join(':')}</small></div>`;}).join('');
-  h+=sec('voz','Voz y lip-sync',`${clips?`<div class="cliplist">${clips}</div>`:'<p class="note">Agrega un audio o arrástralo a su pista.</p>'}<div class="row2"><button type="button" class="btn sm" data-cmd="addVoice">Agregar audio</button><button type="button" class="btn sm" data-cmd="record">Grabar con micrófono</button></div>`,{cnt:ch.clips.length||null});
+  h+=sec('voz','Voz y lip-sync',`${clips?`<div class="cliplist">${clips}</div>`:'<p class="note">Agrega un audio o arrástralo a su pista.</p>'}<div class="row2"><button type="button" class="btn sm" data-cmd="addVoice">Agregar audio</button><button type="button" class="btn sm" data-cmd="record">Grabar con micrófono</button></div><div class="btns"><button type="button" class="btn sm" data-cmd="tts">Escribir lo que dice (texto a voz)</button></div>`,{cnt:ch.clips.length||null});
   const es=laneState(ch.exprs,S.t,'e','neutral');
   h+=sec('ges','Gestos',exprGrid(ch,es,true)+'<p class="note">En la boca suelta los gestos cambian la sonrisa: feliz, triste, sorprendido…</p>',{cnt:ch.exprs.length||null});
   if(!ch.parent) h+=moveSection(ch);
@@ -5461,7 +5466,7 @@ function charSections(ch){
   h+=posSection(ch);
   const clips=ch.clips.map(c=>{const a=S.audio[c.aid];return `<div class="ci${S.sel&&S.sel.id===c.id?' on':''}" data-clip="${c.id}"><span>${esc(a?a.name:'audio')}</span><small>${tc(c.start).slice(1).join(':')}</small></div>`;}).join('');
   const vfxSel=`<label class="f"><span>Efecto de voz</span><select data-f="vfx">${vfxOptions(ch.vfx||'normal')}</select></label>`+'<div class="btns">'+(ch.clips.length?'<button type="button" class="btn sm" data-act="vfxTry">▶ Probar cómo suena</button>':'')+'<button type="button" class="btn sm" data-act="vfxEdit">Ajustar o crear efecto…</button></div>';
-  h+=sec('voz','Voz y lip-sync',`${clips?`<div class="cliplist">${clips}</div>`:'<p class="note">Todavía no tiene voz. Agrega un audio o arrástralo a su pista.</p>'}${vfxSel}<div class="row2"><button type="button" class="btn sm" data-cmd="addVoice">Agregar audio</button><button type="button" class="btn sm" data-cmd="record">Grabar con micrófono</button></div>`,{cnt:ch.clips.length||null});
+  h+=sec('voz','Voz y lip-sync',`${clips?`<div class="cliplist">${clips}</div>`:'<p class="note">Todavía no tiene voz. Agrega un audio o arrástralo a su pista.</p>'}${vfxSel}<div class="row2"><button type="button" class="btn sm" data-cmd="addVoice">Agregar audio</button><button type="button" class="btn sm" data-cmd="record">Grabar con micrófono</button></div><div class="btns"><button type="button" class="btn sm" data-cmd="tts">Escribir lo que dice (texto a voz)</button></div>`,{cnt:ch.clips.length||null});
   const es=laneState(ch.exprs,S.t,'e','neutral');
   h+=sec('ges','Gestos',exprGrid(ch,es,false)+'<p class="note">Se pone en el cabezal y dura 1.5 s; alárgalo en la línea de tiempo.</p>',{cnt:ch.exprs.length||null});
   const ps=laneState(ch.poses,S.t,'p','reposo'),noArms=ch.tpl==='png'&&!puppetHasArms(ch.puppet);
@@ -5668,7 +5673,7 @@ const CMDS={
   addChar:()=>openCharPicker(),addBoca:()=>openBocaPicker(),addFx:()=>openFxPicker(),vestir:()=>{const o=selObj();if(o&&!isProp(o)&&!isBoca(o)) openEditor(o,'acc');else toast('Selecciona un personaje para ponerle accesorios');},addImg:()=>pickImage(),addText:()=>openTextPicker(),addBubble:()=>openBubblePicker(),
   addVoice:()=>{const ch=charById(S.selObj)||cur().chars[0];if(!ch){toast('Primero agrega un personaje');return;}pickAudio('voice',ch.id);},
   addSubs:()=>openSubsModal(),
-  record:()=>openRecorder(),addSfx:()=>pickAudio('sfx',null),addMove:()=>addMove(),addCam:()=>openCamPicker(),addScene:()=>addScene(),
+  record:()=>openRecorder(),tts:()=>openTTS(),addSfx:()=>pickAudio('sfx',null),addMove:()=>addMove(),addCam:()=>openCamPicker(),addScene:()=>addScene(),
   viewCam:()=>setView('cam'),viewFull:()=>setView('full'),movie:()=>{closePicker();playMovie();},
   quickSfx:()=>openQuickSfx(),setSave:()=>saveSetModal(),setPick:()=>openSetPicker(),
   cutout:()=>{const o=selObj();openCutout(o&&o.kind==='img'?o:null);},
@@ -7439,6 +7444,182 @@ function veSave(use){
 function delVoiceFx(id){
   const v=MYVFX.find(x=>x.id===id);if(!v) return;
   confirmModal('Borrar «'+esc(v.label)+'»','Los personajes que lo usan vuelven a su voz normal.','Borrar',()=>{MYVFX=MYVFX.filter(x=>x.id!==id);for(const sc of S.scenes) for(const ch of sc.chars) if(ch.vfx==='u:'+id) ch.vfx='normal';saveLib();refreshAll();save();toast('Efecto borrado');});
+}
+
+// ===== Texto a voz (Piper: la voz se genera aquí mismo, en tu compu) =====
+// La primera vez se descargan el motor y la voz; se guardan y después funciona sin internet.
+// El audio entra como cualquier voz: con lip-sync automático y con el efecto de voz del personaje.
+const TTS_BASE={ort:'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/',pho:'https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/',
+  voices:['https://huggingface.co/rhasspy/piper-voices/resolve/main/','https://huggingface.co/diffusionstudio/piper-voices/resolve/main/']};
+const TTS_VOICES=[
+  {id:'mx',label:'Hombre · México',path:'es/es_MX/claude/high/es_MX-claude-high',mb:63},
+  {id:'mx2',label:'Hombre 2 · México',path:'es/es_MX/ald/medium/es_MX-ald-medium',mb:63},
+  {id:'esf',label:'Mujer · España',path:'es/es_ES/sharvard/medium/es_ES-sharvard-medium',sid:1,mb:77},
+  {id:'esm',label:'Hombre · España',path:'es/es_ES/sharvard/medium/es_ES-sharvard-medium',sid:0,mb:77},
+  {id:'es3',label:'Hombre 3 · España',path:'es/es_ES/davefx/medium/es_ES-davefx-medium',mb:63},
+  {id:'lite',label:'Ligera · España (28 MB)',path:'es/es_ES/carlfm/x_low/es_ES-carlfm-x_low',mb:28}];
+const TTS_CACHE='bocon-voces-1';
+const TTS={ready:null,sess:{},pho:null,last:null,busy:false};
+const ttsVoiceOf=id=>TTS_VOICES.find(v=>v.id===id)||TTS_VOICES[0];
+const ttsUrls=(v,ext)=>TTS_BASE.voices.map(b=>b+v.path+ext);
+function ttsPrefs(o){try{if(o) localStorage.setItem('bocon-tts',JSON.stringify(o));else return Object.assign({voice:'mx',speed:1},JSON.parse(localStorage.getItem('bocon-tts')||'{}'));}catch(_){return {voice:'mx',speed:1};}}
+// baja un archivo (o lo toma de lo guardado) avisando cuánto lleva
+async function ttsFetch(urls,onProg){
+  let cache=null;try{cache=await caches.open(TTS_CACHE);}catch(_){}
+  if(cache) for(const u of urls){try{const r=await cache.match(u);if(r) return await r.arrayBuffer();}catch(_){}}
+  let err=null;
+  for(const u of urls){
+    try{
+      const r=await fetch(u);if(!r.ok) throw new Error('HTTP '+r.status);
+      const total=+r.headers.get('content-length')||0;let buf;
+      if(r.body&&onProg){const rd=r.body.getReader(),parts=[];let got=0;for(;;){const {done,value}=await rd.read();if(done) break;parts.push(value);got+=value.length;onProg(got,total);}
+        const u8=new Uint8Array(got);let o=0;for(const p of parts){u8.set(p,o);o+=p.length;}buf=u8.buffer;}
+      else buf=await r.arrayBuffer();
+      if(cache) try{await cache.put(urls[0],new Response(buf));}catch(_){}
+      return buf;
+    }catch(e){err=e;}
+  }
+  throw err||new Error('sin internet');
+}
+async function ttsCached(v){try{const c=await caches.open(TTS_CACHE);for(const u of ttsUrls(v,'.onnx')) if(await c.match(u)) return true;}catch(_){}return false;}
+// el motor: ONNX Runtime (para la red neuronal) y espeak-ng (para convertir el texto en fonemas)
+function ttsEngine(onProg){
+  if(TTS.ready) return TTS.ready;
+  TTS.ready=(async()=>{
+    if(!window.ort) await loadScript(TTS_BASE.ort+'ort.wasm.min.js');
+    ort.env.wasm.wasmPaths=TTS_BASE.ort;ort.env.wasm.numThreads=1;
+    if(!window.createPiperPhonemize) await loadScript(TTS_BASE.pho+'piper_phonemize.js');
+    const [wasm,data]=await Promise.all([ttsFetch([TTS_BASE.pho+'piper_phonemize.wasm']),ttsFetch([TTS_BASE.pho+'piper_phonemize.data'],onProg)]);
+    TTS.pho={wasm,data};
+  })();
+  TTS.ready.catch(()=>{TTS.ready=null;});
+  return TTS.ready;
+}
+function ttsVoice(v,onProg){
+  if(TTS.sess[v.path]) return TTS.sess[v.path];
+  const p=(async()=>{
+    const cfg=JSON.parse(new TextDecoder().decode(await ttsFetch(ttsUrls(v,'.onnx.json'))));
+    const model=await ttsFetch(ttsUrls(v,'.onnx'),onProg);
+    return {cfg,sess:await ort.InferenceSession.create(model,{executionProviders:['wasm']})};
+  })();
+  TTS.sess[v.path]=p;p.catch(()=>{delete TTS.sess[v.path];});return p;
+}
+// texto → números de fonemas (espeak-ng, el mismo que usaron para entrenar las voces)
+function ttsPhonemes(text,lang){
+  return new Promise((res,rej)=>{
+    let done=false;const fin=(f,v)=>{if(!done){done=true;f(v);}};setTimeout(()=>fin(rej,new Error('No pude leer el texto')),15000);
+    createPiperPhonemize({wasmBinary:TTS.pho.wasm.slice(0),getPreloadedPackage:()=>TTS.pho.data,locateFile:u=>TTS_BASE.pho+u.split('/').pop(),
+      print:d=>{try{const j=JSON.parse(d);if(j&&j.phoneme_ids) fin(res,j.phoneme_ids);}catch(_){}},printErr:()=>{}})
+      .then(m=>m.callMain(['-l',lang,'--input',JSON.stringify([{text}]),'--espeak_data','/espeak-ng-data'])).catch(e=>fin(rej,e));
+  });
+}
+// parte el texto en frases (cada una suena mejor y entre frases queda una pausa)
+function ttsSplit(text){
+  const out=[];
+  for(const line of String(text).replace(/\r/g,'').split(/\n+/)){
+    const t=line.trim();if(!t) continue;
+    const ss=t.match(/[^.!?…]+[.!?…]+["»”')]*|[^.!?…]+$/g)||[t];
+    ss.forEach((s,i)=>{s=s.trim();if(!s) return;
+      // las frases muy largas se parten en comas
+      if(s.length>220){const cs=s.split(/(?<=[,;:])\s+/);let buf='';for(const c of cs){if((buf+' '+c).length>220&&buf){out.push({t:buf,p:.12});buf=c;}else buf=buf?buf+' '+c:c;}if(buf) out.push({t:buf,p:.3});}
+      else out.push({t:s,p:i===ss.length-1?.45:.3});});
+  }
+  return out;
+}
+async function ttsSynth(text,vid,speed,on){
+  const v=ttsVoiceOf(vid),say=m=>on&&on(m);
+  say({msg:'Preparando el motor…'});
+  await ttsEngine((a,b)=>say({msg:'Bajando el motor de voz…',a,b}));
+  const {cfg,sess}=await ttsVoice(v,(a,b)=>say({msg:'Bajando la voz «'+v.label+'»…',a,b}));
+  const sr=cfg.audio&&cfg.audio.sample_rate||22050,inf=cfg.inference||{},lang=cfg.espeak&&cfg.espeak.voice||'es',parts=ttsSplit(text),chunks=[];
+  if(!parts.length) throw new Error('Escribe algo para que lo diga');
+  for(let i=0;i<parts.length;i++){
+    say({msg:parts.length>1?`Generando la voz… ${i+1} de ${parts.length}`:'Generando la voz…',a:i,b:parts.length});
+    await new Promise(r=>setTimeout(r,20));
+    const ids=await ttsPhonemes(parts[i].t,lang),n=ids.length;
+    const feeds={input:new ort.Tensor('int64',BigInt64Array.from(ids,x=>BigInt(x)),[1,n]),input_lengths:new ort.Tensor('int64',BigInt64Array.from([BigInt(n)]),[1]),
+      scales:new ort.Tensor('float32',Float32Array.from([inf.noise_scale??.667,(inf.length_scale??1)/Math.max(.5,speed||1),inf.noise_w??.8]),[3])};
+    if((cfg.num_speakers||1)>1) feeds.sid=new ort.Tensor('int64',BigInt64Array.from([BigInt(v.sid||0)]),[1]);
+    const r=await sess.run(feeds);chunks.push(r.output.data);chunks.push(new Float32Array(Math.round(sr*parts[i].p)));
+  }
+  let L=Math.round(sr*.1);for(const c of chunks) L+=c.length;const pcm=new Float32Array(L);let o=Math.round(sr*.1),pk=0;for(const c of chunks){pcm.set(c,o);o+=c.length;}
+  for(let i=0;i<L;i++) pk=Math.max(pk,Math.abs(pcm[i]));if(pk>0){const k=.9/pk;for(let i=0;i<L;i++) pcm[i]*=k;}
+  return {pcm,sr};
+}
+function wavBytes(pcm,sr){
+  const n=pcm.length,ab=new ArrayBuffer(44+n*2),dv=new DataView(ab),w=(p,s)=>{for(let i=0;i<s.length;i++) dv.setUint8(p+i,s.charCodeAt(i));};
+  w(0,'RIFF');dv.setUint32(4,36+n*2,true);w(8,'WAVEfmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,sr,true);dv.setUint32(28,sr*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,'data');dv.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++) dv.setInt16(44+i*2,Math.max(-32767,Math.min(32767,Math.round(pcm[i]*32767))),true);
+  return ab;
+}
+let TTSM=null;
+function openTTS(chArg){
+  const sc=cur(),ch0=chArg||charById(S.selObj)||sc.chars[0];
+  if(!ch0){toast('Primero agrega un personaje');return;}
+  const st=ttsPrefs(),fxOf=ch=>ch.vfx&&ch.vfx!=='normal'?ch.vfx:(/\blito\b/i.test(ch.name)?'lito':'normal');
+  TTSM={src:null};
+  const body=`<label class="sub-lbl" for="ttsTxt">¿Qué dice?</label><textarea id="ttsTxt" class="sub-txt" rows="5" maxlength="1500" placeholder="Escribe lo que va a decir.&#10;Usa ¿? y ¡! para que suene con emoción. Cada renglón o punto hace una pausa.">${esc(st.last||'')}</textarea>
+    <div class="tts-grid">
+      <label class="f"><span>Personaje</span><select id="ttsCh">${sc.chars.map(c=>`<option value="${c.id}"${c.id===ch0.id?' selected':''}>${esc(c.name)}</option>`).join('')}</select></label>
+      <label class="f"><span>Voz</span><select id="ttsVoice">${TTS_VOICES.map(v=>`<option value="${v.id}"${v.id===st.voice?' selected':''}>${esc(v.label)}</option>`).join('')}</select></label>
+      <label class="f"><span>Efecto de voz</span><select id="ttsFx">${vfxOptions(fxOf(ch0))}</select></label>
+      <label class="f"><span>Velocidad</span><span class="val"><input type="range" id="ttsSpd" min="70" max="150" step="5" value="${Math.round((st.speed||1)*100)}"><output id="ttsSpdO"></output></span></label>
+    </div>
+    <div class="ve-play"><button type="button" class="btn" id="ttsPlay">▶ Escuchar</button><small class="muted" id="ttsNote"></small></div>
+    <div class="tts-prog" id="ttsProg" hidden><i></i></div>
+    <p class="note">La voz se genera aquí mismo, en tu compu. La primera vez se descarga la voz (unos 60 MB) y el motor (unos 30 MB); después ya no necesita internet. Entra con lip-sync y con el efecto de voz que elijas.</p>`;
+  openModal({title:'Texto a voz',wide:true,body,
+    actions:[{label:'Cancelar'},{label:'Agregar a la línea de tiempo',cls:'primary',keep:true,id:'ttsAdd',run:()=>ttsAdd()}],
+    onOpen:c=>{
+      const sp=$('#ttsSpd'),so=$('#ttsSpdO'),syncSp=()=>{so.textContent=sp.value+'%';};sp.oninput=syncSp;syncSp();
+      $('#ttsCh').onchange=e=>{const ch=sc.chars.find(x=>x.id===e.target.value);if(ch) $('#ttsFx').value=fxOf(ch);};
+      $('#ttsVoice').onchange=()=>ttsNote();ttsNote();
+      $('#ttsPlay').onclick=()=>ttsPreview();
+      setTimeout(()=>{const t=$('#ttsTxt');if(t&&!isPhone()) t.focus();},60);
+    },
+    onClose:()=>{ttsStopPrev();TTSM=null;}});
+}
+async function ttsNote(){const n=$('#ttsNote');if(!n) return;const v=ttsVoiceOf($('#ttsVoice').value);n.textContent='';const ok=await ttsCached(v);if(n.isConnected&&$('#ttsVoice').value===v.id) n.textContent=ok?'Voz descargada ✓':`Se descarga la primera vez (${v.mb} MB)`;}
+function ttsProg(m){
+  const p=$('#ttsProg'),n=$('#ttsNote');if(!p) return;
+  if(!m){p.hidden=true;return;}
+  p.hidden=false;const k=m.b?Math.max(0,Math.min(1,m.a/m.b)):0;p.firstElementChild.style.width=(k*100).toFixed(1)+'%';
+  if(n) n.textContent=m.msg+(m.b>1e5?` ${Math.round(m.a/1048576)} de ${Math.round(m.b/1048576)} MB`:'');
+}
+function ttsStopPrev(){if(TTSM&&TTSM.src){try{TTSM.src.stop();}catch(_){}TTSM.src=null;}const b=$('#ttsPlay');if(b) b.textContent='▶ Escuchar';}
+function ttsBusy(on){TTS.busy=on;for(const id of ['ttsPlay','ttsAdd']){const b=$('#'+id);if(b) b.disabled=on;}}
+// genera (o reusa lo último si no cambió nada)
+async function ttsMake(){
+  const text=$('#ttsTxt').value.trim(),vid=$('#ttsVoice').value,speed=+$('#ttsSpd').value/100;
+  if(!text) throw new Error('Escribe algo para que lo diga');
+  ttsPrefs({voice:vid,speed,last:text});
+  const key=vid+'|'+speed+'|'+text;if(TTS.last&&TTS.last.key===key) return TTS.last;
+  const r=await ttsSynth(text,vid,speed,ttsProg);TTS.last={key,text,...r};return TTS.last;
+}
+function ttsErr(e){
+  const m=e&&e.message||'';ttsProg(null);
+  toast(/Escribe/.test(m)?m:(navigator.onLine===false?'Sin internet: la primera vez hay que descargar la voz':'No pude generar la voz. Revisa tu internet e inténtalo otra vez'));
+  const n=$('#ttsNote');if(n) n.textContent='';
+}
+async function ttsPreview(){
+  if(TTSM&&TTSM.src){ttsStopPrev();return;}if(TTS.busy) return;ttsBusy(true);
+  try{const r=await ttsMake(),fx=$('#ttsFx').value;ttsProg({msg:'Aplicando el efecto…'});
+    let buf=pcmBuffer(r.pcm,r.sr);const F=vfxOf(fx);if(F) buf=await renderVfx(buf,F);
+    if(!TTSM) return;ttsProg(null);ttsNote();const x=ac();if(x.state!=='running') await x.resume();
+    const s=x.createBufferSource();s.buffer=buf;s.connect(x.destination);s.start();TTSM.src=s;$('#ttsPlay').textContent='■ Detener';s.onended=()=>{if(TTSM&&TTSM.src===s) ttsStopPrev();};
+  }catch(e){ttsErr(e);}finally{ttsBusy(false);}
+}
+async function ttsAdd(){
+  if(TTS.busy) return;ttsBusy(true);ttsStopPrev();
+  try{
+    const r=await ttsMake(),ch=charById($('#ttsCh').value),fx=$('#ttsFx').value;if(!ch) throw new Error('Escribe');
+    ttsProg({msg:'Poniendo la voz con lip-sync…'});
+    const name='Voz: '+(r.text.length>34?r.text.slice(0,32)+'…':r.text);
+    const aid=await importAudioFile(new File([wavBytes(r.pcm,r.sr)],name+'.wav',{type:'audio/wav'}));S.audio[aid].name=name;addMedia(aid,'aud');
+    const c=addVoiceClip(ch,aid,S.t);ch.vfx=fx;if(vfxOf(fx)) for(const k of ch.clips) vfxPrep(S.audio[k.aid],fx);
+    S.selObj=ch.id;S.sel={kind:'clip',id:c.id,owner:ch.id};closeModal();refreshAll();save();
+    toast(`${ch.name} ya dice tu texto (${S.audio[aid].dur.toFixed(1)} s)`+(vfxOf(fx)?' · '+vfxLabel(fx):''));
+  }catch(e){ttsErr(e);}finally{ttsBusy(false);}
 }
 
 // ===== Música que baja sola cuando alguien habla =====
