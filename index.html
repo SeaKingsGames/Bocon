@@ -7218,6 +7218,7 @@ const VFX={
   ardilla:{label:'Ardilla (aguda)',pitch:1.55,hp:140},
   aguda:{label:'Un poco aguda',pitch:1.22},
   grave:{label:'Grave',pitch:.8},
+  lito:{label:'Lito (caricatura)',toHz:300,fmtAuto:1,inton:1.15},
   helio:{label:'Globo de helio',pitch:1.85,hp:220,high:2},
   duende:{label:'Duende',pitch:1.35,vib:6,vibD:.25},
   gigante:{label:'Gigante',pitch:.6,low:6,rev:.9,rwet:.25},
@@ -7256,10 +7257,64 @@ function pitchShift(x,sr,ratio){
   }
   return out;
 }
+// ----- tono y timbre por separado (PSOLA): sube el tono sin voz de ardilla, o cambia el "tamaño" de la voz sin cambiar el tono -----
+// tono de la voz cada 10 ms (0 = sin tono: consonantes o silencio)
+function voiceTrack(x,sr){
+  const D=Math.max(1,Math.round(sr/11025)),sr2=sr/D,n2=Math.floor(x.length/D),y=new Float32Array(n2);
+  for(let i=0;i<n2;i++){let s=0;for(let k=0;k<D;k++) s+=x[i*D+k];y[i]=s/D;}
+  const hop=Math.round(sr2*.01),W=Math.round(sr2*.04),minL=Math.floor(sr2/750),maxL=Math.ceil(sr2/55),nf=Math.max(0,Math.floor((n2-W-maxL)/hop)+1);
+  const f0=new Float32Array(nf),rms=new Float32Array(nf),r=new Float32Array(maxL+2);let mx=0;
+  for(let f=0;f<nf;f++){let e=0;const o=f*hop;for(let i=0;i<W;i++) e+=y[o+i]*y[o+i];rms[f]=Math.sqrt(e/W);if(rms[f]>mx) mx=rms[f];}
+  for(let f=0;f<nf;f++){
+    if(rms[f]<mx*.04) continue;const o=f*hop;let e0=0,best=0,bl=0;for(let i=0;i<W;i++) e0+=y[o+i]*y[o+i];
+    for(let L=minL;L<=maxL;L++){let s=0,e1=0;for(let i=0;i<W;i++){const b=y[o+i+L];s+=y[o+i]*b;e1+=b*b;}r[L]=s/Math.sqrt(e0*e1+1e-12);if(r[L]>best){best=r[L];bl=L;}}
+    if(best<.55) continue;
+    for(let L=minL+1;L<bl;L++) if(r[L]>r[L-1]&&r[L]>=r[L+1]&&r[L]>best*.9){bl=L;break;}// el primer pico parecido (no la octava de abajo)
+    const a=r[bl-1]||0,b=r[bl],c=r[bl+1]||0,d=(a-2*b+c)?(a-c)/(2*(a-2*b+c)):0;f0[f]=sr2/(bl+Math.max(-.5,Math.min(.5,d)));
+  }
+  const g=new Float32Array(nf);
+  for(let f=0;f<nf;f++){if(!f0[f]) continue;const w=[];for(let k=-2;k<=2;k++){const v=f0[f+k];if(v) w.push(v);}w.sort((p,q)=>p-q);g[f]=w.length>=3?w[w.length>>1]:0;}
+  const v=Array.from(g).filter(x=>x>0).sort((p,q)=>p-q);
+  return {f0:g,hop:hop*D,off:W*D/2,med:v.length?v[v.length>>1]:150};
+}
+// o: ratio (tono), toHz (lleva el tono típico de la voz a esos Hz), fmt (timbre: >1 voz más chica), fmtAuto (timbre según cuánto sube el tono), inton (entonación: 1 = natural)
+function voiceShift(x,sr,o,tr){
+  tr=tr||voiceTrack(x,sr);const L=x.length,f0=tr.f0,med=tr.med;
+  const fAt=t=>{const i=Math.round((t-tr.off)/tr.hop);return i>=0&&i<f0.length?f0[i]:0;};
+  const base=Math.max(.25,Math.min(4,o.toHz?o.toHz/med:(o.ratio||1))),inton=o.inton||1;
+  const fmt=o.fmtAuto?Math.max(.6,Math.min(1.5,Math.pow(base,.42))):Math.max(.4,Math.min(2.5,o.fmt||1));
+  const at=s=>{const i=Math.floor(s);if(i<0||i>=L-1) return 0;const q=s-i;return x[i]*(1-q)+x[i+1]*q;};
+  // marcas: una por cada vuelta de la voz, alineadas al pico
+  const marks=[];let t=0,prevV=false;
+  while(t<L){
+    const f=fAt(t);
+    if(f){const T=sr/f;let c=t,mv=-1;
+      if(!prevV){for(let k=0;k<T&&t+k<L;k++){const v=Math.abs(x[Math.floor(t+k)]);if(v>mv){mv=v;c=t+k;}}}
+      else{const R=T*.12;for(let k=-R;k<=R;k++){const v=x[Math.floor(t+k)]||0;if(v>mv){mv=v;c=t+k;}}if(mv<Math.abs(x[Math.floor(t)]||0)*1.05) c=t;}
+      marks.push({t:c,T,f});t=c+T;prevV=true;}
+    else{t+=sr*.005;prevV=false;}
+  }
+  const out=new Float32Array(L),U=Math.round(sr*.004);let ts=0,k=0;
+  while(ts<L){
+    const f=fAt(ts);
+    if(f&&marks.length){
+      while(k<marks.length-1&&Math.abs(marks[k+1].t-ts)<=Math.abs(marks[k].t-ts)) k++;
+      const m=marks[k],p=Math.max(.25,Math.min(4,base*Math.pow(m.f/med,inton-1))),G=m.T/fmt,Ts=m.T/p,wg=1/Math.max(1,G/Ts);
+      for(let j=Math.ceil(-G);j<=G;j++){const o2=Math.round(ts+j);if(o2<0||o2>=L) continue;out[o2]+=at(m.t+j*fmt)*(.5+.5*Math.cos(Math.PI*j/G))*wg;}
+      ts+=Ts;
+    }else{// consonantes y silencio: granos seguidos que solo cambian el timbre
+      for(let j=-U;j<=U;j++){const o2=Math.round(ts+j);if(o2<0||o2>=L) continue;out[o2]+=at(ts+j*fmt)*(.5+.5*Math.cos(Math.PI*j/U));}
+      ts+=U;
+    }
+  }
+  return out;
+}
+const vfxPsola=F=>!!(F&&(F.toHz||F.fmtAuto||F.fmt!=null||(F.inton&&F.inton!==1)));
 function peakOf(arrs){let m=0;for(const a of arrs) for(let i=0;i<a.length;i+=3){const v=Math.abs(a[i]);if(v>m) m=v;}return m;}
 // lo que se hace muestra por muestra (antes de los filtros)
-function vfxSamples(x,sr,F){
-  if(F.pitch&&Math.abs(F.pitch-1)>.005) x=pitchShift(x,sr,F.pitch);
+function vfxSamples(x,sr,F,tr){
+  if(vfxPsola(F)) x=voiceShift(x,sr,{ratio:F.pitch||1,toHz:F.toHz,fmt:F.fmt,fmtAuto:F.fmtAuto,inton:F.inton},tr);
+  else if(F.pitch&&Math.abs(F.pitch-1)>.005) x=pitchShift(x,sr,F.pitch);
   if(F.dual>0){const d=pitchShift(x,sr,F.dualPitch||.5),y=new Float32Array(x.length),a=1-F.dual*.35;for(let i=0;i<x.length;i++) y[i]=x[i]*a+d[i]*F.dual;x=y;}
   if(F.vib>0&&F.vibD>0){const y=new Float32Array(x.length),D=F.vibD*sr*.0045,w=2*Math.PI*F.vib/sr;for(let i=0;i<x.length;i++){const s=i-D-D*Math.sin(w*i),k=Math.floor(s);if(k<0||k>=x.length-1) continue;const f=s-k;y[i]=x[k]*(1-f)+x[k+1]*f;}x=y;}
   if(F.whisper>0){const y=new Float32Array(x.length),a=Math.exp(-1/(sr*.012));let env=0,lp=0,rnd=mulberry32(77);for(let i=0;i<x.length;i++){env=Math.max(Math.abs(x[i]),env*a);const n=rnd()*2-1;lp+=(n-lp)*.35;const hiN=n-lp;y[i]=x[i]*(1-F.whisper)+hiN*env*2.4*F.whisper;}x=y;}
@@ -7271,7 +7326,8 @@ function vfxSamples(x,sr,F){
 async function renderVfx(buf,F){
   const sr=buf.sampleRate,nch=buf.numberOfChannels,len=buf.length;
   let ch=[];for(let i=0;i<nch;i++) ch.push(buf.getChannelData(i));const p0=peakOf(ch)||1;
-  ch=ch.map(x=>vfxSamples(x,sr,F));
+  let tr=null;if(vfxPsola(F)){const m=new Float32Array(len);for(const x of ch) for(let i=0;i<len;i++) m[i]+=x[i]/nch;tr=voiceTrack(m,sr);}
+  ch=ch.map(x=>vfxSamples(x,sr,F,tr));
   const off=new OfflineAudioContext(nch,len,sr),b2=off.createBuffer(nch,len,sr);ch.forEach((x,i)=>b2.copyToChannel(x,i));
   const src=off.createBufferSource();src.buffer=b2;let node=src;
   const link=n=>{node.connect(n);node=n;};
@@ -7308,8 +7364,8 @@ async function vfxReadyAll(scope){const ps=vfxNeeded(scope).map(([a,k])=>{const 
 function vfxKick(){for(const sc of S.scenes) for(const ch of sc.chars) if(vfxOf(ch.vfx)) for(const c of ch.clips) vfxPrep(S.audio[c.aid],ch.vfx);}
 // ----- ajustar y crear efectos de voz -----
 const VFX_KNOBS=[
-  ['Tono',[['st','Tono',-12,12,1,v=>(v>0?'+':'')+v+' st'],['dual','Voz doble (grave)',0,100,1,v=>v+'%']]],
-  ['Timbre',[['low','Graves',-12,12,1,v=>(v>0?'+':'')+v+' dB'],['high','Agudos',-12,12,1,v=>(v>0?'+':'')+v+' dB'],['hp','Quitar graves',0,1200,10,v=>v?v+' Hz':'no'],['lp','Quitar agudos',800,12000,100,v=>v>=12000?'no':v+' Hz']]],
+  ['Tono',[['st','Tono',-24,24,1,v=>(v>0?'+':'')+v+' st'],['to','Tono automático',0,450,10,v=>v>=100?v+' Hz':'no'],['fmt','Timbre',-12,13,1,v=>v>12?'auto':(v>0?'+':'')+v+' st'],['inton','Entonación',50,200,5,v=>v+'%'],['dual','Voz doble (grave)',0,100,1,v=>v+'%']]],
+  ['Ecualizador',[['low','Graves',-12,12,1,v=>(v>0?'+':'')+v+' dB'],['high','Agudos',-12,12,1,v=>(v>0?'+':'')+v+' dB'],['hp','Quitar graves',0,1200,10,v=>v?v+' Hz':'no'],['lp','Quitar agudos',800,12000,100,v=>v>=12000?'no':v+' Hz']]],
   ['Carácter',[['drive','Distorsión',0,100,1,v=>v+'%'],['ring','Robot',0,150,1,v=>v?v+' Hz':'no'],['comb','Metálico',0,100,1,v=>v+'%'],['crush','8 bits',0,100,1,v=>v+'%'],['whisper','Susurro',0,100,1,v=>v+'%']]],
   ['Movimiento',[['vib','Vibrato: velocidad',0,12,.5,v=>v+' Hz'],['vibD','Vibrato: cuánto',0,100,1,v=>v+'%'],['trem','Trémolo: velocidad',0,15,.5,v=>v+' Hz'],['tremD','Trémolo: cuánto',0,100,1,v=>v+'%'],['chorus','Coro',0,100,1,v=>v+'%']]],
   ['Espacio',[['delay','Eco: tiempo',0,1000,10,v=>v?v+' ms':'no'],['fb','Eco: repeticiones',0,85,1,v=>v+'%'],['wet','Eco: cuánto',0,100,1,v=>v+'%'],['rev','Sala: tamaño',0,40,1,v=>v?(v/10).toFixed(1)+' s':'no'],['rwet','Sala: cuánto',0,100,1,v=>v+'%']]],
@@ -7317,11 +7373,15 @@ const VFX_KNOBS=[
 ];
 // receta ↔ perillas
 function vfxToKnobs(F){F=F||{};const w=F.rwet!=null?F.rwet:(F.rev&&!F.delay?F.wet:0);
-  return {st:F.pitch?Math.round(12*Math.log2(F.pitch)):0,dual:Math.round((F.dual||0)*100),low:F.low||0,high:F.high||0,hp:F.hp||0,lp:F.lp||12000,drive:Math.round((F.drive||0)*10),ring:F.ring||0,comb:F.comb?Math.round((F.comb-.003)/.009*100):0,
+  const st=F.pitch?Math.round(12*Math.log2(F.pitch)):0;
+  return {st,to:F.toHz||0,fmt:F.fmtAuto?13:F.fmt!=null?Math.round(12*Math.log2(F.fmt)):vfxPsola(F)?0:st,inton:Math.round((F.inton||1)*100),dual:Math.round((F.dual||0)*100),low:F.low||0,high:F.high||0,hp:F.hp||0,lp:F.lp||12000,drive:Math.round((F.drive||0)*10),ring:F.ring||0,comb:F.comb?Math.round((F.comb-.003)/.009*100):0,
     crush:Math.round((F.crush||0)*100),whisper:Math.round((F.whisper||0)*100),vib:F.vib||0,vibD:Math.round((F.vibD||0)*100),trem:F.trem||0,tremD:Math.round((F.tremD||0)*100),chorus:Math.round((F.chorus||0)*100),
     delay:F.delay?Math.round(F.delay*1000):0,fb:Math.round((F.delay?F.fb||0:0)*100),wet:Math.round((F.delay?F.wet||0:0)*100),rev:F.rev?Math.round(F.rev*10):0,rwet:Math.round((w||0)*100),hiss:Math.round((F.hiss||0)*100),gain:F.gain||0};}
 function vfxFromKnobs(K){const F={},r=v=>Math.round(v*1000)/1000;
-  if(K.st) F.pitch=r(Math.pow(2,K.st/12));if(K.dual) F.dual=K.dual/100;if(K.low) F.low=K.low;if(K.high) F.high=K.high;if(K.hp) F.hp=K.hp;if(K.lp<12000) F.lp=K.lp;
+  if(K.st) F.pitch=r(Math.pow(2,K.st/12));if(K.to>=100) F.toHz=K.to;if(K.inton&&K.inton!==100) F.inton=K.inton/100;
+  // timbre igual al tono = el cambio de tono clásico (voz de ardilla); si es distinto, se usa el tono con timbre aparte
+  if(K.fmt>12) F.fmtAuto=1;else if(K.fmt!==K.st||F.toHz||F.inton) F.fmt=r(Math.pow(2,(K.fmt||0)/12));
+  if(K.dual) F.dual=K.dual/100;if(K.low) F.low=K.low;if(K.high) F.high=K.high;if(K.hp) F.hp=K.hp;if(K.lp<12000) F.lp=K.lp;
   if(K.drive) F.drive=K.drive/10;if(K.ring) F.ring=K.ring;if(K.comb) F.comb=r(.003+.009*K.comb/100);if(K.crush) F.crush=K.crush/100;if(K.whisper) F.whisper=K.whisper/100;
   if(K.vib&&K.vibD){F.vib=K.vib;F.vibD=K.vibD/100;}if(K.trem&&K.tremD){F.trem=K.trem;F.tremD=K.tremD/100;}if(K.chorus) F.chorus=K.chorus/100;
   if(K.delay&&K.wet){F.delay=K.delay/1000;F.fb=K.fb/100;F.wet=K.wet/100;}if(K.rev&&K.rwet){F.rev=K.rev/10;F.rwet=K.rwet/100;}if(K.hiss) F.hiss=K.hiss/100;if(K.gain) F.gain=K.gain;
@@ -7347,7 +7407,7 @@ function openVoiceFx(chArg){
   VE={ch,key,mine,K:vfxToKnobs(vfxOf(key)),src:null,demo:null};
   const chips=`<div class="chips" id="vePre">${VFX_KEYS.map(k=>`<button type="button" class="chip" data-vp="${k}">${esc(VFX[k].label)}</button>`).join('')}${MYVFX.map(v=>`<button type="button" class="chip mine" data-vp="u:${v.id}">★ ${esc(v.label)}</button>`).join('')}</div>`;
   const knobs=VFX_KNOBS.map(([g,L])=>`<div class="ae-sub">${g}</div>`+L.map(([k,l,a,b,st])=>`<label class="ae-r ve-r"><span>${l}</span><input type="range" data-vk="${k}" min="${a}" max="${b}" step="${st}"><output></output></label>`).join('')).join('');
-  const body=`<p class="note" style="font-size:13px">${ch?`Para la voz de <b>${esc(ch.name)}</b>. `:''}Elige uno listo y ajústalo a tu gusto, o arma el tuyo desde cero. El lip-sync no cambia.</p>${chips}
+  const body=`<p class="note" style="font-size:13px">${ch?`Para la voz de <b>${esc(ch.name)}</b>. `:''}Elige uno listo y ajústalo a tu gusto, o arma el tuyo desde cero. El lip-sync no cambia.<br><b>Tono</b> es qué tan aguda suena; <b>Timbre</b> es qué tan chica suena la voz (súbelo para voz de niño o de caricatura sin que suene a ardilla).</p>${chips}
     <div class="ve-play"><button type="button" class="btn primary" id="vePlay">▶ Escuchar</button><button type="button" class="btn" id="veOrig">Original</button><button type="button" class="btn ghost" id="veReset">Todo en cero</button><small class="muted">${ch&&ch.clips.length?'Con sus primeros 6 segundos de voz':'Con una voz de ejemplo'}</small></div>
     <div class="ve-knobs">${knobs}</div>
     <label class="ae-f"><span>Nombre para guardarlo en tus efectos</span><input type="text" id="veName" maxlength="24" value="${esc(mine?mine.label:(ch?'Voz de '+ch.name:'Mi efecto'))}"></label>`;
