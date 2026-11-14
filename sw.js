@@ -1,8 +1,8 @@
 // Bocón Estudio: funciona sin internet una vez instalado
-const CACHE='bocon-v23';
+const CACHE='bocon-v24';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./vendor/mp4-muxer.js','./icons/icon-192.png','./icons/icon-512.png','./icons/maskable-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting();});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE&&!k.startsWith('bocon-voces')&&k!=='bocon-motor').map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',e=>{
   const req=e.request;if(req.method!=='GET') return;
   const url=new URL(req.url);
@@ -13,6 +13,10 @@ self.addEventListener('fetch',e=>{
     if(req.mode==='navigate'){e.respondWith(fetch(req).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',cp));return r;}).catch(()=>caches.match('./index.html')));return;}
     e.respondWith(caches.match(req).then(r=>r||fetch(req).then(res=>{const cp=res.clone();caches.open(CACHE).then(c=>c.put(req,cp));return res;})));
     return;
+  }
+  // motor de texto a voz (no cambia de versión): se guarda la primera vez para usarlo sin internet
+  if(url.host==='cdn.jsdelivr.net'&&/onnxruntime-web@|piper-wasm@/.test(url.pathname)){
+    e.respondWith(caches.open('bocon-motor').then(c=>c.match(req).then(r=>r||fetch(req).then(res=>{if(res.ok) c.put(req,res.clone());return res;}))));return;
   }
   if(url.host==='fonts.googleapis.com'||url.host==='fonts.gstatic.com'){
     e.respondWith(caches.open(CACHE).then(c=>c.match(req).then(r=>{const net=fetch(req).then(res=>{c.put(req,res.clone());return res;}).catch(()=>r);return r||net;})));
