@@ -26,11 +26,11 @@ async function mp(path,opts){
   const r=await fetch('https://api.mercadopago.com'+path,Object.assign({},opts,{headers:Object.assign({Authorization:'Bearer '+env('MP_ACCESS_TOKEN'),'Content-Type':'application/json'},opts.headers||{})}));
   let j={};try{j=await r.json();}catch(_){}return {ok:r.ok,status:r.status,j};
 }
-async function leerSub(uid){const r=await db('suscripciones?select=*&user_id=eq.'+encodeURIComponent(uid));return r.ok&&Array.isArray(r.j)?r.j[0]||null:null;}
+async function leerSub(uid){const r=await db('bocon_suscripciones?select=*&user_id=eq.'+encodeURIComponent(uid));return r.ok&&Array.isArray(r.j)?r.j[0]||null:null;}
 async function guardarSub(uid,campos){
-  return db('suscripciones?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(Object.assign({user_id:uid,actualizado:new Date().toISOString()},campos))});
+  return db('bocon_suscripciones?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(Object.assign({user_id:uid,actualizado:new Date().toISOString()},campos))});
 }
-async function contarFundadores(){const r=await db('suscripciones?select=user_id&plan=eq.fundador&estado=eq.authorized');return r.ok&&Array.isArray(r.j)?r.j.length:0;}
+async function contarFundadores(){const r=await db('bocon_suscripciones?select=user_id&plan=eq.fundador&estado=eq.authorized');return r.ok&&Array.isArray(r.j)?r.j.length:0;}
 // lo que nos importa de una suscripción de Mercado Pago
 function desdeMP(pre){
   const o={mp_id:String(pre.id),estado:pre.status||null,correo_mp:pre.payer_email||null,proximo_cobro:pre.next_payment_date||null};

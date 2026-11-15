@@ -46,9 +46,10 @@ Mientras no pongas las variables de abajo, la app funciona como siempre: **todo 
 En cuanto las pongas, aparece el botón **Entrar / Hazte Pro** y el plan gratis exporta en 720p con la marquita «Hecho con Bocón».
 
 ### 1. Supabase (cuentas)
-1. En supabase.com crea un proyecto (o usa uno que ya tengas).
-2. **SQL Editor → New query**: pega el contenido de `supabase/esquema.sql` y dale **Run**. Crea la tabla `suscripciones`.
-3. **Authentication → URL Configuration**: en *Site URL* y en *Redirect URLs* pon la dirección de tu app en Vercel (por ejemplo `https://bocon.vercel.app`).
+1. Usa un proyecto de Supabase que ya tengas (por ejemplo el de otra de tus apps) o crea uno. El plan gratis solo deja 2 proyectos activos por persona; Bocón cabe en uno compartido porque solo usa las cuentas y una tabla.
+2. **SQL Editor → New query**: pega el contenido de `supabase/esquema.sql` y dale **Run**. Crea la tabla `bocon_suscripciones` (no toca las tablas de tu otra app).
+3. **Authentication → URL Configuration**: en *Redirect URLs* agrega la dirección de Bocón en Vercel (por ejemplo `https://bocon.vercel.app/**`). Si el proyecto es solo de Bocón, ponla también en *Site URL*; si lo compartes, deja el *Site URL* de tu otra app.
+   - Si lo compartes, las cuentas son las mismas para las dos apps (un solo usuario y contraseña para todo SeaKings) y los correos de inicio de sesión son los mismos: escríbelos de forma general, por ejemplo «Tu código de SeaKings Studios».
 4. Recomendado: **Authentication → Emails → Magic Link**, agrega al correo el código `{{ .Token }}`. Así también se puede entrar escribiendo el código (útil si el enlace se abre en otro navegador, como el de Gmail).
 5. Para el lanzamiento conecta un servicio de correo propio (**Authentication → SMTP**, por ejemplo Resend): el de Supabase solo manda unos pocos correos por hora.
 6. Opcional: para "Entrar con Google" activa el proveedor Google en **Authentication → Providers** y pon `LOGIN_GOOGLE=1` abajo.
