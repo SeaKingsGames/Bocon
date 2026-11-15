@@ -552,7 +552,7 @@ details.sec.hl>summary{color:var(--blue)}
 .acc-row .sl-btns .btn.icon{font-size:13px}
 .acc-row .sl-btns .btn.icon svg{width:15px;height:15px}
 .acc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px;padding:4px 10px 12px}
-.acc-pick{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px 7px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);font-weight:600;font-size:11px;color:var(--ink);min-width:0;line-height:1.15;text-align:center}
+.acc-pick{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px 7px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);font-weight:600;font-size:11px;color:var(--ink);min-width:0;line-height:1.15;text-align:center}
 .acc-pick:hover{border-color:var(--blue)}
 .acc-pick canvas{width:100%;height:58px;display:block}
 .acc-pick.up{border-style:dashed;color:var(--blue)}
@@ -746,6 +746,8 @@ details.sec.hl>summary{color:var(--blue)}
   .ge-r{grid-template-columns:100px minmax(0,1fr) 40px}
 }
 .ve-play{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tts-cnt{margin-left:auto}.tts-cnt.over{color:var(--red)}
+.pro-tag{position:absolute;top:3px;right:5px;font-style:normal;font-size:11px;line-height:1;color:#f2c230;text-shadow:0 0 2px rgba(0,0,0,.6);pointer-events:none}
 .tts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;margin-bottom:12px}
 .tts-prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:10px}
 .tts-prog>i{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
@@ -3435,7 +3437,7 @@ function renderAccPanel(){
   const worn=L.length?L.map((a,i)=>`<div class="slot acc-row${a.id===pe.acc?' on':''}" data-acc="${a.id}" role="button" tabindex="0"><span class="th"><canvas data-at="${a.id}"></canvas></span><span class="sl-tx"><b>${esc(accLabel(a))}</b><small>${esc(ACC_AT[a.at]||'')}${a.back?' · detrás':''}${a.hide?' · escondido':''}</small></span><span class="sl-btns"><button type="button" class="btn sm icon" data-amove="${a.id}" data-dir="-1"${i===0?' disabled':''} title="Más atrás" aria-label="Más atrás">↓</button><button type="button" class="btn sm icon" data-amove="${a.id}" data-dir="1"${i===L.length-1?' disabled':''} title="Más adelante" aria-label="Más adelante">↑</button><button type="button" class="btn sm icon" data-ahide="${a.id}" aria-pressed="${a.hide?'true':'false'}" title="${a.hide?'Mostrar':'Esconder'}" aria-label="${a.hide?'Mostrar':'Esconder'}">${a.hide?IC.eyeOff:IC.eye}</button><button type="button" class="btn sm icon danger" data-adel="${a.id}" aria-label="Quitar">×</button></span></div>`).join(''):'<p class="sec-note">Todavía no tiene accesorios. Elige uno abajo.</p>';
   const cat=ACC_GROUPS.map(([g,lbl])=>{
     const keys=Object.keys(ACC).filter(k=>accGroupOf(ACC[k].at)===g),n=L.filter(a=>accGroupOf(a.at)===g).length;
-    return `<details class="slot-sec" data-g="${g}"${pe.open[g]?' open':''}><summary><span>${lbl}</span><span class="cnt${n?' full':''}">${n?n+' puesto'+(n>1?'s':''):keys.length}</span></summary><div class="acc-grid">${keys.map(k=>`<button type="button" class="acc-pick" data-addacc="${k}" title="${esc(ACC[k].label)}"><canvas data-ak="${k}"></canvas><span>${esc(ACC[k].label)}</span></button>`).join('')}<button type="button" class="acc-pick up" data-addimg="${g}" title="Subir un PNG tuyo para ${esc(lbl.toLowerCase())}"><canvas data-up="1"></canvas><span>Tu PNG</span></button></div></details>`;
+    return `<details class="slot-sec" data-g="${g}"${pe.open[g]?' open':''}><summary><span>${lbl}</span><span class="cnt${n?' full':''}">${n?n+' puesto'+(n>1?'s':''):keys.length}</span></summary><div class="acc-grid">${keys.map(k=>`<button type="button" class="acc-pick" data-addacc="${k}" title="${esc(ACC[k].label)}">${proTag(k)}<canvas data-ak="${k}"></canvas><span>${esc(ACC[k].label)}</span></button>`).join('')}<button type="button" class="acc-pick up" data-addimg="${g}" title="Subir un PNG tuyo para ${esc(lbl.toLowerCase())}"><canvas data-up="1"></canvas><span>Tu PNG</span></button></div></details>`;
   }).join('');
   $('#peAccPanel').innerHTML=`<div class="slot-sec worn"><div class="worn-h"><b>Puestos</b><span class="cnt">${L.length}</span></div>${worn}</div><p class="pe-tip">Toca un accesorio para ponérselo. Luego arrástralo en la vista: el círculo azul lo gira y el cuadrito cambia su tamaño. Se mueve con la parte a la que está pegado.</p>${cat}`;
   $$('#peAccPanel canvas[data-at]').forEach(x=>{const a=L.find(q=>q.id===x.dataset.at);if(a) drawAccThumb(x,a);});
@@ -3457,7 +3459,7 @@ function peAccRemove(id){const ch=pe.ch;ch.acc=ch.acc.filter(a=>a.id!==id);if(pe
 function peAccAdd(a){pe.ch.acc.push(a);pe.acc=a.id;renderAccPanel();peAccTools();pe.dirty=true;save();}
 $('#peAccPanel').addEventListener('click',e=>{
   if(!pe) return;const ch=pe.ch;
-  const add=e.target.closest('[data-addacc]');if(add){const k=add.dataset.addacc,a=newAcc(k);if(ch.tpl==='png'&&ACC[k].clip&&!hasSlot(ch.puppet,'cuerpo')) toast('La ropa se pinta sobre la pieza "Cuerpo"; súbela para verla');peAccAdd(a);return;}
+  const add=e.target.closest('[data-addacc]');if(add){const k=add.dataset.addacc;if(!accRoom(k)) return;const a=newAcc(k);if(ch.tpl==='png'&&ACC[k].clip&&!hasSlot(ch.puppet,'cuerpo')) toast('La ropa se pinta sobre la pieza "Cuerpo"; súbela para verla');peAccAdd(a);return;}
   const img=e.target.closest('[data-addimg]');if(img){pe.upAt=img.dataset.addimg;$('#fileAcc').value='';$('#fileAcc').click();return;}
   const mvb=e.target.closest('[data-amove]');if(mvb){const i=ch.acc.findIndex(a=>a.id===mvb.dataset.amove),j=i+(+mvb.dataset.dir);if(i>=0&&j>=0&&j<ch.acc.length){const [a]=ch.acc.splice(i,1);ch.acc.splice(j,0,a);renderAccPanel();pe.dirty=true;save();}return;}
   const hb=e.target.closest('[data-ahide]');if(hb){const a=ch.acc.find(q=>q.id===hb.dataset.ahide);if(a){a.hide=!a.hide;renderAccPanel();pe.dirty=true;save();}return;}
@@ -4863,10 +4865,10 @@ function aeTemplate(key){
 function aePickItem(side){
   const h=AE.act.hold.find(x=>x.side===side),cur0=h?h.item:'';
   const body='<div class="ae-picks">'+`<div class="pgrid"><button type="button" class="pick${cur0?'':' on'}" data-pk="_none"><canvas data-none="1"></canvas>Nada</button></div>`+
-    HAND_CATS.map(([t,ks])=>`<span class="eyebrow">${esc(t)}</span><div class="pgrid">${ks.filter(k=>ACC[k]).map(k=>`<button type="button" class="pick${k===cur0?' on':''}" data-pk="${k}"><canvas data-ac="${k}"></canvas>${esc(ACC[k].label)}</button>`).join('')}</div>`).join('')+'</div>';
+    HAND_CATS.map(([t,ks])=>`<span class="eyebrow">${esc(t)}</span><div class="pgrid">${ks.filter(k=>ACC[k]).map(k=>`<button type="button" class="pick${k===cur0?' on':''}" data-pk="${k}" style="position:relative">${proTag(k)}<canvas data-ac="${k}"></canvas>${esc(ACC[k].label)}</button>`).join('')}</div>`).join('')+'</div>';
   openModal({title:'Objeto para su mano '+aeHandName(side),wide:true,body,
     onOpen:c=>{c.querySelectorAll('canvas[data-ac]').forEach(x=>drawAccThumb(x,{k:x.dataset.ac}));c.querySelectorAll('canvas[data-none]').forEach(x=>{const {c:g,w}=fitCanvas(x);g.strokeStyle='#8c9ea8';g.lineWidth=1.5;g.setLineDash([4,3]);g.strokeRect(8,8,w-16,w-16);});},
-    onPick:k=>{if(!AE) return;aeCommit();const a=AE.act;
+    onPick:k=>{if(!AE) return;if(k!=='_none'&&!accRoom(k)) return;aeCommit();const a=AE.act;
       if(k==='_none'){a.hold=a.hold.filter(x=>x.side!==side);if(a.throw&&a.throw.side===side) a.throw=null;}
       else if(h) h.item=k;else a.hold.push({side,item:k});
       aeChanged();aeFit();}});
@@ -5708,6 +5710,7 @@ function openCharPicker(){
   openModal({title:'Agregar personaje',wide:true,body:`<div class="pgrid">${PROC_TPLS.map(k=>`<button type="button" class="pick sq" data-pk="${k}"><canvas data-tpl="${k}"></canvas>${TPL[k].label}</button>`).join('')}<button type="button" class="pick sq hot" data-pk="oneimg"><canvas data-up="3"></canvas>Desde una imagen<small>Se arma sola</small></button><button type="button" class="pick sq" data-pk="png"><canvas data-up="1"></canvas>Tus PNG<small>Por piezas</small></button><button type="button" class="pick sq" data-pk="import"><canvas data-up="2"></canvas>Importar<small>Archivo de marioneta</small></button>${lib}</div>${LIB.length?'':'<p class="note">Los personajes que guardes en la biblioteca aparecen aquí.</p>'}`,
     onOpen:c=>{c.querySelectorAll('canvas[data-tpl]').forEach(x=>drawAvatar(x,null,'feliz',x.dataset.tpl,'saludar'));c.querySelectorAll('canvas[data-lib]').forEach(x=>drawLibThumb(x,LIB.find(i=>i.id===x.dataset.lib)));c.querySelectorAll('canvas[data-up]').forEach(x=>drawIcon(x,x.dataset.up==='1'?'up':x.dataset.up==='3'?'magic':'file'));},
     onPick:k=>{
+      if(!charRoom()) return;
       if(k==='import'){const fi=$('#filePuppet');fi.value='';fi.click();return;}
       if(k==='oneimg'){const fi=$('#fileOne');fi.value='';fi.click();return;}
       if(k.startsWith('lib:')){addFromLibrary(k.slice(4));return;}
@@ -5841,6 +5844,7 @@ function moveZ(o,op){
 }
 function duplicateSel(){
   const o=selObj();if(!o){toast('Selecciona algo para duplicarlo');return;}
+  if(!isProp(o)&&!isBoca(o)&&!charRoom()) return;
   const copy=JSON.parse(JSON.stringify(o,(k,v)=>k.startsWith('_')?undefined:v));copy.id=(isProp(o)?'p':'c')+uid();copy.name=o.name+' 2';copy.x=clamp(o.x+.08,0,1);
   copy.moves=[];if(!isProp(o)){copy.clips=[];copy.exprs=[];copy.poses=[];copy.flip=!o.flip;cur().chars.push(copy);}else cur().props.push(copy);
   {const z=cur().z;if(Array.isArray(z)&&z.length){const i=z.indexOf(o.id);z.splice(i<0?z.length:i+1,0,copy.id);}}
@@ -5932,7 +5936,7 @@ function saveToLibrary(ch){
   saveLib();if(LTAB==='lib') renderLeft();toast(old?`${ch.name} se actualizó en tu biblioteca`:`${ch.name} quedó guardado en tu biblioteca`);
 }
 function addFromLibrary(id,where){
-  const it=LIB.find(i=>i.id===id);if(!it) return;where=where||{};
+  const it=LIB.find(i=>i.id===id);if(!it) return;where=where||{};if(!charRoom()) return;
   if(it.puppet&&!Object.values(it.puppet.slots||{}).every(a=>S.assets[a])){toast('Faltan imágenes de esa marioneta; vuelve a importarla');}
   const ch=newChar(it.tpl,{lib:it.id,name:it.name,hue:it.hue,feet:it.feet!==false,mstyle:it.mstyle||'caricatura',lip:it.lip||'',ontop:!!it.ontop,bstyle:it.bstyle||'',bcol:it.bcol||'',puppet:it.puppet?JSON.parse(JSON.stringify(it.puppet)):null,acc:(it.acc||[]).filter(a=>a.k==='img'?S.assets[a.aid]:ACC[a.k]).map(a=>Object.assign({},a)),phue:it.phue||0,psat:it.psat==null?100:it.psat,pbri:it.pbri==null?100:it.pbri});
   if(ch.puppet) ch.puppet.g=Object.assign(newPuppet().g,ch.puppet.g||{});
@@ -6368,6 +6372,7 @@ async function openJsonFile(f){
   applyDoc(d.doc);afterLoad('Proyecto abierto');
 }
 async function importPuppetData(d){
+  if(!charRoom()) return;
   const map={};for(const [id,a] of Object.entries(d.assets||{})){try{map[id]=await addAsset(dataURLToBlob(a.data),a.name);}catch(_){}}
   const pp=Object.assign(newPuppet(),d.puppet,{slots:{},faceRel:!!d.puppet.faceRel});pp.g=Object.assign(newPuppet().g,d.puppet.g||{});pp.arms=d.puppet.arms||{A:{},B:{}};pp.xf=d.puppet.xf||{};
   for(const [k,id] of Object.entries(d.puppet.slots||{})) if(map[id]) pp.slots[k]=map[id];
@@ -7435,7 +7440,7 @@ function veSave(use){
   const same=k=>JSON.stringify(vfxFromKnobs(vfxToKnobs(vfxOf(k))))===JSON.stringify(F);
   if(!use||!key||key.startsWith('u:')||!same(key)){
     if(!Object.keys(F).length&&use) key='normal';
-    else{const label=($('#veName').value||'').trim().slice(0,24)||'Mi efecto',ex=VE.mine||(key&&key.startsWith('u:')?MYVFX.find(v=>'u:'+v.id===key):null)||MYVFX.find(v=>v.label.toLowerCase()===label.toLowerCase());
+    else{if(!isPro()){openPro('Guardar tus propios efectos de voz');return;}const label=($('#veName').value||'').trim().slice(0,24)||'Mi efecto',ex=VE.mine||(key&&key.startsWith('u:')?MYVFX.find(v=>'u:'+v.id===key):null)||MYVFX.find(v=>v.label.toLowerCase()===label.toLowerCase());
       const it={id:ex?ex.id:uid(),label,p:F};if(ex) MYVFX[MYVFX.indexOf(ex)]=it;else MYVFX.push(it);key='u:'+it.id;saveLib();toast(ex?`«${label}» actualizado`:`«${label}» quedó en tus efectos de voz`);}
   }
   if(use&&ch){ch.vfx=key;if(vfxOf(key)) for(const c of ch.clips) vfxPrep(S.audio[c.aid],key);toast('Efecto de voz: '+vfxLabel(key));}
@@ -7565,7 +7570,7 @@ function openTTS(chArg){
       <label class="f"><span>Efecto de voz</span><select id="ttsFx">${vfxOptions(fxOf(ch0))}</select></label>
       <label class="f"><span>Velocidad</span><span class="val"><input type="range" id="ttsSpd" min="70" max="150" step="5" value="${Math.round((st.speed||1)*100)}"><output id="ttsSpdO"></output></span></label>
     </div>
-    <div class="ve-play"><button type="button" class="btn" id="ttsPlay">▶ Escuchar</button><small class="muted" id="ttsNote"></small></div>
+    <div class="ve-play"><button type="button" class="btn" id="ttsPlay">▶ Escuchar</button><small class="muted" id="ttsNote"></small>${isPro()?'':'<small class="muted tts-cnt" id="ttsCnt"></small>'}</div>
     <div class="tts-prog" id="ttsProg" hidden><i></i></div>
     <p class="note">La voz se genera aquí mismo, en tu compu. La primera vez se descarga la voz (unos 60 MB) y el motor (unos 30 MB); después ya no necesita internet. Entra con lip-sync y con el efecto de voz que elijas.</p>`;
   openModal({title:'Texto a voz',wide:true,body,
@@ -7575,6 +7580,7 @@ function openTTS(chArg){
       $('#ttsCh').onchange=e=>{const ch=sc.chars.find(x=>x.id===e.target.value);if(ch) $('#ttsFx').value=fxOf(ch);};
       $('#ttsVoice').onchange=()=>ttsNote();ttsNote();
       $('#ttsPlay').onclick=()=>ttsPreview();
+      const cnt=$('#ttsCnt'),tx=$('#ttsTxt');if(cnt){const up=()=>{const n=tx.value.trim().length;cnt.textContent=n+' / '+TTS_FREE+' letras'+(n>TTS_FREE?' · con Pro sin límite ✦':'');cnt.classList.toggle('over',n>TTS_FREE);};tx.addEventListener('input',up);up();}
       setTimeout(()=>{const t=$('#ttsTxt');if(t&&!isPhone()) t.focus();},60);
     },
     onClose:()=>{ttsStopPrev();TTSM=null;}});
@@ -7593,11 +7599,12 @@ async function ttsMake(){
   const text=$('#ttsTxt').value.trim(),vid=$('#ttsVoice').value,speed=+$('#ttsSpd').value/100;
   if(!text) throw new Error('Escribe algo para que lo diga');
   ttsPrefs({voice:vid,speed,last:text});
+  if(!isPro()&&text.length>TTS_FREE){openPro('Texto a voz de más de '+TTS_FREE+' letras');throw new Error('pro');}
   const key=vid+'|'+speed+'|'+text;if(TTS.last&&TTS.last.key===key) return TTS.last;
   const r=await ttsSynth(text,vid,speed,ttsProg);TTS.last={key,text,...r};return TTS.last;
 }
 function ttsErr(e){
-  const m=e&&e.message||'';ttsProg(null);
+  const m=e&&e.message||'';if(m==='pro') return;ttsProg(null);
   toast(/Escribe/.test(m)?m:(navigator.onLine===false?'Sin internet: la primera vez hay que descargar la voz':'No pude generar la voz. Revisa tu internet e inténtalo otra vez'));
   const n=$('#ttsNote');if(n) n.textContent='';
 }
@@ -8035,7 +8042,7 @@ $('#oiAuto').onclick=()=>{if(!OI) return;OI.cut=null;OI.follow=true;oiAnalyze();
 $('#oiPrev').onclick=e=>{if(!OI) return;OI.prev=!OI.prev;OI.prevP=null;e.currentTarget.setAttribute('aria-pressed',String(OI.prev));e.currentTarget.textContent=OI.prev?'Volver a ajustar':'▶ Ver cómo queda';};
 $('#oiOk').onclick=()=>oiCreate();
 $('#oiCancel').onclick=()=>closeOneImg();
-$('#oiOther').onclick=()=>{const fi=$('#fileOne');fi.value='';fi.click();};
+$('#oiOther').onclick=()=>{if(!charRoom()) return;const fi=$('#fileOne');fi.value='';fi.click();};
 $('#fileOne').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f){if(OI) closeOneImg();openOneImg(f);}});
 
 // ===== Recortar un objeto del fondo (o de una imagen): lazo, varita y pincel =====
@@ -8606,6 +8613,13 @@ insp.addEventListener('click',e=>{const b=e.target.closest('[data-act="qsFav"]')
 const PLAN={mode:'dev',cfg:null,sb:null,user:null,info:null,busy:false,go:u=>{location.href=u;}};
 const PLAN_KEY='bocon-plan';
 const isPro=()=>PLAN.mode!=='free';
+// ----- lo que es de Pro (solo cuenta cuando ya hay cuentas: sin configurar, todo abierto) -----
+const ACC_PRO=new Set(['turbante','gorraOficial','gorroPreso','sombreroPirata','gorroChef','sombreroMago','monoculo','parche','lentesAbuelo','barba','cicatriz','curita','alasAngel','alasMurcielago','collar','cadena','paliacate','preso','comandante','chaleco','tunica','delantal','saco','lampara','baston','tridente','catalejo','cuchara','brazaletes','arpa','pergamino','grillete','babuchas','pantuflas']);
+const FREE_CHARS=2,TTS_FREE=200;
+// ¿cabe otro personaje en la escena? (las bocas sobre fotos no cuentan)
+function charRoom(){if(isPro()) return true;if(cur().chars.filter(c=>!isBoca(c)).length<FREE_CHARS) return true;openPro('Tener más de '+FREE_CHARS+' personajes en la escena','Si no, quita uno de la escena para poner otro.');return false;}
+function accRoom(k){if(isPro()||!ACC_PRO.has(k)) return true;openPro('«'+(ACC[k]?ACC[k].label:'Este accesorio')+'»');return false;}
+const proTag=k=>!isPro()&&ACC_PRO.has(k)?'<i class="pro-tag" title="Bocón Pro">✦</i>':'';
 function planCache(o){try{if(o) localStorage.setItem(PLAN_KEY,JSON.stringify(o));else return JSON.parse(localStorage.getItem(PLAN_KEY)||'null');}catch(_){return null;}}
 // mientras se pregunta al servidor, se usa lo último que se supo (y sin internet, lo mismo por unos días)
 {const c=planCache();if(c&&c.cfg) PLAN.mode=c.pro&&c.until>Date.now()?'pro':'free';}
@@ -8695,11 +8709,11 @@ function exProWanted(c){
   return null;
 }
 // ----- ventanas: Pro y cuenta -----
-const PRO_PERKS=[['Sin marca de agua','en tus videos, GIF y en vivo'],['1080p Full HD','para YouTube y TikTok'],['Sin fondo','GIF transparente y cuadros PNG para CapCut, Premiere o DaVinci']];
-function openPro(why){
+const PRO_PERKS=[['Sin marca de agua','en tus videos, GIF y en vivo'],['1080p Full HD','para YouTube y TikTok'],['Sin fondo','GIF transparente y cuadros PNG para CapCut, Premiere o DaVinci'],['Personajes sin límite','todos los que quieras en la misma escena (gratis: '+FREE_CHARS+')'],['Ropa y accesorios ✦','turbantes, uniformes, alas, gorros, objetos para la mano y todo lo nuevo que vaya saliendo'],['Texto a voz sin límite','textos largos de una sola vez (gratis: '+TTS_FREE+' letras)'],['Tus propios efectos de voz','ajusta tono, timbre y más, y guárdalos con su nombre']];
+function openPro(why,tip){
   if(!PLAN.cfg){toast('Bocón Pro todavía no está disponible aquí');return;}
   const C=PLAN.cfg,u=PLAN.user,info=PLAN.info||{},pro=isPro();
-  const perks=`<ul class="pro-list">${PRO_PERKS.map(p=>`<li><b>${p[0]}</b><span>${p[1]}</span></li>`).join('')}<li class="soon"><b>Muy pronto</b><span>proyectos en la nube, biblioteca de personajes y escenarios, voces con IA</span></li></ul>`;
+  const perks=`<ul class="pro-list">${PRO_PERKS.map(p=>`<li><b>${p[0]}</b><span>${p[1]}</span></li>`).join('')}<li class="soon"><b>Muy pronto</b><span>proyectos en la nube y más ropa y accesorios</span></li></ul>`;
   if(pro){
     openModal({title:'Bocón Pro ✦',body:`<p class="note" style="font-size:13px">${info.cortesia?'Tienes Pro de cortesía.':info.estado==='authorized'?`Tu plan ${esc(info.plan||'')} está activo${info.proximo_cobro?' · próximo cobro el '+fmtFecha(info.proximo_cobro):''}.`:info.pagado_hasta?`Cancelaste tu suscripción; sigues con Pro hasta el ${fmtFecha(info.pagado_hasta)}.`:'Tu Pro está activo.'}</p>${perks}`,
       actions:[...(info.estado==='authorized'&&!info.cortesia?[{label:'Cancelar suscripción',cls:'danger',run:()=>planCancel()}]:[]),{label:'Listo',cls:'primary'}]});
@@ -8709,7 +8723,7 @@ function openPro(why){
   if(C.fundador&&C.fundador.quedan>0) plans.push({k:'fundador',t:'Precio fundador',p:pesos(C.fundador.precio)+' <small>MXN al mes</small>',n:`Te queda para siempre · quedan ${C.fundador.quedan} lugares`});
   plans.push({k:'mensual',t:'Mensual',p:pesos(C.mensual)+' <small>MXN al mes</small>',n:'Cancelas cuando quieras'});
   if(C.anual) plans.push({k:'anual',t:'Anual',p:pesos(C.anual)+' <small>MXN al año</small>',n:`Sale en ${pesos(C.anual/12)} al mes · ahorras ${Math.max(0,Math.round((1-C.anual/(C.mensual*12))*100))}%`});
-  const body=`${wanted?`<p class="note" style="font-size:13px"><b>${esc(wanted)}</b> es de Bocón Pro.</p>`:''}${perks}
+  const body=`${wanted?`<p class="note" style="font-size:13px"><b>${esc(wanted)}</b> es de Bocón Pro.${tip?' '+esc(tip):''}</p>`:''}${perks}
     <div class="opts pro-plans" role="radiogroup" aria-label="Plan">${plans.map((p,i)=>`<label class="opt"><input type="radio" name="proPlan" value="${p.k}"${i===0?' checked':''}><span><b>${p.t}</b><span class="pp">${p.p}</span><small>${p.n}</small></span></label>`).join('')}</div>
     ${C.prueba?`<p class="note">Los primeros <b>${C.prueba} días son gratis</b>; el cobro empieza después.</p>`:''}
     ${u?`<label class="f"><span>Correo de Mercado Pago</span><input type="text" id="proMail" inputmode="email" autocomplete="email" value="${esc(u.email||'')}"></label><p class="note">Pon el correo de la cuenta de Mercado Pago con la que vas a pagar (tarjeta de crédito o débito). Cancelas cuando quieras desde aquí.</p>`:'<p class="note">Primero entra a tu cuenta (solo tu correo) para que tu Pro quede guardado y lo uses en el celular y en la compu.</p>'}
