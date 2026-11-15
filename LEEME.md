@@ -79,8 +79,11 @@ En tu proyecto → **Settings → Environment Variables**, agrega y luego haz **
 Los precios se cambian aquí sin tocar código. Quien ya está suscrito conserva el precio con el que entró.
 
 ### Qué es gratis y qué es Pro hoy
-- **Gratis:** todo el editor; exporta MP4 720p y GIF con la marquita (en video vertical va arriba a la izquierda para no taparse con los botones de TikTok).
-- **Pro:** sin marquita (también en vivo), MP4 en 1080p, GIF sin fondo y cuadros PNG sin fondo.
+- **Gratis:** todo el editor; hasta 2 personajes por escena (las bocas sobre fotos no cuentan); la ropa y accesorios básicos; los efectos de voz listos; texto a voz de hasta 200 letras; exporta MP4 720p y GIF con la marquita (en video vertical va arriba a la izquierda para no taparse con los botones de TikTok).
+- **Pro:** sin marquita (también en vivo), MP4 en 1080p, GIF sin fondo y cuadros PNG sin fondo; personajes sin límite; la ropa y accesorios marcados con ✦; texto a voz sin límite; guardar tus propios efectos de voz.
+- Los límites solo se aplican cuando ya hay cuentas (variables puestas en Vercel). Los proyectos y marionetas que ya traen cosas Pro se abren y se ven igual; el candado solo está al agregar algo nuevo.
+- Lo que es Pro se cambia en `index.html`: `ACC_PRO` (accesorios), `FREE_CHARS` (personajes) y `TTS_FREE` (letras de texto a voz).
+- Precios recomendados para el lanzamiento: `PRO_PRECIO_MENSUAL=79`, `PRO_PRECIO_ANUAL=690`, `PRO_FUNDADOR_PRECIO=49`, `PRO_FUNDADOR_CUPO=100`, `PRO_PRUEBA_DIAS=7`.
 - Si alguien cancela, ya no se le cobra y sigue con Pro hasta el final de lo que pagó.
 
 ## Archivos
