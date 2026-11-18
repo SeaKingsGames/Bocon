@@ -115,6 +115,19 @@ input[type=range]{width:100%;accent-color:var(--blue);min-width:0}
 .acct-row{display:flex;gap:12px;align-items:center}
 .acct-row span:last-child{display:flex;flex-direction:column}
 .acct-row small{color:var(--muted)}
+.inst-bar{position:fixed;top:56px;right:12px;z-index:92;width:min(372px,calc(100% - 24px));display:flex;gap:12px;align-items:flex-start;padding:12px 8px 12px 12px;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 36px var(--shadow);animation:instIn .25s ease-out}
+.inst-bar.off{opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s}
+.inst-bar img{width:44px;height:44px;border-radius:11px;flex:none}
+.inst-bar .tx{flex:1;min-width:0;font-size:13px;line-height:1.4}
+.inst-bar .tx>b{display:block;font:700 14px var(--font-body);margin-bottom:2px}
+.inst-bar .tx>span{color:var(--muted)}
+.inst-bar .tx>span b{color:var(--ink)}
+.inst-bar .i,.inst-steps .i{width:15px;height:15px;vertical-align:-3px;color:var(--blue)}
+.inst-bar .acts{display:flex;gap:6px;margin-top:10px}
+.inst-bar .x{flex:none;border:0;background:transparent;color:var(--dim);font-size:22px;line-height:1;padding:0 6px;cursor:pointer}
+@keyframes instIn{from{opacity:0;transform:translateY(-8px)}}
+.inst-steps{margin:0 0 10px;padding-left:20px;font-size:13px;line-height:1.5}
+.inst-steps li{margin:5px 0}
 .acct-btns{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 .note.legal{font-size:11px;margin-top:10px}.note.legal a,.pro-who a{color:var(--blue)}
 .acct-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);font:700 18px var(--font-body)}
@@ -608,6 +621,8 @@ details.sec.hl>summary{color:var(--blue)}
   .logo{font-size:19px;margin:0 2px 0 4px}
   .menus,.save-state,.split,.mtabs,.stage-bar,.tl-tools>.btn,.tl-tools>.lbl,.top .lbl-txt,.transport .lbl-txt{display:none!important}
   .tl-tools{flex:none}
+  .install-btn{display:none!important}
+  .inst-bar{left:8px;right:8px;width:auto;top:calc(50px + env(safe-area-inset-top,0px))}
   .zoomer .btn{min-width:34px;height:32px;padding:0 8px;font-size:18px}
   .zoomer .zfit{font-size:12px}
   .mob-only{display:inline-flex}
@@ -788,6 +803,7 @@ details.sec.hl>summary{color:var(--blue)}
           <button type="button" data-cmd="open">Abrir proyecto…</button>
           <button type="button" data-cmd="save">Guardar proyecto en archivo</button>
           <button type="button" data-cmd="demo">Cargar el ejemplo</button>
+          <button type="button" data-cmd="install" id="cmdInstall" hidden>Instalar Bocón como app</button>
           <hr><button type="button" data-cmd="setSave">Guardar escenario de esta escena…</button>
           <hr><button type="button" data-cmd="export">Exportar…<kbd>Ctrl E</kbd></button>
         </div></div>
@@ -843,6 +859,7 @@ details.sec.hl>summary{color:var(--blue)}
     </div>
     <span class="grow"></span>
     <span class="save-state" id="saveState"></span>
+    <button type="button" class="btn ghost install-btn" id="installBtn" data-cmd="install" hidden title="Instalar Bocón como app: abre en su propia ventana y funciona sin internet"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span class="lbl-txt">Instalar</span></button>
     <button type="button" class="btn ghost acct-btn" id="acctBtn" hidden><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg><span class="lbl-txt">Entrar</span></button>
     <button type="button" class="btn ghost live-btn" data-cmd="live" title="Tu personaje habla en tiempo real con tu micrófono"><i class="dot"></i><span class="lbl-txt">En vivo</span></button>
     <button type="button" class="btn primary" data-cmd="export"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>Exportar</button>
@@ -5685,7 +5702,7 @@ const CMDS={
   viewCam:()=>setView('cam'),viewFull:()=>setView('full'),movie:()=>{closePicker();playMovie();},
   quickSfx:()=>openQuickSfx(),setSave:()=>saveSetModal(),setPick:()=>openSetPicker(),
   cutout:()=>{const o=selObj();openCutout(o&&o.kind==='img'?o:null);},
-  zoomIn:()=>zoom(1.5),zoomOut:()=>zoom(1/1.5),zoomFit:()=>zoomFit(),theme:()=>toggleTheme(),live:()=>openLive()
+  zoomIn:()=>zoom(1.5),zoomOut:()=>zoom(1/1.5),zoomFit:()=>zoomFit(),theme:()=>toggleTheme(),live:()=>openLive(),install:()=>installNow()
 };
 function runCmd(c){closeMenus();const f=CMDS[c];if(f) f();}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmd]');if(b&&!b.disabled&&!b.closest('#modal')){e.preventDefault();runCmd(b.dataset.cmd);}});
@@ -8944,7 +8961,7 @@ $('#leftBody').addEventListener('click',e=>{
 $('#btnMenu').onclick=()=>{
   const f=S.format,b=(k,l,on)=>`<button type="button" data-pk="${k}"${on?' class="on"':''}>${l}</button>`;
   openModal({title:'Menú',body:`<div class="mmenu">
-    <span class="lbl">Proyecto</span>${b('new','Proyecto nuevo')}${b('open','Abrir proyecto…')}${b('save','Guardar proyecto en archivo')}${b('demo','Cargar el ejemplo')}${b('export','Exportar video…')}
+    <span class="lbl">Proyecto</span>${b('new','Proyecto nuevo')}${b('open','Abrir proyecto…')}${b('save','Guardar proyecto en archivo')}${b('demo','Cargar el ejemplo')}${b('export','Exportar video…')}${instCan()?b('install','Instalar Bocón como app'):''}
     <span class="lbl">Formato del video</span><div class="fmts">${b('fmt:16:9','16:9 horizontal',f==='16:9')}${b('fmt:9:16','9:16 vertical',f==='9:16')}${b('fmt:1:1','1:1',f==='1:1')}</div>
     <span class="lbl">Ver</span>${b('viewCam','Vista de cámara',S.view==='cam')}${b('viewFull','Escena completa (con el cuadro de cámara)',S.view==='full')}${b('movie','Reproducir película completa')}${b('theme',S.ui.theme==='light'?'Tema oscuro':'Tema claro')}${b('live','Modo en vivo')}
     <span class="lbl">Escenas</span>${b('addScene','Escena nueva')}${b('scene','Ajustes de esta escena')}</div>`,
@@ -9732,6 +9749,51 @@ setPlayIcon();
 let lastHW=headW();
 new ResizeObserver(()=>resize()).observe($('#stageBox'));
 window.addEventListener('resize',()=>{resize();if(headW()!==lastHW){lastHW=headW();renderTimeline();}if(pe) pe.dirty=true;});
+// ===== Instalar como app: botón propio en Chrome y Edge (PC y Android), pasos en iPhone y aviso en navegadores de TikTok o Instagram =====
+const INST={ev:null,booted:false,shown:false,ua:navigator.userAgent};
+INST.ios=/iphone|ipad|ipod/i.test(INST.ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+INST.inapp=/Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|Bytedance|Line\/|Snapchat/i.test(INST.ua);
+INST.macSafari=!INST.ios&&/Macintosh/.test(INST.ua)&&/Version\/[\d.]+.*Safari\//.test(INST.ua)&&!/Chrome|Chromium|Edg\/|Firefox/.test(INST.ua);
+const IC_SHARE='<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M7 11H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+function instStandalone(){try{return navigator.standalone===true||['standalone','fullscreen','minimal-ui','window-controls-overlay'].some(m=>matchMedia(`(display-mode: ${m})`).matches);}catch(_){return false;}}
+function instCan(){return !instStandalone()&&!INST.inapp&&(!!INST.ev||INST.ios||INST.macSafari);}
+function instSnoozed(){try{return Date.now()-(+localStorage.getItem('bocon.instNo')||0)<14*864e5;}catch(_){return false;}}
+function instSnooze(){try{localStorage.setItem('bocon.instNo',String(Date.now()));}catch(_){}}
+function instSync(){const on=instCan(),b=$('#installBtn'),m=$('#cmdInstall');if(b) b.hidden=!on;if(m) m.hidden=!on;}
+function instClose(){const d=$('#instBar');if(d){d.classList.add('off');setTimeout(()=>d.remove(),220);}}
+function instMaybe(){
+  if(!INST.booted||INST.shown||$('#instBar')||instStandalone()||instSnoozed()) return;
+  if(!(INST.ev||INST.ios||INST.inapp)) return;
+  if(!$('#modal').hidden||!$('#live').hidden){setTimeout(instMaybe,8000);return;}
+  INST.shown=true;
+  const ipad=/ipad/i.test(INST.ua)||(INST.ios&&/Macintosh/.test(INST.ua));
+  let t,s,a;
+  if(INST.inapp){t='Abre Bocón en tu navegador';s='Desde aquí no se puede instalar y tus proyectos se pueden perder. Toca <b>⋯</b> y elige <b>Abrir en el navegador</b>.';a='<button type="button" class="btn sm primary" data-ib="ok">Entendido</button>';}
+  else if(INST.ev){t='Instala Bocón';s=matchMedia('(pointer:coarse)').matches?'Queda en tu pantalla de inicio como cualquier app, abre más rápido y funciona sin internet.':'Abre en su propia ventana, con su ícono, y funciona sin internet.';a='<button type="button" class="btn sm primary" data-ib="go">Instalar</button><button type="button" class="btn sm ghost" data-ib="no">Ahora no</button>';}
+  else{t='Instala Bocón en tu '+(ipad?'iPad':'iPhone');s=`Toca ${IC_SHARE} <b>Compartir</b> (si no lo ves, está en el botón <b>⋯</b>) y luego <b>Agregar a inicio</b>. Así ${ipad?'el iPad':'el iPhone'} no borra tus proyectos.`;a='<button type="button" class="btn sm primary" data-ib="ok">Entendido</button><button type="button" class="btn sm ghost" data-ib="how">Ver pasos</button>';}
+  const d=document.createElement('div');d.id='instBar';d.className='inst-bar';d.setAttribute('role','dialog');d.setAttribute('aria-label',t);
+  d.innerHTML=`<img src="icons/icon-192.png" alt=""><div class="tx"><b>${t}</b><span>${s}</span><div class="acts">${a}</div></div><button type="button" class="x" data-ib="no" aria-label="Cerrar">×</button>`;
+  d.addEventListener('click',e=>{const k=e.target.closest('[data-ib]');if(!k) return;const v=k.dataset.ib;
+    if(v==='go'){installNow();return;}
+    instSnooze();instClose();if(v==='how') installNow();});
+  document.body.appendChild(d);
+}
+function instHow(){
+  const guia='<p class="note"><a href="https://www.seakingsstudios.com/bitacora/instala-bocon-estudio-en-pc-android-y-iphone" target="_blank" rel="noopener">Ver la guía para cada navegador</a></p>';
+  if(INST.ios){const ap=/ipad/i.test(INST.ua)||/Macintosh/.test(INST.ua)?'el iPad':'el iPhone';
+    return `<ol class="inst-steps"><li>Toca ${IC_SHARE} <b>Compartir</b>. En iOS 26 está dentro del botón <b>⋯</b>, junto a la dirección.</li><li>Baja en la lista y toca <b>Agregar a inicio</b>.</li><li>Toca <b>Agregar</b> y abre Bocón siempre desde ese ícono.</li></ol><p class="note">Así ${ap} guarda tus proyectos aunque pases días sin abrir Bocón.${/CriOS|FxiOS|EdgiOS/.test(INST.ua)?' Si no ves la opción, abre Bocón en Safari.':''}</p>${guia}`;}
+  if(INST.macSafari) return `<ol class="inst-steps"><li>En la barra de menús de Safari abre <b>Archivo</b>.</li><li>Elige <b>Agregar al Dock</b>.</li></ol>${guia}`;
+  if(INST.inapp) return '<p class="note" style="font-size:13px">Desde el navegador de esta app no se puede instalar. Toca <b>⋯</b>, elige <b>Abrir en el navegador</b> y ahí instálalo.</p>'+guia;
+  return '<p class="note" style="font-size:13px">Este navegador no instala apps. Abre Bocón en Chrome o Edge para instalarlo, o sigue usándolo aquí.</p>'+guia;
+}
+async function installNow(){
+  if(INST.ev){const e=INST.ev;INST.ev=null;instClose();instSync();
+    try{await e.prompt();const r=await e.userChoice;if(!r||r.outcome!=='accepted') instSnooze();}catch(_){}
+    return;}
+  openModal({title:'Instalar Bocón',body:instHow(),actions:[{label:'Entendido',cls:'primary'}]});
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INST.ev=e;instSync();if(INST.booted) setTimeout(instMaybe,1500);});
+window.addEventListener('appinstalled',()=>{INST.ev=null;instClose();instSync();toast('¡Listo! Bocón quedó instalado');});
 (async()=>{
   // antes se dibujaba el ejemplo y unos segundos después aparecía tu proyecto: ahora se espera a lo guardado
   const boot=document.createElement('div');boot.id='boot';boot.innerHTML='<div><b>Bocón</b><span>Abriendo tu proyecto…</span></div>';document.body.appendChild(boot);
@@ -9740,6 +9802,7 @@ window.addEventListener('resize',()=>{resize();if(headW()!==lastHW){lastHW=headW
   syncControls();resize();refreshAll();
   requestAnimationFrame(loop);
   boot.classList.add('off');setTimeout(()=>boot.remove(),350);
+  INST.booted=true;instSync();setTimeout(instMaybe,4000);
   HIST.stack=[];HIST.i=-1;save();
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{dirty=true;renderInspector();renderLeft();});
 })();
