@@ -110,9 +110,13 @@ input[type=range]{width:100%;accent-color:var(--blue);min-width:0}
 .pro-plans .pp{display:block;font:700 19px var(--font-body);margin:3px 0 2px;white-space:nowrap}
 .pro-plans .pp small{font-size:11.5px;font-weight:600;color:var(--muted)}
 .pro-plans .opt:has(input:checked){border-color:#f6c64e}
+#boot{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:var(--bg);transition:opacity .3s}#boot.off{opacity:0;pointer-events:none}
+#boot>div{display:flex;flex-direction:column;align-items:center;gap:8px}#boot b{font:400 44px "Bagel Fat One",Fredoka,system-ui;color:var(--ink)}#boot span{color:var(--muted);font-size:13px}
 .acct-row{display:flex;gap:12px;align-items:center}
 .acct-row span:last-child{display:flex;flex-direction:column}
 .acct-row small{color:var(--muted)}
+.acct-btns{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.note.legal{font-size:11px;margin-top:10px}.note.legal a,.pro-who a{color:var(--blue)}
 .acct-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);font:700 18px var(--font-body)}
 .live-btn .dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 30%,transparent)}
 
@@ -746,6 +750,7 @@ details.sec.hl>summary{color:var(--blue)}
   .ge-r{grid-template-columns:100px minmax(0,1fr) 40px}
 }
 .ve-play{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vtog{display:inline-flex;align-items:center;gap:5px}.vtog[aria-pressed="true"]{border-color:var(--cam);color:var(--cam)}
 .tts-cnt{margin-left:auto}.tts-cnt.over{color:var(--red)}
 .pro-tag{position:absolute;top:3px;right:5px;font-style:normal;font-size:11px;line-height:1;color:#f2c230;text-shadow:0 0 2px rgba(0,0,0,.6);pointer-events:none}
 .tts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;margin-bottom:12px}
@@ -869,6 +874,7 @@ details.sec.hl>summary{color:var(--blue)}
       <button type="button" class="tbtn play" id="btnPlay" aria-label="Reproducir"></button>
       <div class="tc"><span id="tcNow">00:00<span class="ff">:00</span></span><small id="tcDur">/ 00:00:00</small></div>
       <span class="movie-tag" id="movieTag" hidden>Película completa</span>
+      <button type="button" class="btn sm vtog" id="vToggle" title="Cambiar entre lo que sale en el video y la escena completa con el cuadro de la cámara"></button>
       <span class="grow"></span>
       <button type="button" class="btn sm" data-cmd="movie" title="Todas las escenas seguidas, con transiciones"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5v4M16 5v4M10 12.5v4l3.5-2z"/></svg><span class="lbl-txt">Ver película</span></button>
     </div>
@@ -5685,8 +5691,14 @@ function runCmd(c){closeMenus();const f=CMDS[c];if(f) f();}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmd]');if(b&&!b.disabled&&!b.closest('#modal')){e.preventDefault();runCmd(b.dataset.cmd);}});
 function afterLoad(msg){S.t=0;S.sel=null;HIST.stack=[];HIST.i=-1;syncControls();resize();refreshAll();save();toast(msg);}
 function syncControls(){$('#selFormat').value=S.format;setView(S.view);}
-function setView(v){S.view=v;$('#vCam').setAttribute('aria-pressed',String(v==='cam'));$('#vFull').setAttribute('aria-pressed',String(v==='full'));const tag=$('#viewTag');tag.hidden=v!=='full';tag.textContent='Escena completa · el cuadro morado es la cámara';dirty=true;}
+function setView(v){S.view=v;$('#vCam').setAttribute('aria-pressed',String(v==='cam'));$('#vFull').setAttribute('aria-pressed',String(v==='full'));vtogSync();const tag=$('#viewTag');tag.hidden=v!=='full';tag.textContent='Escena completa · el cuadro morado es la cámara';dirty=true;}
 $('#vCam').onclick=()=>setView('cam');$('#vFull').onclick=()=>setView('full');
+// un solo botón que muestra la vista actual y cambia a la otra: Video (lo que sale) o Cámara (toda la escena para animar la cámara)
+function vtogSync(){const b=$('#vToggle');if(!b) return;const cam=S.view==='cam';
+  b.innerHTML=cam?'<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3"/></svg><span>Video</span>'
+    :'<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="2"/><rect x="7" y="8" width="10" height="8" rx="1" stroke-dasharray="2 2"/></svg><span>Cámara</span>';
+  b.setAttribute('aria-label',cam?'Vista de video. Toca para ver la escena completa y animar la cámara':'Vista de cámara (escena completa). Toca para ver el video');b.setAttribute('aria-pressed',String(!cam));}
+$('#vToggle').onclick=()=>{setView(S.view==='cam'?'full':'cam');toast(S.view==='cam'?'Vista de video: lo que sale en tu video':'Vista de cámara: toda la escena, el cuadro morado es la cámara');};
 function applyTheme(){document.documentElement.dataset.ui=S.ui.theme==='light'?'light':'dark';$('#cmdTheme').textContent=S.ui.theme==='light'?'Tema oscuro':'Tema claro';}
 function toggleTheme(){S.ui.theme=S.ui.theme==='light'?'dark':'light';try{localStorage.setItem('bocon-theme',S.ui.theme);}catch(e){}applyTheme();refreshAll();}
 function refreshAll(){renderScenes();renderLeft();renderInspector();renderTimeline();updUndo();dirty=true;}
@@ -8613,6 +8625,8 @@ insp.addEventListener('click',e=>{const b=e.target.closest('[data-act="qsFav"]')
 const PLAN={mode:'dev',cfg:null,sb:null,user:null,info:null,busy:false,go:u=>{location.href=u;}};
 const PLAN_KEY='bocon-plan';
 const isPro=()=>PLAN.mode!=='free';
+const LEGAL={terminos:'https://www.seakingsstudios.com/terminos-bocon',privacidad:'https://www.seakingsstudios.com/privacidad-bocon'};
+const legalLinks=txt=>`<p class="note legal">${txt} <a href="${LEGAL.terminos}" target="_blank" rel="noopener">términos</a> y el <a href="${LEGAL.privacidad}" target="_blank" rel="noopener">aviso de privacidad</a>.</p>`;
 // ----- lo que es de Pro (solo cuenta cuando ya hay cuentas: sin configurar, todo abierto) -----
 const ACC_PRO=new Set(['turbante','gorraOficial','gorroPreso','sombreroPirata','gorroChef','sombreroMago','monoculo','parche','lentesAbuelo','barba','cicatriz','curita','alasAngel','alasMurcielago','collar','cadena','paliacate','preso','comandante','chaleco','tunica','delantal','saco','lampara','baston','tridente','catalejo','cuchara','brazaletes','arpa','pergamino','grillete','babuchas','pantuflas']);
 const FREE_CHARS=2,TTS_FREE=200;
@@ -8726,9 +8740,10 @@ function openPro(why,tip){
   const body=`${wanted?`<p class="note" style="font-size:13px"><b>${esc(wanted)}</b> es de Bocón Pro.${tip?' '+esc(tip):''}</p>`:''}${perks}
     <div class="opts pro-plans" role="radiogroup" aria-label="Plan">${plans.map((p,i)=>`<label class="opt"><input type="radio" name="proPlan" value="${p.k}"${i===0?' checked':''}><span><b>${p.t}</b><span class="pp">${p.p}</span><small>${p.n}</small></span></label>`).join('')}</div>
     ${C.prueba?`<p class="note">Los primeros <b>${C.prueba} días son gratis</b>; el cobro empieza después.</p>`:''}
-    ${u?`<label class="f"><span>Correo de Mercado Pago</span><input type="text" id="proMail" inputmode="email" autocomplete="email" value="${esc(u.email||'')}"></label><p class="note">Pon el correo de la cuenta de Mercado Pago con la que vas a pagar (tarjeta de crédito o débito). Cancelas cuando quieras desde aquí.</p>`:'<p class="note">Primero entra a tu cuenta (solo tu correo) para que tu Pro quede guardado y lo uses en el celular y en la compu.</p>'}
+    ${u?`<label class="f"><span>Correo de Mercado Pago</span><input type="text" id="proMail" inputmode="email" autocomplete="email" value="${esc(u.email||'')}"></label><p class="note">Pon el correo de la cuenta de Mercado Pago con la que vas a pagar (tarjeta de crédito o débito). Cancelas cuando quieras desde aquí.</p><p class="note pro-who">Entraste como <b>${esc(u.email||'')}</b> · <a href="#" id="proSwitch">cambiar de cuenta</a></p>${legalLinks('Al suscribirte aceptas los')}`:'<p class="note">Primero entra a tu cuenta (solo tu correo) para que tu Pro quede guardado y lo uses en el celular y en la compu.</p>'}
     ${C.pagos===false?'<p class="note" style="color:var(--red)">Los pagos todavía no están configurados en el servidor.</p>':''}`;
-  openModal({title:'Bocón Pro ✦',wide:true,body,actions:[{label:'Ahora no'},u?{label:'Suscribirme con Mercado Pago',cls:'primary',keep:true,run:()=>planSubscribe()}:{label:'Entrar',cls:'primary',run:()=>openAccount('pro')}]});
+  openModal({title:'Bocón Pro ✦',wide:true,body,actions:[{label:'Ahora no'},u?{label:'Suscribirme con Mercado Pago',cls:'primary',keep:true,run:()=>planSubscribe()}:{label:'Entrar',cls:'primary',run:()=>openAccount('pro')}],
+    onOpen:c=>{const sw=c.querySelector('#proSwitch');if(sw) sw.onclick=e=>{e.preventDefault();acSwitch('pro');};}});
 }
 async function planSubscribe(){
   if(PLAN.busy) return;const c=$('#mcard'),plan=(c.querySelector('input[name="proPlan"]:checked')||{}).value||'mensual',correo=((c.querySelector('#proMail')||{}).value||'').trim();
@@ -8748,20 +8763,27 @@ function openAccount(then){
   const u=PLAN.user;
   if(u){
     const info=PLAN.info||{},st=isPro()?(info.cortesia?'Pro (cortesía)':info.estado==='authorized'?'Pro ✦ · '+esc(info.plan||'activo'):info.pagado_hasta?'Pro hasta el '+fmtFecha(info.pagado_hasta):'Pro ✦'):'Gratis';
-    openModal({title:'Tu cuenta',body:`<div class="acct-row"><span class="acct-av">${esc((u.email||'?')[0].toUpperCase())}</span><span><b>${esc(u.email||'')}</b><small>Plan: ${st}</small></span></div>`,
-      actions:[{label:'Salir',run:async()=>{try{await PLAN.sb.auth.signOut();}catch(_){}PLAN.user=null;PLAN.info=null;planSet(false);toast('Saliste de tu cuenta');}},{label:isPro()?'Ver mi Pro':'Hazte Pro ✦',cls:'primary',run:()=>openPro()}]});
+    openModal({title:'Tu cuenta',body:`<div class="acct-row"><span class="acct-av">${esc((u.email||'?')[0].toUpperCase())}</span><span><b>${esc(u.email||'')}</b><small>Plan: ${st}</small></span></div>
+      <div class="btns acct-btns"><button type="button" class="btn sm" id="acSwitch">Cambiar de cuenta</button><button type="button" class="btn sm" id="acOut">Salir de la cuenta</button></div>
+      <p class="note">Tus proyectos se quedan en este aparato aunque cambies de cuenta.</p>${legalLinks('Consulta los')}`,
+      actions:[{label:'Cerrar'},{label:isPro()?'Ver mi Pro':'Hazte Pro ✦',cls:'primary',run:()=>openPro()}],
+      onOpen:c=>{c.querySelector('#acSwitch').onclick=()=>acSwitch(then);c.querySelector('#acOut').onclick=async()=>{await acSignOut();closeModal();toast('Saliste de tu cuenta');};}});
     return;
   }
   const C=PLAN.cfg||{};
   openModal({title:'Entra a Bocón',body:`<p class="note" style="font-size:13px">Sin contraseñas: te mandamos un enlace a tu correo.</p>
     <label class="f"><span>Tu correo</span><input type="text" id="acMail" inputmode="email" autocomplete="email" placeholder="tucorreo@gmail.com"></label>
     <div id="acCode" hidden><p class="note">Te lo mandamos a <b id="acTo"></b>. Toca el enlace del correo, o escribe aquí el código que viene en él:</p><label class="f"><span>Código</span><input type="text" id="acOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="10"></label></div>
-    ${C.google?'<div class="btns"><button type="button" class="btn" id="acGoogle">Entrar con Google</button></div>':''}`,
+    ${C.google?'<div class="btns"><button type="button" class="btn" id="acGoogle">Entrar con Google</button></div>':''}${legalLinks('Al entrar aceptas los')}`,
     actions:[{label:'Cancelar'},{label:'Mandarme el enlace',cls:'primary',keep:true,id:'acGo',run:()=>acStep(then)}],
     onOpen:c=>{const m=c.querySelector('#acMail');setTimeout(()=>m.focus(),40);m.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();acStep(then);}});
       c.querySelector('#acOtp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();acStep(then);}});
       const g=c.querySelector('#acGoogle');if(g) g.addEventListener('click',async()=>{try{await PLAN.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});}catch(e){toast('No se pudo abrir Google');}});}});
 }
+// salir de la cuenta (las cosas guardadas en este aparato no se tocan)
+async function acSignOut(){try{await PLAN.sb.auth.signOut();}catch(_){}PLAN.user=null;PLAN.info=null;planSet(false);}
+// salir y abrir de una vez la ventana para entrar con otro correo
+async function acSwitch(then){await acSignOut();openAccount(then);toast('Escribe el correo de la otra cuenta');}
 async function acStep(then){
   const c=$('#mcard'),mail=(c.querySelector('#acMail').value||'').trim(),codeBox=c.querySelector('#acCode'),go=c.querySelector('#acGo');
   if(codeBox.hidden){
@@ -8778,7 +8800,7 @@ async function acStep(then){
     closeModal();await planRefresh();toast('¡Bienvenido! Entraste como '+mail);if(then==='pro'&&!isPro()) openPro();}
   catch(e){toast('Ese código no funcionó; revisa que sea el último que te llegó');go.disabled=false;}
 }
-$('#acctBtn').addEventListener('click',()=>{if(!PLAN.user) openAccount();else if(isPro()) openAccount();else openPro();});
+$('#acctBtn').addEventListener('click',()=>openAccount());
 planInit();
 
 // ===== Celular: barra de herramientas abajo, paneles como hojas y gestos con dos dedos =====
@@ -9711,10 +9733,13 @@ let lastHW=headW();
 new ResizeObserver(()=>resize()).observe($('#stageBox'));
 window.addEventListener('resize',()=>{resize();if(headW()!==lastHW){lastHW=headW();renderTimeline();}if(pe) pe.dirty=true;});
 (async()=>{
-  await buildDemo();syncControls();resize();refreshAll();
+  // antes se dibujaba el ejemplo y unos segundos después aparecía tu proyecto: ahora se espera a lo guardado
+  const boot=document.createElement('div');boot.id='boot';boot.innerHTML='<div><b>Bocón</b><span>Abriendo tu proyecto…</span></div>';document.body.appendChild(boot);
+  let ok=false;try{ok=await restore();}catch(e){ok=false;}
+  if(!ok) await buildDemo();
+  syncControls();resize();refreshAll();
   requestAnimationFrame(loop);
-  const ok=await restore();
-  if(ok){syncControls();resize();refreshAll();}
+  boot.classList.add('off');setTimeout(()=>boot.remove(),350);
   HIST.stack=[];HIST.i=-1;save();
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{dirty=true;renderInspector();renderLeft();});
 })();
