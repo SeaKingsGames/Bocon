@@ -22,6 +22,16 @@ En esta carpeta, abre una terminal y escribe:
 Abre `http://localhost:3000` en Chrome o Edge e instálala con el mismo ícono.
 Después de instalarla ya no necesitas tener la terminal abierta.
 
+## Cómo se publica (copia compacta)
+
+El código que se edita es `index.html`, legible como siempre. Al publicar, Vercel corre `npm run build` (`scripts/publicar.mjs`),
+que arma la carpeta `dist/` con una copia compacta: comprime el código, le cambia los nombres a variables y funciones,
+y deja solo lo que usa la app (sin este LEEME, el esquema ni el código del servidor). Eso es lo que se sirve en la dirección de Bocón.
+Las funciones de `api/` se publican igual que antes.
+
+- Para probar la copia compacta en tu compu: `npm install`, `npm run build` y `npx serve dist`.
+- Para probar el código legible: `npx serve .` como antes.
+
 ## Modo en vivo con OBS
 
 1. En Bocón Estudio toca **En vivo** (arriba a la derecha) y da permiso al micrófono.
