@@ -1,0 +1,12 @@
+{
+  "name": "bocon-estudio",
+  "private": true,
+  "description": "Bocón Estudio. El código legible vive en index.html; Vercel publica una copia compacta en dist/.",
+  "scripts": {
+    "build": "node scripts/publicar.mjs"
+  },
+  "devDependencies": {
+    "csso": "^5.0.5",
+    "terser": "^5.36.0"
+  }
+}
