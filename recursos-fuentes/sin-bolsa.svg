@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- T-shirt shopping bag -->
+  <g stroke="#2f2a3a" stroke-width="12" stroke-linejoin="round">
+    <path d="M150 170 L150 80 Q150 60 175 60 L215 60 Q238 60 238 85 L238 160 L362 160 L362 85 Q362 60 385 60 L425 60 Q450 60 450 80 L450 170 Q490 180 490 230 L470 500 Q466 530 435 530 L165 530 Q134 530 130 500 L110 230 Q110 180 150 170 Z" fill="#f8fbff"/>
+    <path d="M182 92 L206 92 L206 168 L182 168 Z M394 92 L418 92 L418 168 L394 168 Z" fill="#ffffff" stroke-width="8"/>
+  </g>
+  <path d="M110 230 Q300 250 490 230" fill="none" stroke="#2f2a3a" stroke-width="6" opacity=".35"/>
+  <circle cx="300" cy="360" r="62" fill="none" stroke="#9fd3c7" stroke-width="14"/>
+  <path d="M276 360 Q300 312 324 360 Q300 400 276 360" fill="#9fd3c7"/>
+  <g fill="none" stroke="#2f2a3a" stroke-width="6" stroke-linecap="round" opacity=".3"><path d="M190 260 Q200 360 185 470"/><path d="M415 260 Q405 360 418 470"/></g>
+  <!-- no sign -->
+  <circle cx="300" cy="310" r="250" fill="none" stroke="#2f2a3a" stroke-width="58"/>
+  <circle cx="300" cy="310" r="250" fill="none" stroke="#ef3b3b" stroke-width="40"/>
+  <path d="M123 133 L477 487" stroke="#2f2a3a" stroke-width="58" stroke-linecap="butt"/>
+  <path d="M123 133 L477 487" stroke="#ef3b3b" stroke-width="40"/>
+</svg>

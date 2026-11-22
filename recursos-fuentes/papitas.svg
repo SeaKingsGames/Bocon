@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- pillow bag -->
+  <path d="M150 90 L450 90 Q440 300 455 510 L145 510 Q160 300 150 90 Z" fill="#ff6b3d" stroke="#2f2a3a" stroke-width="12" stroke-linejoin="round"/>
+  <!-- crimps -->
+  <path d="M140 70 L460 70 L460 110 L140 110 Z" fill="#ff8a5c" stroke="#2f2a3a" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M135 490 L465 490 L465 530 L135 530 Z" fill="#ff8a5c" stroke="#2f2a3a" stroke-width="10" stroke-linejoin="round"/>
+  <g stroke="#2f2a3a" stroke-width="5" opacity=".55"><path d="M170 72 V108 M200 72 V108 M230 72 V108 M260 72 V108 M290 72 V108 M320 72 V108 M350 72 V108 M380 72 V108 M410 72 V108 M440 72 V108"/>
+  <path d="M170 492 V528 M200 492 V528 M230 492 V528 M260 492 V528 M290 492 V528 M320 492 V528 M350 492 V528 M380 492 V528 M410 492 V528 M440 492 V528"/></g>
+  <!-- sun burst -->
+  <circle cx="300" cy="330" r="105" fill="#ffd23f" stroke="#2f2a3a" stroke-width="9"/>
+  <!-- chips -->
+  <g stroke="#2f2a3a" stroke-width="7" stroke-linejoin="round">
+    <path d="M235 330 Q250 280 300 290 Q330 300 320 345 Q300 370 260 360 Q235 352 235 330 Z" fill="#ffe7a1"/>
+    <path d="M300 345 Q320 305 365 320 Q385 335 372 370 Q350 392 318 382 Q298 372 300 345 Z" fill="#ffdd85"/>
+    <path d="M260 372 Q275 352 302 362 Q318 375 305 398 Q285 410 266 400 Q252 390 260 372 Z" fill="#ffe7a1"/>
+  </g>
+  <!-- label -->
+  <path d="M165 165 Q300 135 435 165 L430 235 Q300 210 170 235 Z" fill="#ffffff" stroke="#2f2a3a" stroke-width="8" stroke-linejoin="round"/>
+  <text x="300" y="218" text-anchor="middle" font-family="Bagel Fat One, Arial Black, sans-serif" font-size="56" fill="#e8463a">PAPITAS</text>
+  <!-- shine -->
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" opacity=".85">
+    <path d="M182 260 Q176 360 186 450" stroke-width="14"/><path d="M420 130 Q425 160 424 190" stroke-width="10"/>
+  </g>
+</svg>
