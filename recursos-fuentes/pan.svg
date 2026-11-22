@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- bag body (loaf lying on its side) -->
+  <path d="M60 230 Q60 170 130 170 L440 165 Q470 165 478 190 L478 440 Q470 462 440 462 L130 465 Q60 465 60 400 Z" fill="#e9f6ff" fill-opacity=".5" stroke="#2f2a3a" stroke-width="11" stroke-linejoin="round"/>
+  <!-- bread slices visible -->
+  <g stroke="#2f2a3a" stroke-width="9" stroke-linejoin="round">
+    <path d="M85 250 Q85 195 140 195 L425 192 Q455 195 455 250 L455 430 L85 432 Z" fill="#d99a4e"/>
+    <path d="M105 262 Q105 222 145 220 L410 218 Q435 222 435 262 L435 415 L105 417 Z" fill="#fbe3b0"/>
+  </g>
+  <g fill="none" stroke="#2f2a3a" stroke-width="5" opacity=".45" stroke-linecap="round">
+    <path d="M160 222 V415"/><path d="M215 220 V415"/><path d="M270 220 V415"/><path d="M325 220 V415"/><path d="M380 219 V415"/>
+  </g>
+  <!-- printed band -->
+  <rect x="140" y="300" width="250" height="78" rx="14" fill="#3f8fd6" stroke="#2f2a3a" stroke-width="8"/>
+  <text x="265" y="357" text-anchor="middle" font-family="Bagel Fat One, Arial Black, sans-serif" font-size="52" fill="#ffffff" stroke="#2f2a3a" stroke-width="3" paint-order="stroke">PAN</text>
+  <!-- twisted end + tie -->
+  <path d="M478 200 Q520 260 545 245 Q530 315 548 385 Q520 372 478 430" fill="#e9f6ff" fill-opacity=".75" stroke="#2f2a3a" stroke-width="10" stroke-linejoin="round"/>
+  <rect x="486" y="275" width="26" height="80" rx="9" fill="#f2c230" stroke="#2f2a3a" stroke-width="7"/>
+  <!-- shine -->
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" opacity=".95">
+    <path d="M95 210 Q160 186 250 186" stroke-width="13"/><path d="M90 300 V380" stroke-width="12"/><path d="M420 446 Q450 444 460 425" stroke-width="9"/>
+  </g>
+</svg>

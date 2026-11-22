@@ -19,7 +19,7 @@
   --ink:#e3ebee; --muted:#8c9ea8; --dim:#5d6e78;
   --blue:#4fb0e6; --blue-soft:#163246; --red:#ff5d50; --wave:#7db5d5;
   --sfx:#e6ad62; --sfx-soft:#33281a; --prop:#bfe3c9; --cam:#c3a3ff; --cam-soft:#2a2240; --pose:#ffcf8a; --txt:#9fdcf2;
-  --e-neutral:#cfd8dc; --e-feliz:#f6d365; --e-triste:#a3bdf3; --e-enojado:#f39a7c; --e-sorprendido:#7fd8c9; --e-guino:#f4a9c8; --e-picaro:#c6aaf2; --e-enamorado:#ff8fb3; --e-emocionado:#ffe27a; --e-asustado:#9fb4ff; --e-llorando:#7fc4f2; --e-confundido:#d7c2a0; --e-mareado:#b8e986; --e-dormido:#a8a4d8; --e-idea:#fff09a; --e-presumido:#9ad0c2;
+  --e-neutral:#cfd8dc; --e-feliz:#f6d365; --e-triste:#a3bdf3; --e-enojado:#f39a7c; --e-sorprendido:#7fd8c9; --e-guino:#f4a9c8; --e-picaro:#c6aaf2; --e-enamorado:#ff8fb3; --e-emocionado:#ffe27a; --e-asustado:#9fb4ff; --e-llorando:#7fc4f2; --e-confundido:#d7c2a0; --e-mareado:#b8e986; --e-dormido:#a8a4d8; --e-idea:#fff09a; --e-presumido:#9ad0c2; --e-harto:#9ab0c4; --e-incomodo:#b0c4d8; --e-incredulo:#8fe3d6;
   --block-ink:#17222a; --shadow:rgba(0,0,0,.55); --stage-bg:#0a0f12;
   --font-display:'Bagel Fat One','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
   --font-body:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
@@ -394,6 +394,9 @@ details.sec.hl>summary{color:var(--blue)}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
 .pgrid .pick canvas{width:96px;height:64px}
 .pgrid .pick.sq canvas{width:64px;height:64px}
+.grid-pick .pick,.rec-grid .pick{position:relative}
+.rec-grid img{width:100%;height:84px;object-fit:contain;border-radius:6px}
+.rec-grid.tall img{height:150px}
 .pgrid .pick{padding:8px 6px;font-size:12px}
 .pgrid .pick small{font-weight:400;color:var(--muted);font-size:11px;text-align:center}
 .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
@@ -821,6 +824,7 @@ details.sec.hl>summary{color:var(--blue)}
           <button type="button" data-cmd="addChar">Personaje…</button>
           <button type="button" data-cmd="addImg">Imagen…</button>
           <button type="button" data-cmd="cutout">Recortar un objeto del fondo…<kbd>X</kbd></button>
+          <button type="button" data-cmd="recFondos">Fondo de Bocón…</button>
           <button type="button" data-cmd="setPick">Escenario guardado…</button>
           <button type="button" data-cmd="addText">Texto…<kbd>T</kbd></button>
           <button type="button" data-cmd="addBubble">Globo de diálogo…<kbd>G</kbd></button>
@@ -1528,7 +1532,10 @@ const EXPR={
   mareado:{label:'Mareado',smile:-.3,open:.2,ojos:'espirales',fx:['mareo'],base:'sorprendido'},
   dormido:{label:'Dormido',smile:.1,ojos:'cerrados',fx:['zzz']},
   idea:{label:'¡Idea!',smile:.7,browY:-.3,eye:1.1,blush:.3,fx:['foco'],base:'sorprendido'},
-  presumido:{label:'Presumido',smile:.6,browY:-.05,cock:1,lid:.25,fx:['lentes'],base:'picaro'}
+  presumido:{label:'Presumido',smile:.6,browY:-.05,cock:1,lid:.25,fx:['lentes'],base:'picaro'},
+  harto:{label:'Harto',smile:-.35,lid:.42,base:'picaro'},
+  incomodo:{label:'Silencio incómodo',smile:-.3,lid:.42,fx:['sudor'],base:'picaro'},
+  incredulo:{label:'Incrédulo',browY:-.45,eye:1.22,pupil:.62,blush:.2,open:.55,base:'sorprendido'}
 };
 for(const k in EXPR) EXPR[k]=Object.assign({},EXPR_DEF,EXPR[k]);
 const EXPR_KEYS=Object.keys(EXPR);
@@ -4388,7 +4395,17 @@ const ACTIONS={
   comer:{label:'Comer',dur:3,loop:[.4,1.6],front:'B',thumb:.75,hold:[{side:'B',item:'hamburguesa',alt:['hamburguesa','pastel','paleta','taza','pizza','helado']}],
     keys:[{t:0},{t:.4,B:[-.5,.18],gaze:[.2,.6]},{t:.75,B:[-.66,-.6],head:-3},{t:1,B:[-.66,-.58],head:-3},{t:1.3,B:[-.5,.18],gaze:[.2,.6]},{t:1.6,B:[-.5,.18],gaze:[.2,.6]}]},
   beber:{label:'Beber',dur:3,loop:[.4,1.8],front:'B',thumb:.85,hold:[{side:'B',item:'taza',alt:['taza','lata','celular']}],
-    keys:[{t:0},{t:.4,B:[-.5,.18]},{t:.8,B:[-.64,-.6],head:-6,irB:-35},{t:1.2,B:[-.64,-.6],head:-6,irB:-35},{t:1.55,B:[-.5,.18]},{t:1.8,B:[-.5,.18]}]}
+    keys:[{t:0},{t:.4,B:[-.5,.18]},{t:.8,B:[-.64,-.6],head:-6,irB:-35},{t:1.2,B:[-.64,-.6],head:-6,irB:-35},{t:1.55,B:[-.5,.18]},{t:1.8,B:[-.5,.18]}]},
+  arribaDer:{label:'Señalar arriba (der.)',dur:2,loop:[.5,1.4],front:'',thumb:.6,
+    keys:[{t:0},{t:.22,B:{a:[138,-6]},head:-4,gaze:[.55,-.85],e:'out'},{t:.5,B:{a:[133,-2]},head:-3,gaze:[.55,-.85]},{t:.95,B:{a:[138,-7]},head:-4,gaze:[.55,-.85]},{t:1.4,B:{a:[133,-2]},head:-3,gaze:[.55,-.85]}]},
+  arribaIzq:{label:'Señalar arriba (izq.)',dur:2,loop:[.5,1.4],front:'',thumb:.6,
+    keys:[{t:0},{t:.22,A:{a:[138,-6]},head:4,gaze:[-.55,-.85],e:'out'},{t:.5,A:{a:[133,-2]},head:3,gaze:[-.55,-.85]},{t:.95,A:{a:[138,-7]},head:4,gaze:[-.55,-.85]},{t:1.4,A:{a:[133,-2]},head:3,gaze:[-.55,-.85]}]},
+  explicar:{label:'Explicar (una mano)',dur:2.4,loop:[.45,1.15],front:'',thumb:.5,
+    keys:[{t:0},{t:.2,B:{a:[44,92]},head:3,e:'out'},{t:.45,B:{a:[50,104]},head:-2},{t:.8,B:{a:[40,86]},head:3},{t:1.15,B:{a:[50,104]},head:-2}]},
+  explicar2:{label:'Explicar (dos manos)',dur:2.4,loop:[.5,1.2],front:'',thumb:.5,
+    keys:[{t:0},{t:.2,A:{a:[44,92]},B:{a:[40,86]},head:2,e:'out'},{t:.5,A:{a:[40,86]},B:{a:[48,100]},head:-2},{t:.85,A:{a:[48,100]},B:{a:[40,86]},head:2},{t:1.2,A:{a:[40,86]},B:{a:[48,100]},head:-2}]},
+  enSerio:{label:'¿Es en serio?',dur:2,loop:[.5,1.4],front:'',thumb:.6,
+    keys:[{t:0},{t:.14,A:{a:[110,50]},B:{a:[110,50]},by:.25,sq:.08,head:-3,e:'out'},{t:.32,A:{a:[118,40]},B:{a:[118,40]},by:0,sq:-.06,e:'in'},{t:.5,A:{a:[116,44]},B:{a:[116,44]},sq:0},{t:.95,A:{a:[121,38]},B:{a:[121,38]},head:2},{t:1.4,A:{a:[116,44]},B:{a:[116,44]}}]}
 };
 const ACT_KEYS=Object.keys(ACTIONS);
 let MYACT=[];// acciones creadas por ti (se guardan con la biblioteca)
@@ -5385,7 +5402,7 @@ function moveSelect(attr,key,val){
   return `<label class="f"><span>Tipo</span><select ${attr}="${key}" data-re="1">${g('vel','Velocidad')}${g('est','Con estilo')}</select></label>`;
 }
 function pickGrid(kind,keys,labelOf,activeKey,hot){
-  return `<div class="grid-pick">${keys.map((k,i)=>`<button type="button" class="pick${k===activeKey?' on':''}" data-pick="${kind}" data-k="${k}" title="${esc(labelOf(k))}${hot&&hot[i]?' (tecla '+hot[i]+')':''}"><canvas></canvas><span class="lb">${kind==='expr'?`<i class="sw" style="--c:var(--e-${k})"></i>`:''}${esc(labelOf(k))}</span></button>`).join('')}</div>`;
+  return `<div class="grid-pick">${keys.map((k,i)=>`<button type="button" class="pick${k===activeKey?' on':''}" data-pick="${kind}" data-k="${k}" title="${esc(labelOf(k))}${hot&&hot[i]?' (tecla '+hot[i]+')':''}">${recTag(k)}<canvas></canvas><span class="lb">${kind==='expr'?`<i class="sw" style="--c:var(--e-${k})"></i>`:''}${esc(labelOf(k))}</span></button>`).join('')}</div>`;
 }
 function selSection(){
   const s=S.sel;if(!s) return '';
@@ -5547,11 +5564,11 @@ function propSections(p){
 }
 function sceneSections(){
   const sc=cur(),has=!!(sc.bgImg&&S.assets[sc.bgImg]);
-  const bgs=[['estudio','Estudio'],['papel','Papel de animación'],['noche','Noche'],['chroma','Pantalla verde'],...(has?[['img','Tu imagen']]:[]),['pick',has?'Cambiar imagen…':'Subir imagen…']];
+  const bgs=[['estudio','Estudio'],['papel','Papel de animación'],['noche','Noche'],['chroma','Pantalla verde'],...(has?[['img','Tu imagen']]:[]),['rec','Fondos de Bocón…'],['pick',has?'Cambiar imagen…':'Subir imagen…']];
   let b=fText('data-sc','name','Nombre',sc.name)+fSelect('data-sc','bg','Fondo',bgs,sc.bg)+fSelect('data-sc','trans','Entrada',optsOf(TRANS),sc.trans||'corte')+fRange('data-sc','extra','Pausa al final',0,30,Math.round((sc.extra==null?.3:sc.extra)*10),'n')+
     `<p class="note">La entrada es la transición con la que empieza esta escena. La pausa al final está en décimas de segundo.</p><div class="btns"><button type="button" class="btn sm" data-act="sceneDup">Duplicar escena</button>${S.scenes.length>1?'<button type="button" class="btn sm danger" data-act="sceneDel">Borrar escena</button>':''}</div><div class="btns" id="scDelAsk" hidden><span class="note">¿Borrar la escena con todo lo que tiene?</span><button type="button" class="btn sm danger" data-act="sceneDelYes">Sí, borrar</button><button type="button" class="btn sm" data-act="noDel">Cancelar</button></div>`;
   if(sc.bg==='img'&&has) b+=`<div class="btns"><button type="button" class="btn sm" data-act="cutout" title="Separa el mostrador, una mesa o un mueble del fondo para poner personajes detrás">✂ Recortar un objeto del fondo</button></div><p class="note">Para que un personaje quede detrás de un mueble que viene pintado en el fondo.</p>`;
-  b+=`<div class="btns"><button type="button" class="btn sm" data-act="setPick" title="Fondo + decorado que guardaste">Escenarios guardados…</button>${sceneHasSet(sc)?'<button type="button" class="btn sm" data-act="setSave" title="Para usar este fondo y su decorado en otras escenas o proyectos">Guardar escenario</button>':''}</div>`;
+  b+=`<div class="btns"><button type="button" class="btn sm" data-act="recFondos" title="Fondos que vienen con Bocón">Fondos de Bocón…</button><button type="button" class="btn sm" data-act="setPick" title="Fondo + decorado que guardaste">Escenarios guardados…</button>${sceneHasSet(sc)?'<button type="button" class="btn sm" data-act="setSave" title="Para usar este fondo y su decorado en otras escenas o proyectos">Guardar escenario</button>':''}</div>`;
   let h=sec('scn','Escena',b)+autoCamSection(sc);
   h+=sec('add','Agregar',`<div class="quick"><button type="button" class="btn sm" data-cmd="addChar">Personaje</button><button type="button" class="btn sm" data-cmd="addImg">Imagen</button><button type="button" class="btn sm" data-cmd="addText">Texto</button><button type="button" class="btn sm" data-cmd="addBubble">Globo</button><button type="button" class="btn sm" data-cmd="addBoca">Boca con lip-sync</button><button type="button" class="btn sm" data-cmd="addFx">Efecto</button><button type="button" class="btn sm" data-cmd="addMeme">Momento meme</button><button type="button" class="btn sm" data-cmd="addCam">Toma de cámara</button><button type="button" class="btn sm" data-cmd="addSfx">Sonido</button></div><p class="note">También puedes arrastrar audios e imágenes desde tu carpeta al escenario o a la línea de tiempo.</p>`);
   return h;
@@ -5613,7 +5630,7 @@ function setBlockField(f,el){
 }
 function setSceneField(f,el){
   const sc=cur(),v=el.value;
-  if(f==='bg'){if(v==='pick'){el.value=sc.bg;const fi=$('#fileBg');fi.value='';fi.click();return;}sc.bg=v;}
+  if(f==='bg'){if(v==='pick'){el.value=sc.bg;const fi=$('#fileBg');fi.value='';fi.click();return;}if(v==='rec'){el.value=sc.bg;openRecFondos();return;}sc.bg=v;}
   else if(f==='extra') sc.extra=v/10;
   else if(f==='name') sc.name=v||'Escena';
   else sc[f]=v;
@@ -5695,7 +5712,7 @@ const CMDS={
   export:()=>openExport(),
   undo:()=>undo(),redo:()=>redo(),
   dup:()=>duplicateSel(),cut:()=>cutClip(),del:()=>deleteSel(),
-  addChar:()=>openCharPicker(),addBoca:()=>openBocaPicker(),addFx:()=>openFxPicker(),vestir:()=>{const o=selObj();if(o&&!isProp(o)&&!isBoca(o)) openEditor(o,'acc');else toast('Selecciona un personaje para ponerle accesorios');},addImg:()=>pickImage(),addText:()=>openTextPicker(),addBubble:()=>openBubblePicker(),
+  addChar:()=>openCharPicker(),addBoca:()=>openBocaPicker(),addFx:()=>openFxPicker(),vestir:()=>{const o=selObj();if(o&&!isProp(o)&&!isBoca(o)) openEditor(o,'acc');else toast('Selecciona un personaje para ponerle accesorios');},addImg:()=>openRecImgs(),addText:()=>openTextPicker(),addBubble:()=>openBubblePicker(),
   addVoice:()=>{const ch=charById(S.selObj)||cur().chars[0];if(!ch){toast('Primero agrega un personaje');return;}pickAudio('voice',ch.id);},
   addSubs:()=>openSubsModal(),
   record:()=>openRecorder(),tts:()=>openTTS(),addSfx:()=>pickAudio('sfx',null),addMove:()=>addMove(),addCam:()=>openCamPicker(),addScene:()=>addScene(),
@@ -8740,7 +8757,7 @@ function exProWanted(c){
   return null;
 }
 // ----- ventanas: Pro y cuenta -----
-const PRO_PERKS=[['Sin marca de agua','en tus videos, GIF y en vivo'],['1080p Full HD','para YouTube y TikTok'],['Sin fondo','GIF transparente y cuadros PNG para CapCut, Premiere o DaVinci'],['Personajes sin límite','todos los que quieras en la misma escena (gratis: '+FREE_CHARS+')'],['Ropa y accesorios ✦','turbantes, uniformes, alas, gorros, objetos para la mano y todo lo nuevo que vaya saliendo'],['Texto a voz sin límite','textos largos de una sola vez (gratis: '+TTS_FREE+' letras)'],['Tus propios efectos de voz','ajusta tono, timbre y más, y guárdalos con su nombre']];
+const PRO_PERKS=[['Sin marca de agua','en tus videos, GIF y en vivo'],['1080p Full HD','para YouTube y TikTok'],['Sin fondo','GIF transparente y cuadros PNG para CapCut, Premiere o DaVinci'],['Personajes sin límite','todos los que quieras en la misma escena (gratis: '+FREE_CHARS+')'],['Ropa y accesorios ✦','turbantes, uniformes, alas, gorros, objetos para la mano y todo lo nuevo que vaya saliendo'],['Fondos, imágenes, gestos y acciones ✦','los recursos de Bocón marcados con ✦ y los que vayan saliendo'],['Texto a voz sin límite','textos largos de una sola vez (gratis: '+TTS_FREE+' letras)'],['Tus propios efectos de voz','ajusta tono, timbre y más, y guárdalos con su nombre']];
 function openPro(why,tip){
   if(!PLAN.cfg){toast('Bocón Pro todavía no está disponible aquí');return;}
   const C=PLAN.cfg,u=PLAN.user,info=PLAN.info||{},pro=isPro();
@@ -8869,7 +8886,7 @@ function ptoolItems(){
   }
   if(!o){
     it.push(['cmd:addChar','Personaje','user'],['cmd:addText','Texto','text'],['cmd:addSubs','Subtítulos','cc'],['cmd:addBubble','Globo','bubble'],['cmd:addImg','Imagen','image'],...(ctCanOpen(null)?[['cmd:cutout','Recortar objeto','cut']]:[]),['cmd:addBoca','Boca','mouth'],['cmd:addFx','Efectos','fx'],['cmd:addMeme','Memes','fx'],['cmd:quickSfx','Sonidos','music'],['cmd:addCam','Cámara','cam'],'|',
-      ['sheet:scene','Escena','scene'],['cmd:setPick','Escenarios','book'],['left:scene','Capas','layers'],['left:media','Medios','folder'],['left:lib','Biblioteca','book'],['cmd:addScene','Nueva escena','plus']);
+      ['sheet:scene','Escena','scene'],['cmd:recFondos','Fondos','image'],['cmd:setPick','Escenarios','book'],['left:scene','Capas','layers'],['left:media','Medios','folder'],['left:lib','Biblioteca','book'],['cmd:addScene','Nueva escena','plus']);
     return it;
   }
   if(!isProp(o)){
@@ -9719,6 +9736,90 @@ function oiLimbMask(L,cut){
  if(sec&&!sec.slots.some(x=>x[0]==='cabezaSinOjos')) sec.slots.splice(sec.slots.findIndex(x=>x[0]==='cabezaCerrada')+1,0,['cabezaSinOjos','Cabeza sin ojos','Opcional: la cara sin ojos, para los ojos especiales de los gestos (corazones, estrellas, espirales)']);}
 // la vista deja libre abajo el botón de "Ver cómo queda" (para que no tape los pies)
 oiView=function(){const cv=$('#oiCanvas'),w=cv.clientWidth,h=cv.clientHeight,pb=OI&&OI.prev?0:40,F=Math.min((w-24)/OI.W,(h-24-pb)/OI.H);return {cv,w,h,F,ox:(w-OI.W*F)/2,oy:(h-pb-OI.H*F)/2};};
+
+// ===== Recursos de Bocón: fondos, imágenes, gestos y acciones que vienen con la app =====
+// Los archivos están en recursos/ (los originales para editarlos, en recursos-fuentes/).
+// Para agregar uno: pon el archivo en recursos/ y su renglón aquí. pro:1 = solo con Bocón Pro (✦).
+// Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya descargó.
+const REC_FONDOS=[
+  {k:'super',label:'Súper (pasillo)',v:'recursos/fondos/super-vertical.webp',h:'recursos/fondos/super-horizontal.webp'}
+];
+const REC_IMGS=[
+  {k:'queso',label:'Queso en bolsa',src:'recursos/imagenes/queso-en-bolsa.webp',cat:'Súper'},
+  {k:'carne',label:'Carne en plástico',src:'recursos/imagenes/carne-en-plastico.webp',cat:'Súper',pro:1},
+  {k:'pan',label:'Pan en bolsa',src:'recursos/imagenes/pan-en-bolsa.webp',cat:'Súper',pro:1},
+  {k:'papitas',label:'Papitas',src:'recursos/imagenes/papitas.webp',cat:'Súper'},
+  {k:'sinBolsa',label:'¡Sin bolsa!',src:'recursos/imagenes/sin-bolsa.webp',cat:'Súper',pro:1}
+];
+// gestos (EXPR) y acciones (ACTIONS) de la app que son de Pro; los demás son gratis
+const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio']);
+const PRO_STAR='<i class="pro-tag" title="Bocón Pro">✦</i>';
+const recTag=k=>!isPro()&&REC_PRO.has(k)?PRO_STAR:'';
+const recItemTag=it=>it.pro&&!isPro()?PRO_STAR:'';
+function recRoom(k){if(isPro()||!REC_PRO.has(k)) return true;openPro('«'+(EXPR[k]?EXPR[k].label:poseLabel(k))+'»');return false;}
+function recItemRoom(it){if(isPro()||!it.pro) return true;openPro('«'+it.label+'»');return false;}
+// el candado va al poner algo nuevo; lo que ya está en un proyecto se ve igual
+{
+  const ae=addExpr,ap=addPose,sbf=setBlockField;
+  addExpr=k=>{if(recRoom(k)) ae(k);};
+  addPose=k=>{if(recRoom(k)) ap(k);};
+  setBlockField=function(f,el){if((f==='e'||f==='p')&&!recRoom(el.value)){const sb=selBlock();if(sb) el.value=sb.b[f];return;}sbf(f,el);};
+  const at=aeTemplate;aeTemplate=k=>{if(k==='_blank'||recRoom(k)) at(k);};
+}
+// se descarga y queda como imagen del proyecto (se guarda con él, igual que las tuyas)
+const REC_IDS={};
+async function recAsset(src,name){
+  const id0=REC_IDS[src];if(id0&&S.assets[id0]) return id0;
+  const r=await fetch(src);if(!r.ok) throw new Error('No se pudo descargar');
+  const id=await addAsset(await r.blob(),name);REC_IDS[src]=id;return id;
+}
+const recFondoSrc=f=>S.format==='9:16'?f.v:f.h;
+function openRecFondos(){
+  openModal({title:'Fondos de Bocón',wide:true,
+    body:`<div class="pgrid rec-grid${S.format==='9:16'?' tall':''}">${REC_FONDOS.map(f=>`<button type="button" class="pick" data-pk="${f.k}">${recItemTag(f)}<img src="${recFondoSrc(f)}" alt="" loading="lazy">${esc(f.label)}</button>`).join('')}</div><p class="note">Cada fondo viene vertical y horizontal; se pone el que va con el formato de tu video.${isPro()?'':' Los que tienen ✦ son de Bocón Pro.'}</p>`,
+    actions:[{label:'Subir mi imagen…',run:()=>{const fi=$('#fileBg');fi.value='';fi.click();}},{label:'Cerrar',cls:'primary'}],
+    onPick:k=>useRecFondo(k)});
+}
+async function useRecFondo(k){
+  const f=REC_FONDOS.find(x=>x.k===k);if(!f||!recItemRoom(f)) return;
+  try{const sc=cur(),src=recFondoSrc(f);sc.bgImg=await recAsset(src,recFondoName(f,src));sc.bg='img';sc.recBg={k:f.k,src,id:sc.bgImg};addMedia(sc.bgImg,'img');refreshAll();save();toast(`Fondo «${f.label}» listo`);}
+  catch(e){toast('No pude traer el fondo; revisa tu internet');}
+}
+const recFondoName=(f,src)=>f.label+(src===f.v?' vertical':'')+'.webp';
+// si cambias el formato del video, el fondo de Bocón se cambia a su versión vertical u horizontal
+let recSyncing=false;
+async function recSyncFormat(){
+  if(recSyncing) return;
+  const todo=S.scenes.filter(sc=>{const R=sc.recBg;return R&&sc.bg==='img'&&sc.bgImg===R.id;});if(!todo.length) return;
+  recSyncing=true;let n=0;
+  try{
+    for(const sc of todo){
+      const R=sc.recBg,f=REC_FONDOS.find(x=>x.k===R.k);if(!f) continue;const src=recFondoSrc(f);if(R.src===src) continue;
+      const old=sc.bgImg,id=await recAsset(src,recFondoName(f,src));if(sc.bgImg!==old) continue;
+      sc.bgImg=id;sc.recBg={k:f.k,src,id};n++;
+      const used=S.scenes.some(x=>x.bgImg===old||x.props.some(p=>p.aid===old)),m=S.media.find(x=>x.id===old);
+      if(m&&!used&&!S.media.some(x=>x.id===id)) m.id=id;else addMedia(id,'img');
+    }
+  }catch(_){}
+  recSyncing=false;if(n){refreshAll();save();}
+}
+{const rz=resize;resize=function(){rz();recSyncFormat();};}
+function openRecImgs(){
+  const cats=[...new Set(REC_IMGS.map(i=>i.cat))];
+  openModal({title:'Imagen',wide:true,
+    body:`<div class="btns"><button type="button" class="btn sm primary" data-recup="1">Subir de tu equipo…</button></div><p class="note">O usa una de las que vienen con Bocón${isPro()?'':' (las que tienen ✦ son de Bocón Pro)'}:</p>`+
+      cats.map(c=>`<div class="eyebrow">${esc(c)}</div><div class="pgrid rec-grid">${REC_IMGS.filter(i=>i.cat===c).map(i=>`<button type="button" class="pick" data-pk="${i.k}">${recItemTag(i)}<img src="${i.src}" alt="" loading="lazy">${esc(i.label)}</button>`).join('')}</div>`).join(''),
+    actions:[{label:'Cerrar'}],
+    onOpen:c=>{c.querySelector('[data-recup]').onclick=()=>{closeModal();pickImage();};},
+    onPick:k=>useRecImg(k)});
+}
+async function useRecImg(k){
+  const it=REC_IMGS.find(x=>x.k===k);if(!it||!recItemRoom(it)) return;
+  try{const id=await recAsset(it.src,it.label+'.webp');addMedia(id,'img');placeImage(id,{t:S.t});toast(`«${it.label}» en la escena`);}
+  catch(e){toast('No pude traer la imagen; revisa tu internet');}
+}
+CMDS.recFondos=()=>openRecFondos();
+insp.addEventListener('click',e=>{if(e.target.closest('[data-act="recFondos"]')) openRecFondos();});
 
 // ===== Ciclo de dibujo =====
 let lastTc='',lastDur='';

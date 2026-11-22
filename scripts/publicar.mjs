@@ -36,6 +36,6 @@ html = html.replace(/<html([^>]*)>/, (m) => m + '\n<!-- ' + AVISO + ' -->');
 // 4) Carpeta para publicar: solo lo que usa la app (no el esquema, las notas ni el código del servidor)
 rmSync(DIST, { recursive: true, force: true }); mkdirSync(DIST);
 writeFileSync(DIST + '/index.html', html);
-for (const f of ['sw.js', 'manifest.webmanifest', 'icons', 'vendor']) cpSync(f, DIST + '/' + f, { recursive: true });
+for (const f of ['sw.js', 'manifest.webmanifest', 'icons', 'vendor', 'recursos']) cpSync(f, DIST + '/' + f, { recursive: true });
 
 console.log('index.html:', kb(src.length), '→', kb(html.length), '| JS', kb(js.length), '→', kb(out.code.length));

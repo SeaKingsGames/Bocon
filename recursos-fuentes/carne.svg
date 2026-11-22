@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- foam tray -->
+  <path d="M70 250 L530 250 L500 450 Q495 470 470 470 L130 470 Q105 470 100 450 Z" fill="#f4f6f8" stroke="#2f2a3a" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M100 280 L500 280 L478 430 L122 430 Z" fill="#e3e8ec" stroke="#2f2a3a" stroke-width="6" stroke-linejoin="round"/>
+  <!-- steak -->
+  <path d="M150 330 Q150 270 240 268 Q300 250 360 268 Q460 270 455 330 Q470 390 400 410 Q330 430 260 415 Q160 420 150 330 Z" fill="#e2574c" stroke="#2f2a3a" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M168 330 Q168 288 240 286 Q300 270 360 286 Q440 288 438 330" fill="none" stroke="#f7d2c8" stroke-width="16" stroke-linecap="round"/>
+  <g fill="none" stroke="#f4b5aa" stroke-width="9" stroke-linecap="round">
+    <path d="M220 345 Q260 330 290 360 Q320 385 360 360"/><path d="M250 390 Q290 380 320 395"/><path d="M380 320 Q400 340 395 365"/>
+  </g>
+  <ellipse cx="330" cy="330" rx="34" ry="24" fill="#f7d2c8" stroke="#2f2a3a" stroke-width="6"/>
+  <!-- cling film -->
+  <path d="M62 245 Q300 225 538 245 L506 455 Q500 480 470 480 L130 480 Q100 480 94 455 Z" fill="#dff2ff" fill-opacity=".38" stroke="#2f2a3a" stroke-width="7" stroke-linejoin="round" opacity=".9"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" opacity=".95">
+    <path d="M110 300 L190 255" stroke-width="16"/><path d="M135 340 L215 290" stroke-width="9"/>
+    <path d="M410 455 L480 395" stroke-width="14"/><path d="M380 260 L430 252" stroke-width="10"/>
+  </g>
+  <!-- price label -->
+  <g transform="rotate(-8 430 440)">
+    <rect x="370" y="410" width="120" height="62" rx="10" fill="#ffd95e" stroke="#2f2a3a" stroke-width="8"/>
+    <path d="M390 432 H468 M390 452 H445" stroke="#2f2a3a" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</svg>
