@@ -106,9 +106,11 @@ Fondos, imágenes, gestos y acciones que vienen con la app. Salen de los videos 
 
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
-| Fondos | Súper (pasillo) | Cuarto de madrugada |
+| Fondos | Súper (pasillo), Sala de servidores | Cuarto de madrugada, Tier list |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
+| Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir | Multitud festejando |
+| Imágenes (Cosas) | Vela | |
 | Gestos | Harto, Desvelado | Silencio incómodo, Incrédulo, Sintiendo la canción |
 | Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música |
 | Adornos de los gestos | Ojeras | |

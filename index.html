@@ -9753,7 +9753,9 @@ oiView=function(){const cv=$('#oiCanvas'),w=cv.clientWidth,h=cv.clientHeight,pb=
 // Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya descargó.
 const REC_FONDOS=[
   {k:'super',label:'Súper (pasillo)',v:'recursos/fondos/super-vertical.webp',h:'recursos/fondos/super-horizontal.webp'},
-  {k:'madrugada',label:'Cuarto de madrugada',v:'recursos/fondos/madrugada-vertical.webp',h:'recursos/fondos/madrugada-horizontal.webp',pro:1}
+  {k:'madrugada',label:'Cuarto de madrugada',v:'recursos/fondos/madrugada-vertical.webp',h:'recursos/fondos/madrugada-horizontal.webp',pro:1},
+  {k:'servidores',label:'Sala de servidores',v:'recursos/fondos/servidores-vertical.webp',h:'recursos/fondos/servidores-horizontal.webp'},
+  {k:'tierlist',label:'Tier list',v:'recursos/fondos/tierlist-vertical.webp',h:'recursos/fondos/tierlist-horizontal.webp',pro:1}
 ];
 const REC_IMGS=[
   {k:'queso',label:'Queso en bolsa',src:'recursos/imagenes/queso-en-bolsa.webp',cat:'Súper'},
@@ -9762,7 +9764,11 @@ const REC_IMGS=[
   {k:'papitas',label:'Papitas',src:'recursos/imagenes/papitas.webp',cat:'Súper'},
   {k:'sinBolsa',label:'¡Sin bolsa!',src:'recursos/imagenes/sin-bolsa.webp',cat:'Súper',pro:1},
   {k:'grabadoraOff',label:'Grabadora (apagada)',src:'recursos/imagenes/grabadora-apagada.webp',cat:'Música'},
-  {k:'grabadoraOn',label:'Grabadora (sonando)',src:'recursos/imagenes/grabadora-prendida.webp',cat:'Música'}
+  {k:'grabadoraOn',label:'Grabadora (sonando)',src:'recursos/imagenes/grabadora-prendida.webp',cat:'Música'},
+  {k:'linkPerfil',label:'Letrero «Link en mi perfil»',src:'recursos/imagenes/letrero-link-en-mi-perfil.webp',cat:'Redes'},
+  {k:'likeCompartir',label:'Like y compartir',src:'recursos/imagenes/like-y-compartir.webp',cat:'Redes'},
+  {k:'multitud',label:'Multitud festejando',src:'recursos/imagenes/multitud-festejando.webp',cat:'Redes',pro:1},
+  {k:'vela',label:'Vela',src:'recursos/imagenes/vela.webp',cat:'Cosas'}
 ];
 // gestos (EXPR) y acciones (ACTIONS) de la app que son de Pro; los demás son gratis
 const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio','sintiendo','balancearse']);
