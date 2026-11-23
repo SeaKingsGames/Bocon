@@ -19,7 +19,7 @@
   --ink:#e3ebee; --muted:#8c9ea8; --dim:#5d6e78;
   --blue:#4fb0e6; --blue-soft:#163246; --red:#ff5d50; --wave:#7db5d5;
   --sfx:#e6ad62; --sfx-soft:#33281a; --prop:#bfe3c9; --cam:#c3a3ff; --cam-soft:#2a2240; --pose:#ffcf8a; --txt:#9fdcf2;
-  --e-neutral:#cfd8dc; --e-feliz:#f6d365; --e-triste:#a3bdf3; --e-enojado:#f39a7c; --e-sorprendido:#7fd8c9; --e-guino:#f4a9c8; --e-picaro:#c6aaf2; --e-enamorado:#ff8fb3; --e-emocionado:#ffe27a; --e-asustado:#9fb4ff; --e-llorando:#7fc4f2; --e-confundido:#d7c2a0; --e-mareado:#b8e986; --e-dormido:#a8a4d8; --e-idea:#fff09a; --e-presumido:#9ad0c2; --e-harto:#9ab0c4; --e-incomodo:#b0c4d8; --e-incredulo:#8fe3d6; --e-desvelado:#8d86c9; --e-sintiendo:#c9a2f0; --e-serio:#9aa6b8; --e-aliviado:#9fe0b0;
+  --e-neutral:#cfd8dc; --e-feliz:#f6d365; --e-triste:#a3bdf3; --e-enojado:#f39a7c; --e-sorprendido:#7fd8c9; --e-guino:#f4a9c8; --e-picaro:#c6aaf2; --e-enamorado:#ff8fb3; --e-emocionado:#ffe27a; --e-asustado:#9fb4ff; --e-llorando:#7fc4f2; --e-confundido:#d7c2a0; --e-mareado:#b8e986; --e-dormido:#a8a4d8; --e-idea:#fff09a; --e-presumido:#9ad0c2; --e-harto:#9ab0c4; --e-incomodo:#b0c4d8; --e-incredulo:#8fe3d6; --e-desvelado:#8d86c9; --e-sintiendo:#c9a2f0; --e-serio:#9aa6b8; --e-aliviado:#9fe0b0; --e-malvado:#b48cf0; --e-inocente:#ffc6dd;
   --block-ink:#17222a; --shadow:rgba(0,0,0,.55); --stage-bg:#0a0f12;
   --font-display:'Bagel Fat One','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
   --font-body:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
@@ -1539,7 +1539,9 @@ const EXPR={
   desvelado:{label:'Desvelado',smile:-.1,lid:.5,fx:['ojeras'],base:'picaro'},
   sintiendo:{label:'Sintiendo la canción',smile:.25,blush:.35,ojos:'cerrados',fx:['notas']},
   serio:{label:'Serio (voz de papá)',smile:-.25,brow:.6,browY:.06,lid:.2,base:'enojado'},
-  aliviado:{label:'Aliviado',smile:.8,browY:-.1,blush:.5,happy:1,fx:['sudor'],base:'feliz'}
+  aliviado:{label:'Aliviado',smile:.8,browY:-.1,blush:.5,happy:1,fx:['sudor'],base:'feliz'},
+  malvado:{label:'Malvado (mirada que da miedo)',smile:.3,brow:1,browY:.1,lid:.4,pupil:.6,anger:.25,base:'enojado'},
+  inocente:{label:'Inocente (yo no fui)',smile:.3,brow:-.35,browY:-.2,eye:1.12,pupil:1.3,blush:.75,fx:['brillos']}
 };
 for(const k in EXPR) EXPR[k]=Object.assign({},EXPR_DEF,EXPR[k]);
 const EXPR_KEYS=Object.keys(EXPR);
@@ -4190,6 +4192,16 @@ Object.assign(ACC,{
       c.fillStyle='#f4f1ea';c.fillRect(-1.3,-1.6,2.6,3);c.fillStyle=col;for(let y=-1.6;y<1.4;y+=.17) c.fillRect(-1.3,y,2.6,.085);
       rr(c,-.03,-.24,.34,.15,.02);fill(c,'#f4f1ea');stroke(c,ACC_OUT,lw);accDigits(c,'1313',.01,-.205,.075,col,.018);
     }},
+  uniformeNaranja:{label:'Uniforme naranja',at:'torso',col:'#f0772b',clip:true,s:1,box:[-.5,-.42,.5,.5],sleeve:col=>col,
+    draw(c,col,lw){
+      c.fillStyle=col;c.fillRect(-1.3,-1.6,2.6,3);
+      // sombra en los costados para que se vea redondito
+      c.fillStyle='rgba(110,36,0,.16)';c.fillRect(-1.3,-1.6,.93,3);c.fillRect(.37,-1.6,.93,3);
+      c.beginPath();c.moveTo(-.2,-.64);c.lineTo(0,-.3);c.lineTo(.2,-.64);stroke(c,ACC_OUT,.06+lw*2);stroke(c,shade(col,-.28),.06);
+      c.beginPath();c.moveTo(0,-.3);c.lineTo(0,.7);stroke(c,shade(col,-.3),lw*.9);
+      rr(c,.09,-.2,.2,.17,.025);fill(c,shade(col,-.07));stroke(c,ACC_OUT,lw*.8);c.beginPath();c.moveTo(.09,-.14);c.lineTo(.29,-.14);stroke(c,ACC_OUT,lw*.7);
+      rr(c,-.35,-.21,.3,.13,.02);fill(c,'#f4f1ea');stroke(c,ACC_OUT,lw);accDigits(c,'7031',-.31,-.18,.07,'#1d1a20',.016);
+    }},
   comandante:{label:'Uniforme de comandante',at:'torso',col:'#3f5a3a',clip:true,s:1,box:[-.5,-.42,.5,.28],sleeve:col=>col,
     draw(c,col,lw){
       c.fillStyle=col;c.fillRect(-1.3,-1.6,2.6,1.88);c.beginPath();c.moveTo(-1.3,.28);c.lineTo(1.3,.28);stroke(c,shade(col,-.45),lw*1.4);
@@ -4419,7 +4431,9 @@ const ACTIONS={
   reganar:{label:'Regañar (dedo)',dur:2,loop:[.25,.61],front:'',thumb:.25,
     keys:[{t:0},{t:.25,B:{a:[128,58]},head:-3,lean:-2,e:'out'},{t:.43,B:{a:[126,36]},head:-1,lean:-2},{t:.61,B:{a:[128,58]},head:-3,lean:-2}]},
   secarse:{label:'Secarse la frente',dur:1.6,front:'B',thumb:.55,
-    keys:[{t:0},{t:.3,B:[.32,-.8],head:-4,gaze:[0,-.3],e:'out'},{t:.7,B:[-.24,-.82],head:5,gaze:[0,-.3]},{t:.85,B:[-.34,-.72],head:5},{t:1.6}]}
+    keys:[{t:0},{t:.3,B:[.32,-.8],head:-4,gaze:[0,-.3],e:'out'},{t:.7,B:[-.24,-.82],head:5,gaze:[0,-.3]},{t:.85,B:[-.34,-.72],head:5},{t:1.6}]},
+  persignarse:{label:'Persignarse',dur:2.6,front:'B',thumb:.62,
+    keys:[{t:0},{t:.3,B:[-.28,-1],head:-4,gaze:[0,-.3],e:'out'},{t:.62,B:[-.4,-.04],head:2},{t:.95,B:[-.92,-.24],head:-4},{t:1.28,B:[-.06,-.3],head:4},{t:1.62,B:[-.38,-.56],head:-2,gaze:[0,.2]},{t:1.9,B:[-.38,-.56],head:-2},{t:2.6}]}
 };
 const ACT_KEYS=Object.keys(ACTIONS);
 let MYACT=[];// acciones creadas por ti (se guardan con la biblioteca)
@@ -8617,11 +8631,20 @@ const QS=[
   {k:'toctoc',n:'Toc toc (puerta)',g:'Tienda y casa',d:.75,f(b,r){const lp=qsBiq('lp');for(const st of [0,.17,.34]){const i0=Math.round(st*QS_SR),n=Math.round(.16*QS_SR);for(let j=0;j<n&&i0+j<b.length;j++){const t=j/QS_SR;b[i0+j]+=(Math.sin(TAU*160*t)*Math.exp(-t*34)+.5*Math.sin(TAU*410*t)*Math.exp(-t*55)+.7*lp(r(),900,.7)*Math.exp(-t*110))*qsAtk(t,.001);}}}},
   {k:'tictac',n:'Tic tac',g:'Tienda y casa',d:2,f(b,r){[0,.5,1,1.5].forEach((st,k)=>{const f=k%2?2200:3000,i0=Math.round(st*QS_SR),n=Math.round(.05*QS_SR);for(let j=0;j<n&&i0+j<b.length;j++){const t=j/QS_SR;b[i0+j]+=Math.sin(TAU*f*t)*Math.exp(-t*170)+r()*.4*Math.exp(-t*900);}});}},
   {k:'clic',n:'Clic (botón)',g:'Tienda y casa',d:.14,f(b,r){const hp=qsBiq('hp');for(const [st,amp,f] of [[0,1,3400],[.075,.6,2600]]){const i0=Math.round(st*QS_SR),n=Math.round(.045*QS_SR);for(let j=0;j<n&&i0+j<b.length;j++){const t=j/QS_SR;b[i0+j]+=amp*(hp(r(),1800,.8)*Math.exp(-t*700)+.6*Math.sin(TAU*f*t)*Math.exp(-t*260));}}}},
-  {k:'ding',n:'Ding',g:'Tienda y casa',d:1.8,f(b){qsBell(b,0,1318.5,[1,2.01,2.76,4.07,5.4],[1,.45,.32,.18,.1],[2.2,3.5,4.5,6,8]);}}
+  {k:'ding',n:'Ding',g:'Tienda y casa',d:1.8,f(b){qsBell(b,0,1318.5,[1,2.01,2.76,4.07,5.4],[1,.45,.32,.18,.1],[2.2,3.5,4.5,6,8]);}},
+  {k:'goteo',n:'Gotera (plip)',g:'Escena',d:1,f(b,r){
+    // burbujita que sube de tono y su eco en un cuarto de concreto
+    const drop=(t0,f0,g)=>{const i0=Math.round(t0*QS_SR),hp=qsBiq('hp');let ph=0;for(let i=i0;i<b.length;i++){const t=(i-i0)/QS_SR;if(t>.14) break;const f=f0*(1+1.15*(1-Math.exp(-t*55)));ph+=TAU*f/QS_SR;b[i]+=(Math.sin(ph)*qsAtk(t,.0015)*Math.exp(-t*34)+hp(r(),3200,.7)*Math.exp(-t*700)*.35)*g;}};
+    drop(0,930,1);for(const [dt,g] of [[.085,.3],[.165,.19],[.26,.12],[.37,.07],[.5,.04]]) drop(dt,930,g);}},
+  {k:'reja',n:'Reja (barrotes)',g:'Escena',d:1.8,f(b,r){
+    // golpe seco de la puerta y los barrotes que se quedan vibrando
+    const lp=qsBiq('lp');for(let i=0;i<b.length;i++){const t=i/QS_SR;b[i]+=Math.sin(TAU*62*t)*Math.exp(-t*16)*qsAtk(t,.002)*.9+lp(r(),900,.7)*Math.exp(-t*28)*.9;}
+    qsBell(b,0,317,[1,2.37,3.91,5.6,7.3],[1,.7,.5,.35,.2],[3,4.5,6,8,11],.55);qsBell(b,.004,421,[1,2.21,3.63,5.1],[1,.6,.45,.25],[3.5,5,7,9],.4);
+    for(const [st,g] of [[.09,.5],[.16,.35],[.22,.25],[.27,.15]]){const bp=qsBiq('bp'),j0=Math.round(st*QS_SR),n=Math.round(.06*QS_SR);for(let j=0;j<n&&j0+j<b.length;j++){const t=j/QS_SR;b[j0+j]+=(bp(r(),2400,4)*1.5*Math.exp(-t*70)+Math.sin(TAU*475*t)*Math.exp(-t*40)*.5)*g;}}}}
 ];
 const QS_GROUPS=['Caricatura','Escena','Tienda y casa'];
 function qsMake(k){
-  if(QS_CACHE[k]) return QS_CACHE[k];const q=QS.find(x=>x.k===k);if(!q) return null;
+  if(QS_CACHE[k]) return QS_CACHE[k];const q=QS.find(x=>x.k===k);if(!q||!q.f) return null;
   const b=new Float32Array(Math.ceil(q.d*QS_SR));q.f(b,qsRng(k.length*97+k.charCodeAt(0)));
   let m=0;for(let i=0;i<b.length;i++){if(!isFinite(b[i])) b[i]=0;const a=Math.abs(b[i]);if(a>m) m=a;}
   // mismo volumen a la oreja: los que suenan parejo (un silbato, un zumbido) se bajan un poco
@@ -8631,6 +8654,15 @@ function qsMake(k){
 }
 // queda registrado con un id fijo: si lo pones varias veces, el proyecto lo guarda una sola vez
 function qsEnsure(k){const id='qs_'+k;if(S.audio[id]) return id;const q=QS.find(x=>x.k===k),d=qsMake(k);if(!d) return null;regAudio(id,{name:q.n,kind:'pcm',pcm:d,sr:QS_SR,buffer:pcmBuffer(d,QS_SR)});return id;}
+// los grabados (q.src) se bajan la primera vez y quedan guardados dentro del proyecto
+const QS_LOADING={};
+function qsLoad(k){
+  const q=QS.find(x=>x.k===k);if(!q) return Promise.resolve(null);if(!q.src) return Promise.resolve(qsEnsure(k));
+  const id='qs_'+k;if(S.audio[id]) return Promise.resolve(id);
+  return QS_LOADING[k]||(QS_LOADING[k]=fetch(q.src).then(r=>{if(!r.ok) throw new Error('http');return r.arrayBuffer();})
+    .then(async bytes=>{const buffer=await decode(bytes.slice(0));regAudio(id,{name:q.n,kind:'file',bytes,buffer});return id;})
+    .catch(()=>{toast('No pude bajar ese sonido; revisa tu internet');return null;}).finally(()=>{delete QS_LOADING[k];}));
+}
 function qsPlace(aid){
   const a=S.audio[aid];if(!a) return;if(playing) pause();const sc=cur(),t=S.t,c=addSfxClip(sc,null,aid,t),tr=sc.tracks.find(x=>x.clips.includes(c));
   S.sel={kind:'sfx',id:c.id,owner:tr.id};refreshAll();save();closeModal();
@@ -8652,11 +8684,12 @@ function openQuickSfx(){
       if(e.target.closest('[data-qsup]')){const fi=$('#fileQs');fi.value='';fi.click();return;}
       if(e.target.closest('[data-qsfile]')){closeModal();pickAudio('sfx',null);return;}
       if(del){MYSFX=MYSFX.filter(f=>f.id!==del.dataset.qsdel);saveLib();openQuickSfx();return;}
-      if(add){const aid=qsAid(add.dataset.qsadd);if(aid) qsPlace(aid);return;}
-      if(pl){const aid=qsAid(pl.dataset.qsplay);if(aid){previewAudio(aid);c.querySelectorAll('.qs.on').forEach(x=>x.classList.remove('on'));pl.classList.add('on');setTimeout(()=>pl.classList.remove('on'),Math.min(3000,S.audio[aid].dur*1000));}}
+      if(add){qsAidLoad(add.dataset.qsadd).then(aid=>{if(aid) qsPlace(aid);});return;}
+      if(pl){pl.classList.add('on');qsAidLoad(pl.dataset.qsplay).then(aid=>{if(!aid||!c.isConnected){pl.classList.remove('on');return;}previewAudio(aid);c.querySelectorAll('.qs.on').forEach(x=>{if(x!==pl) x.classList.remove('on');});setTimeout(()=>pl.classList.remove('on'),Math.min(3000,S.audio[aid].dur*1000));});}
     });}});
 }
 const qsAid=v=>v.startsWith('qs:')?qsEnsure(v.slice(3)):v.startsWith('my:')?v.slice(3):null;
+const qsAidLoad=v=>v.startsWith('qs:')?qsLoad(v.slice(3)):Promise.resolve(qsAid(v));
 function addMySfx(aid,name){
   if(!S.audio[aid]) return false;if(MYSFX.some(f=>f.aid===aid)){toast('Ya está en tus sonidos rápidos');return false;}
   MYSFX.push({id:'f'+uid(),aid,name:String(name||S.audio[aid].name||'Sonido').replace(/\.[a-z0-9]+$/i,'').slice(0,28)});saveLib();return true;
@@ -8677,7 +8710,7 @@ const isPro=()=>PLAN.mode!=='free';
 const LEGAL={terminos:'https://www.seakingsstudios.com/terminos-bocon',privacidad:'https://www.seakingsstudios.com/privacidad-bocon'};
 const legalLinks=txt=>`<p class="note legal">${txt} <a href="${LEGAL.terminos}" target="_blank" rel="noopener">términos</a> y el <a href="${LEGAL.privacidad}" target="_blank" rel="noopener">aviso de privacidad</a>.</p>`;
 // ----- lo que es de Pro (solo cuenta cuando ya hay cuentas: sin configurar, todo abierto) -----
-const ACC_PRO=new Set(['turbante','gorraOficial','gorroPreso','sombreroPirata','gorroChef','sombreroMago','monoculo','parche','lentesAbuelo','barba','cicatriz','curita','alasAngel','alasMurcielago','collar','cadena','paliacate','preso','comandante','chaleco','tunica','delantal','saco','lampara','baston','tridente','catalejo','cuchara','brazaletes','arpa','pergamino','grillete','babuchas','pantuflas']);
+const ACC_PRO=new Set(['turbante','gorraOficial','gorroPreso','sombreroPirata','gorroChef','sombreroMago','monoculo','parche','lentesAbuelo','barba','cicatriz','curita','alasAngel','alasMurcielago','collar','cadena','paliacate','preso','comandante','chaleco','tunica','delantal','saco','lampara','baston','tridente','catalejo','cuchara','brazaletes','arpa','pergamino','grillete','babuchas','pantuflas','uniformeNaranja']);
 const FREE_CHARS=2,TTS_FREE=200;
 // ¿cabe otro personaje en la escena? (las bocas sobre fotos no cuentan)
 function charRoom(){if(isPro()) return true;if(cur().chars.filter(c=>!isBoca(c)).length<FREE_CHARS) return true;openPro('Tener más de '+FREE_CHARS+' personajes en la escena','Si no, quita uno de la escena para poner otro.');return false;}
@@ -9461,6 +9494,29 @@ QS.push(
   {k:'suspenso',n:'Suspenso',g:'Memes',d:3,f(b,r){let p1=0,p2=0;const lp=qsBiq('lp');for(let i=0;i<b.length;i++){const t=i/QS_SR,u=t/3;p1+=TAU*55/QS_SR;p2+=TAU*(880+440*u)*(1+.01*Math.sin(TAU*6*t))/QS_SR;const tr=.5+.5*Math.sin(TAU*(10+8*u)*t);
     b[i]=(Math.sin(p1)*.6+lp(r(),200,.7)*.4)*Math.min(1,t/.4)*Math.min(1,(3-t)/.3)+(Math.sin(p2)*.25*tr*u)*Math.min(1,(3-t)/.2);}}}
 );
+// ----- audios grabados (recursos/sonidos): se bajan la primera vez que los usas -----
+QS_GROUPS.push('Audios virales');
+QS.push(
+  {k:'vineBoom',n:'Vine boom',g:'Audios virales',d:1.2,src:'recursos/sonidos/vine-boom.mp3'},
+  {k:'impostor',n:'Among Us: impostor',g:'Audios virales',d:4.1,src:'recursos/sonidos/among-us-impostor.mp3'},
+  {k:'rizz',n:'Rizz',g:'Audios virales',d:1.6,src:'recursos/sonidos/rizz.mp3'},
+  {k:'ohYeah',n:'Oh yeah',g:'Audios virales',d:6.4,src:'recursos/sonidos/oh-yeah.mp3'},
+  {k:'nooo',n:'¡Nooo!',g:'Audios virales',d:3.6,src:'recursos/sonidos/nooo.mp3'},
+  {k:'gatoRiendo',n:'Gato riendo',g:'Audios virales',d:3.2,src:'recursos/sonidos/gato-riendo.mp3'},
+  {k:'miau',n:'M-E-O-W',g:'Audios virales',d:1.3,src:'recursos/sonidos/miau.mp3'},
+  {k:'pollo',n:'Pollo gritando',g:'Audios virales',d:5.4,src:'recursos/sonidos/pollo-gritando.mp3'},
+  {k:'sorpresa',n:'Sorpresa',g:'Audios virales',d:0.8,src:'recursos/sonidos/sorpresa.mp3'},
+  {k:'ideaBrillante',n:'Idea brillante',g:'Audios virales',d:1.2,src:'recursos/sonidos/idea-brillante.mp3'},
+  {k:'homero',n:'Homero quejándose',g:'Audios virales',d:9.6,src:'recursos/sonidos/homero.mp3'},
+  {k:'peroQue',n:'«¿Pero esto qué es?»',g:'Audios virales',d:3.4,src:'recursos/sonidos/pero-esto-que-es.mp3'},
+  {k:'queDificil',n:'«Qué difícil me la pusiste, diablo»',g:'Audios virales',d:4.4,src:'recursos/sonidos/que-dificil-diablo.mp3'},
+  {k:'salir26',n:'«Me salí de mi casa a los 26»',g:'Audios virales',d:19.6,src:'recursos/sonidos/me-sali-a-los-26.mp3'},
+  {k:'povDormir',n:'POV: yéndome a dormir',g:'Audios virales',d:19.4,src:'recursos/sonidos/pov-a-dormir.mp3'},
+  {k:'everest',n:'«El monte Everest…» (canción)',g:'Audios virales',d:21.9,src:'recursos/sonidos/monte-everest.mp3'},
+  {k:'push',n:'Push push push',g:'Audios virales',d:21.1,src:'recursos/sonidos/push-push.mp3'},
+  {k:'teclado',n:'Teclado de compu',g:'Tienda y casa',d:6.7,src:'recursos/sonidos/teclado.mp3'},
+  {k:'pasos',n:'Pasos corriendo',g:'Caricatura',d:2.6,src:'recursos/sonidos/pasos-corriendo.mp3'}
+);
 // ----- recetas -----
 const MEMES={
   bum:{label:'¡Bum!',d:'Golpe de zoom, temblor y destello',dur:1.4,sound:'boom',cam:'golpe',shake:1,expr:'sorprendido',fx:[['destello',.35]]},
@@ -9504,7 +9560,7 @@ function applyMeme(key){
   const ctr=ch?objCenter(ch,t):{x:.5,y:.45};
   for(const [fx,d,extra] of R.fx||[]){if(!FX[fx]) continue;const F=FX[fx],p=newProp('fx',Object.assign({fx,name:F.label,t0:t,t1:snap(t+Math.max(.25,d||dur)),layer:'frente',ent:F.screen?'corte':'fade'},F.center?{x:ctr.x,y:ctr.y}:{},extra||{}));sc.props.push(p);}
   if(R.text&&R.text[0]){const P=txtPreset(R.text[1])||TEXT_PRESETS.meme,p=newProp('texto',Object.assign({},P,{name:'Texto',text:R.text[0],x:zone?clamp(zone.x,.25,.75):.5,y:zone?clamp(Math.max(.5/zone.z,Math.min(1-.5/zone.z,zone.y))-.5/zone.z+.1,.08,.5):.16,scale:(P.scale||1)/(zone?Math.sqrt(zone.z):1),t0:t,t1:snap(t+dur),wrap:9,preset:R.text[1],ent:'pop'}));delete p.label;sc.props.push(p);}
-  if(R.sound){let aid=null;if(R.sound.startsWith('my:')){aid=R.sound.slice(3);if(!S.audio[aid]) aid=null;}else aid=qsEnsure(R.sound);if(aid) addSfxClip(sc,null,aid,t);}
+  if(R.sound){let aid=null;if(R.sound.startsWith('my:')){aid=R.sound.slice(3);if(!S.audio[aid]) aid=null;}else{aid=qsEnsure(R.sound);if(!aid) qsLoad(R.sound).then(a=>{if(a&&S.scenes.includes(sc)){addSfxClip(sc,null,a,t);refreshAll();save();}});}if(aid) addSfxClip(sc,null,aid,t);}
   if(ch){S.selObj=ch.id;}S.sel=null;refreshAll();save();
   toast(`${R.label||'Momento'} en ${tc(t).join(':')}`,{label:'Deshacer',run:undo});
 }
@@ -9544,7 +9600,7 @@ function openMemeBuilder(id){
     <p class="note">Los efectos de pantalla (destello, impacto) duran poquito; los demás, todo el momento.</p>`;
   openModal({title:it?'Editar mi momento':'Crear mi momento',wide:true,body,
     actions:[...(it?[{label:'Borrar',cls:'danger',run:()=>{MYMEME=MYMEME.filter(x=>x.id!==it.id);saveLib();toast('Momento borrado');}}]:[]),{label:'Cancelar'},{label:'Guardar',run:()=>mbSave(it,false)},{label:'Guardar y poner',cls:'primary',run:()=>mbSave(it,true)}],
-    onOpen:c=>{$('#mmPlay').onclick=()=>{const v=$('#mmSound').value;if(!v) return;const aid=v.startsWith('my:')?v.slice(3):qsEnsure(v),a=S.audio[aid];if(!a) return;const x=ac();if(x.state!=='running') x.resume();const s=x.createBufferSource();s.buffer=a.buffer;s.connect(x.destination);s.start();};}});
+    onOpen:c=>{$('#mmPlay').onclick=async()=>{const v=$('#mmSound').value;if(!v) return;const aid=v.startsWith('my:')?v.slice(3):await qsLoad(v),a=S.audio[aid];if(!a) return;const x=ac();if(x.state!=='running') x.resume();const s=x.createBufferSource();s.buffer=a.buffer;s.connect(x.destination);s.start();};}});
 }
 function mbSave(it,put){
   const v=id=>$('#'+id).value,dur=clamp(parseFloat(String(v('mmDur')).replace(',','.'))||2,.5,8),short=k=>['destello','impacto'].includes(k)?.4:dur;
@@ -9766,7 +9822,8 @@ const REC_FONDOS=[
   {k:'sala',label:'Sala de noche',v:'recursos/fondos/sala-vertical.webp',h:'recursos/fondos/sala-horizontal.webp'},
   {k:'recamara',label:'Recámara de noche',v:'recursos/fondos/recamara-vertical.webp',h:'recursos/fondos/recamara-horizontal.webp'},
   {k:'puerta',label:'Puerta de la recámara',v:'recursos/fondos/puerta-vertical.webp',h:'recursos/fondos/puerta-horizontal.webp',pro:1},
-  {k:'salaDia',label:'Sala de día',v:'recursos/fondos/sala-dia-vertical.webp',h:'recursos/fondos/sala-dia-horizontal.webp'}
+  {k:'salaDia',label:'Sala de día',v:'recursos/fondos/sala-dia-vertical.webp',h:'recursos/fondos/sala-dia-horizontal.webp'},
+  {k:'celda',label:'Celda de cárcel',v:'recursos/fondos/celda-vertical.webp',h:'recursos/fondos/celda-horizontal.webp'}
 ];
 const REC_IMGS=[
   {k:'queso',label:'Queso en bolsa',src:'recursos/imagenes/queso-en-bolsa.webp',cat:'Súper'},
@@ -9785,10 +9842,12 @@ const REC_IMGS=[
   {k:'carrito',label:'Carrito de juguete',src:'recursos/imagenes/carrito.webp',cat:'Juguetes'},
   {k:'muneca',label:'Muñeca',src:'recursos/imagenes/muneca.webp',cat:'Juguetes',pro:1},
   {k:'bloques',label:'Bloques ABC',src:'recursos/imagenes/bloques.webp',cat:'Juguetes',pro:1},
-  {k:'fantasmaSenora',label:'Fantasma: señora de vestido azul',src:'recursos/imagenes/fantasma-senora.webp',cat:'Sustos',pro:1}
+  {k:'fantasmaSenora',label:'Fantasma: señora de vestido azul',src:'recursos/imagenes/fantasma-senora.webp',cat:'Sustos',pro:1},
+  {k:'charquito',label:'Charquito de agua',src:'recursos/imagenes/charquito.webp',cat:'Cárcel',layer:'atras'},
+  {k:'gota',label:'Gota de agua',src:'recursos/imagenes/gota.webp',cat:'Cárcel'}
 ];
 // gestos (EXPR) y acciones (ACTIONS) de la app que son de Pro; los demás son gratis
-const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio','sintiendo','balancearse','reganar','secarse']);
+const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio','sintiendo','balancearse','reganar','secarse','inocente','persignarse']);
 const PRO_STAR='<i class="pro-tag" title="Bocón Pro">✦</i>';
 const recTag=k=>!isPro()&&REC_PRO.has(k)?PRO_STAR:'';
 const recItemTag=it=>it.pro&&!isPro()?PRO_STAR:'';

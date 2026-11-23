@@ -98,15 +98,17 @@ Los precios se cambian aquí sin tocar código. Quien ya está suscrito conserva
 
 ## Recursos de Bocón
 
-Fondos, imágenes, gestos y acciones que vienen con la app. Salen de los videos que se van haciendo con Bocón.
+Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen de los videos que se van haciendo con Bocón.
 
 - **Fondos:** Escena → Fondo → *Fondos de Bocón…* (también en el menú Agregar). Cada fondo trae versión vertical y horizontal y se cambia sola si cambias el formato del video.
 - **Imágenes:** *+ Imagen* abre una ventana para subir la tuya o usar una de Bocón.
 - **Gestos y acciones:** salen junto a los demás en el panel del personaje.
+- **Ropa:** en *Editar personaje → Ropa*, con las demás.
+- **Sonidos:** en *Sonidos rápidos*. Los de *Audios virales* (y el teclado y los pasos) son archivos: se bajan la primera vez que los tocas y quedan guardados dentro del proyecto.
 
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
-| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día | Cuarto de madrugada, Tier list, Puerta de la recámara |
+| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel | Cuarto de madrugada, Tier list, Puerta de la recámara |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir | Multitud festejando |
@@ -114,16 +116,21 @@ Fondos, imágenes, gestos y acciones que vienen con la app. Salen de los videos 
 | Imágenes (Casa) | | Cama: cabecera, Cama: cobija |
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Imágenes (Sustos) | | Fantasma: señora de vestido azul |
-| Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado | Silencio incómodo, Incrédulo, Sintiendo la canción |
-| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo), Secarse la frente |
+| Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
+| Ropa | | Uniforme naranja |
+| Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo) | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui) |
+| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo), Secarse la frente, Persignarse |
 | Adornos de los gestos | Ojeras | |
-| Sonidos rápidos | Clic (botón) | |
+| Sonidos rápidos | Clic (botón), Gotera (plip), Reja (barrotes) | |
+| Sonidos (archivos) | Audios virales: Vine boom, Among Us: impostor, Rizz, Oh yeah, ¡Nooo!, Gato riendo, M-E-O-W, Pollo gritando, Sorpresa, Idea brillante, Homero quejándose, «¿Pero esto qué es?», «Qué difícil me la pusiste, diablo», «Me salí de mi casa a los 26», POV: yéndome a dormir, «El monte Everest…», Push push push. Además: Teclado de compu, Pasos corriendo | |
+
+Para la gotera de la celda: pon el *Charquito* en el piso y una *Gota* que baje del tubo hasta el charquito con un movimiento *Acelerando* de medio segundo; al llegar, el sonido *Gotera (plip)*.
 
 Para meter personajes a la cama: pon la *Cama: cabecera* (se va sola detrás de los personajes), luego los personajes con la cabeza sobre las almohadas y al final la *Cama: cobija*, que los tapa hasta el cuello.
 
 Para agregar uno nuevo:
 1. Pon el archivo en `recursos/fondos/` o `recursos/imagenes/` (WebP; los fondos en 1080×1920 y 1920×1080) y su original editable en `recursos-fuentes/`.
-2. Agrega su renglón en `REC_FONDOS` o `REC_IMGS` en `index.html` (`pro:1` si es de Pro; `layer:'atras'` si la imagen va detrás de los personajes). Los gestos van en `EXPR` y las acciones en `ACTIONS`; si son de Pro, agrega su nombre a `REC_PRO`. Los adornos de los gestos van en `EMOTES` (y se dibujan en `drawEmotes`) y los sonidos rápidos en `QS` (se hacen con código, no son archivos).
+2. Agrega su renglón en `REC_FONDOS` o `REC_IMGS` en `index.html` (`pro:1` si es de Pro; `layer:'atras'` si la imagen va detrás de los personajes). Los gestos van en `EXPR` y las acciones en `ACTIONS`; si son de Pro, agrega su nombre a `REC_PRO`. Los adornos de los gestos van en `EMOTES` (y se dibujan en `drawEmotes`) y los sonidos rápidos en `QS`: los que se hacen con código llevan `f`; los grabados van en `recursos/sonidos/` (MP3, sin silencio al principio y al final, a −16 LUFS) y en `QS` llevan `src` y su duración `d`.
 3. Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya había descargado.
 
 Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que las tuyas), así que el proyecto se ve igual aunque después cambie el recurso.
@@ -138,4 +145,4 @@ Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que l
 - `vendor/supabase.js`: cuentas con Supabase (licencia MIT); solo se carga si activas Bocón Pro
 - `api/`: el servidor de cuentas y cobros (funciones de Vercel): `config`, `suscribir`, `estado`, `cancelar` y `mp-webhook`
 - `supabase/esquema.sql`: la tabla de suscripciones para Supabase
-- `recursos/`: fondos e imágenes que vienen con la app (se publican); `recursos-fuentes/`: sus originales en SVG para editarlos (no se publican)
+- `recursos/`: fondos, imágenes y sonidos que vienen con la app (se publican); `recursos-fuentes/`: sus originales en SVG para editarlos (no se publican)
