@@ -106,15 +106,16 @@ Fondos, imágenes, gestos y acciones que vienen con la app. Salen de los videos 
 
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
-| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche | Cuarto de madrugada, Tier list, Puerta de la recámara |
+| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día | Cuarto de madrugada, Tier list, Puerta de la recámara |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir | Multitud festejando |
 | Imágenes (Cosas) | Vela | |
 | Imágenes (Casa) | | Cama: cabecera, Cama: cobija |
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
-| Gestos | Harto, Desvelado, Serio (voz de papá) | Silencio incómodo, Incrédulo, Sintiendo la canción |
-| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo) |
+| Imágenes (Sustos) | | Fantasma: señora de vestido azul |
+| Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado | Silencio incómodo, Incrédulo, Sintiendo la canción |
+| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo), Secarse la frente |
 | Adornos de los gestos | Ojeras | |
 | Sonidos rápidos | Clic (botón) | |
 

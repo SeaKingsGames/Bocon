@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="700" viewBox="0 0 560 700">
+  <defs>
+    <radialGradient id="aura" cx=".5" cy=".45" r=".55"><stop offset="0" stop-color="#c9f2ff" stop-opacity=".55"/><stop offset="1" stop-color="#c9f2ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="vest" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d8fe0"/><stop offset=".75" stop-color="#7fb0f0"/><stop offset="1" stop-color="#b9dcff" stop-opacity=".35"/></linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef8ff"/><stop offset="1" stop-color="#d4ecfb"/></linearGradient>
+  </defs>
+  <!-- brazos de "buuu" -->
+  <path d="M170 330 Q90 300 70 230" fill="none" stroke="#2b2438" stroke-width="44" stroke-linecap="round"/>
+  <path d="M170 330 Q90 300 70 230" fill="none" stroke="url(#skin)" stroke-width="28" stroke-linecap="round"/>
+  <path d="M390 330 Q470 300 490 230" fill="none" stroke="#2b2438" stroke-width="44" stroke-linecap="round"/>
+  <path d="M390 330 Q470 300 490 230" fill="none" stroke="url(#skin)" stroke-width="28" stroke-linecap="round"/>
+  <!-- vestido que termina en colita de fantasma -->
+  <path d="M190 300 Q280 270 370 300 Q420 420 430 560 Q395 600 370 570 Q345 640 310 600 Q280 660 250 600 Q215 640 190 570 Q165 600 130 560 Q140 420 190 300 Z" fill="url(#vest)" stroke="#2b2438" stroke-width="10" stroke-linejoin="round" opacity=".95"/>
+  <path d="M215 330 Q280 312 345 330 L330 365 Q280 350 230 365 Z" fill="#ffffff" stroke="#2b2438" stroke-width="6" opacity=".9"/>
+  <g fill="#ffffff" opacity=".8"><circle cx="230" cy="420" r="10"/><circle cx="300" cy="455" r="10"/><circle cx="350" cy="410" r="9"/><circle cx="255" cy="510" r="9"/><circle cx="330" cy="520" r="9"/></g>
+  <!-- cabeza -->
+  <circle cx="280" cy="200" r="112" fill="url(#skin)" stroke="#2b2438" stroke-width="10"/>
+  <!-- chongo y pelo gris -->
+  <circle cx="280" cy="78" r="46" fill="#dfe6ee" stroke="#2b2438" stroke-width="9"/>
+  <path d="M170 190 Q170 95 280 92 Q390 95 390 190 Q360 140 280 138 Q200 140 170 190 Z" fill="#dfe6ee" stroke="#2b2438" stroke-width="9" stroke-linejoin="round"/>
+  <!-- lentes -->
+  <circle cx="240" cy="205" r="30" fill="#ffffff" fill-opacity=".35" stroke="#2b2438" stroke-width="8"/>
+  <circle cx="320" cy="205" r="30" fill="#ffffff" fill-opacity=".35" stroke="#2b2438" stroke-width="8"/>
+  <path d="M270 203 H290" stroke="#2b2438" stroke-width="7"/>
+  <circle cx="240" cy="207" r="11" fill="#2b2438"/><circle cx="320" cy="207" r="11" fill="#2b2438"/>
+  <circle cx="244" cy="202" r="4" fill="#fff"/><circle cx="324" cy="202" r="4" fill="#fff"/>
+  <!-- boca de "buuu" y chapitas -->
+  <ellipse cx="280" cy="262" rx="18" ry="22" fill="#4a3a5e" stroke="#2b2438" stroke-width="6"/>
+  <circle cx="215" cy="248" r="15" fill="#b9d7ff" opacity=".9"/><circle cx="345" cy="248" r="15" fill="#b9d7ff" opacity=".9"/>
+  <!-- brillos -->
+  <path d="M60 120 l10 -26 l10 26 l26 10 l-26 10 l-10 26 l-10 -26 l-26 -10 z" fill="#e9fbff" stroke="#2b2438" stroke-width="5" opacity=".9"/>
+  <path d="M470 90 l7 -18 l7 18 l18 7 l-18 7 l-7 18 l-7 -18 l-18 -7 z" fill="#e9fbff" stroke="#2b2438" stroke-width="4" opacity=".9"/>
+</svg>

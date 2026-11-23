@@ -19,7 +19,7 @@
   --ink:#e3ebee; --muted:#8c9ea8; --dim:#5d6e78;
   --blue:#4fb0e6; --blue-soft:#163246; --red:#ff5d50; --wave:#7db5d5;
   --sfx:#e6ad62; --sfx-soft:#33281a; --prop:#bfe3c9; --cam:#c3a3ff; --cam-soft:#2a2240; --pose:#ffcf8a; --txt:#9fdcf2;
-  --e-neutral:#cfd8dc; --e-feliz:#f6d365; --e-triste:#a3bdf3; --e-enojado:#f39a7c; --e-sorprendido:#7fd8c9; --e-guino:#f4a9c8; --e-picaro:#c6aaf2; --e-enamorado:#ff8fb3; --e-emocionado:#ffe27a; --e-asustado:#9fb4ff; --e-llorando:#7fc4f2; --e-confundido:#d7c2a0; --e-mareado:#b8e986; --e-dormido:#a8a4d8; --e-idea:#fff09a; --e-presumido:#9ad0c2; --e-harto:#9ab0c4; --e-incomodo:#b0c4d8; --e-incredulo:#8fe3d6; --e-desvelado:#8d86c9; --e-sintiendo:#c9a2f0; --e-serio:#9aa6b8;
+  --e-neutral:#cfd8dc; --e-feliz:#f6d365; --e-triste:#a3bdf3; --e-enojado:#f39a7c; --e-sorprendido:#7fd8c9; --e-guino:#f4a9c8; --e-picaro:#c6aaf2; --e-enamorado:#ff8fb3; --e-emocionado:#ffe27a; --e-asustado:#9fb4ff; --e-llorando:#7fc4f2; --e-confundido:#d7c2a0; --e-mareado:#b8e986; --e-dormido:#a8a4d8; --e-idea:#fff09a; --e-presumido:#9ad0c2; --e-harto:#9ab0c4; --e-incomodo:#b0c4d8; --e-incredulo:#8fe3d6; --e-desvelado:#8d86c9; --e-sintiendo:#c9a2f0; --e-serio:#9aa6b8; --e-aliviado:#9fe0b0;
   --block-ink:#17222a; --shadow:rgba(0,0,0,.55); --stage-bg:#0a0f12;
   --font-display:'Bagel Fat One','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
   --font-body:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
@@ -1538,7 +1538,8 @@ const EXPR={
   incredulo:{label:'Incrédulo',browY:-.45,eye:1.22,pupil:.62,blush:.2,open:.55,base:'sorprendido'},
   desvelado:{label:'Desvelado',smile:-.1,lid:.5,fx:['ojeras'],base:'picaro'},
   sintiendo:{label:'Sintiendo la canción',smile:.25,blush:.35,ojos:'cerrados',fx:['notas']},
-  serio:{label:'Serio (voz de papá)',smile:-.25,brow:.6,browY:.06,lid:.2,base:'enojado'}
+  serio:{label:'Serio (voz de papá)',smile:-.25,brow:.6,browY:.06,lid:.2,base:'enojado'},
+  aliviado:{label:'Aliviado',smile:.8,browY:-.1,blush:.5,happy:1,fx:['sudor'],base:'feliz'}
 };
 for(const k in EXPR) EXPR[k]=Object.assign({},EXPR_DEF,EXPR[k]);
 const EXPR_KEYS=Object.keys(EXPR);
@@ -4416,7 +4417,9 @@ const ACTIONS={
   balancearse:{label:'Balancearse con la música',dur:3.6,loop:[0,1.8],front:'',thumb:.45,
     keys:[{t:0,A:{a:[24,28]},B:{a:[30,36]},lean:-5,head:6},{t:.45,A:{a:[27,32]},B:{a:[27,32]},by:.05,sq:.03},{t:.9,A:{a:[30,36]},B:{a:[24,28]},lean:5,head:-6},{t:1.35,A:{a:[27,32]},B:{a:[27,32]},by:.05,sq:.03},{t:1.8,A:{a:[24,28]},B:{a:[30,36]},lean:-5,head:6}]},
   reganar:{label:'Regañar (dedo)',dur:2,loop:[.25,.61],front:'',thumb:.25,
-    keys:[{t:0},{t:.25,B:{a:[128,58]},head:-3,lean:-2,e:'out'},{t:.43,B:{a:[126,36]},head:-1,lean:-2},{t:.61,B:{a:[128,58]},head:-3,lean:-2}]}
+    keys:[{t:0},{t:.25,B:{a:[128,58]},head:-3,lean:-2,e:'out'},{t:.43,B:{a:[126,36]},head:-1,lean:-2},{t:.61,B:{a:[128,58]},head:-3,lean:-2}]},
+  secarse:{label:'Secarse la frente',dur:1.6,front:'B',thumb:.55,
+    keys:[{t:0},{t:.3,B:[.32,-.8],head:-4,gaze:[0,-.3],e:'out'},{t:.7,B:[-.24,-.82],head:5,gaze:[0,-.3]},{t:.85,B:[-.34,-.72],head:5},{t:1.6}]}
 };
 const ACT_KEYS=Object.keys(ACTIONS);
 let MYACT=[];// acciones creadas por ti (se guardan con la biblioteca)
@@ -9762,7 +9765,8 @@ const REC_FONDOS=[
   {k:'tierlist',label:'Tier list',v:'recursos/fondos/tierlist-vertical.webp',h:'recursos/fondos/tierlist-horizontal.webp',pro:1},
   {k:'sala',label:'Sala de noche',v:'recursos/fondos/sala-vertical.webp',h:'recursos/fondos/sala-horizontal.webp'},
   {k:'recamara',label:'Recámara de noche',v:'recursos/fondos/recamara-vertical.webp',h:'recursos/fondos/recamara-horizontal.webp'},
-  {k:'puerta',label:'Puerta de la recámara',v:'recursos/fondos/puerta-vertical.webp',h:'recursos/fondos/puerta-horizontal.webp',pro:1}
+  {k:'puerta',label:'Puerta de la recámara',v:'recursos/fondos/puerta-vertical.webp',h:'recursos/fondos/puerta-horizontal.webp',pro:1},
+  {k:'salaDia',label:'Sala de día',v:'recursos/fondos/sala-dia-vertical.webp',h:'recursos/fondos/sala-dia-horizontal.webp'}
 ];
 const REC_IMGS=[
   {k:'queso',label:'Queso en bolsa',src:'recursos/imagenes/queso-en-bolsa.webp',cat:'Súper'},
@@ -9780,10 +9784,11 @@ const REC_IMGS=[
   {k:'camaCobija',label:'Cama: cobija',src:'recursos/imagenes/cama-cobija.webp',cat:'Casa',pro:1},
   {k:'carrito',label:'Carrito de juguete',src:'recursos/imagenes/carrito.webp',cat:'Juguetes'},
   {k:'muneca',label:'Muñeca',src:'recursos/imagenes/muneca.webp',cat:'Juguetes',pro:1},
-  {k:'bloques',label:'Bloques ABC',src:'recursos/imagenes/bloques.webp',cat:'Juguetes',pro:1}
+  {k:'bloques',label:'Bloques ABC',src:'recursos/imagenes/bloques.webp',cat:'Juguetes',pro:1},
+  {k:'fantasmaSenora',label:'Fantasma: señora de vestido azul',src:'recursos/imagenes/fantasma-senora.webp',cat:'Sustos',pro:1}
 ];
 // gestos (EXPR) y acciones (ACTIONS) de la app que son de Pro; los demás son gratis
-const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio','sintiendo','balancearse','reganar']);
+const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio','sintiendo','balancearse','reganar','secarse']);
 const PRO_STAR='<i class="pro-tag" title="Bocón Pro">✦</i>';
 const recTag=k=>!isPro()&&REC_PRO.has(k)?PRO_STAR:'';
 const recItemTag=it=>it.pro&&!isPro()?PRO_STAR:'';
