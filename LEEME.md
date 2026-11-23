@@ -111,7 +111,7 @@ Fondos, imágenes, gestos y acciones que vienen con la app. Salen de los videos 
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir | Multitud festejando |
 | Imágenes (Cosas) | Vela | |
-| Imágenes (Casa) | Cama: cabecera, Cama: cobija | |
+| Imágenes (Casa) | | Cama: cabecera, Cama: cobija |
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Gestos | Harto, Desvelado, Serio (voz de papá) | Silencio incómodo, Incrédulo, Sintiendo la canción |
 | Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo) |
