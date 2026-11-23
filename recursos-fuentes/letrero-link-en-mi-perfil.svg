@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+<rect x="40" y="30" width="820" height="330" rx="48" fill="#ffd43b" stroke="#2f2a3a" stroke-width="14"/>
+<rect x="64" y="52" width="772" height="24" rx="12" fill="#fff3b0"/>
+<text x="450" y="185" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="128" fill="#2f2a3a" letter-spacing="2">LINK EN</text>
+<text x="450" y="320" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="128" fill="#2f2a3a" letter-spacing="2">MI PERFIL</text>
+<path d="M370 380 L530 380 L530 440 L600 440 L450 540 L300 440 L370 440 Z" fill="#ff6b9a" stroke="#2f2a3a" stroke-width="14" stroke-linejoin="round"/>
+</svg>
