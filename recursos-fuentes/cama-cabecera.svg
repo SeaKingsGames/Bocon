@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560">
+<rect x="40" y="70" width="50" height="470" rx="18" fill="#8a5a3c" stroke="#2b2438" stroke-width="10"/>
+<circle cx="65" cy="62" r="34" fill="#a06c48" stroke="#2b2438" stroke-width="10"/>
+<rect x="1010" y="70" width="50" height="470" rx="18" fill="#8a5a3c" stroke="#2b2438" stroke-width="10"/>
+<circle cx="1035" cy="62" r="34" fill="#a06c48" stroke="#2b2438" stroke-width="10"/>
+<path d="M88 540 V200 Q88 150 140 140 Q550 40 960 140 Q1012 150 1012 200 V540 Z" fill="#a06c48" stroke="#2b2438" stroke-width="10" stroke-linejoin="round"/>
+<path d="M140 520 V220 Q140 188 175 182 Q550 100 925 182 Q960 188 960 220 V520 Z" fill="#8a5a3c" stroke="#2b2438" stroke-width="6"/>
+<rect x="230" y="230" width="40" height="290" rx="12" fill="#7a4e33" opacity=".7"/>
+<rect x="365" y="230" width="40" height="290" rx="12" fill="#7a4e33" opacity=".7"/>
+<rect x="500" y="230" width="40" height="290" rx="12" fill="#7a4e33" opacity=".7"/>
+<rect x="635" y="230" width="40" height="290" rx="12" fill="#7a4e33" opacity=".7"/>
+<rect x="770" y="230" width="40" height="290" rx="12" fill="#7a4e33" opacity=".7"/>
+<rect x="110" y="370" width="215" height="140" rx="58" fill="#f7f3ea" stroke="#2b2438" stroke-width="9"/>
+<path d="M140 400 Q217 388 295 400" fill="none" stroke="#c9c3d6" stroke-width="7" stroke-linecap="round"/>
+<rect x="345" y="378" width="215" height="140" rx="58" fill="#eef3fb" stroke="#2b2438" stroke-width="9"/>
+<path d="M375 408 Q452 396 530 408" fill="none" stroke="#c9c3d6" stroke-width="7" stroke-linecap="round"/>
+<rect x="580" y="370" width="215" height="140" rx="58" fill="#f7f3ea" stroke="#2b2438" stroke-width="9"/>
+<path d="M610 400 Q687 388 765 400" fill="none" stroke="#c9c3d6" stroke-width="7" stroke-linecap="round"/>
+<rect x="815" y="378" width="215" height="140" rx="58" fill="#eef3fb" stroke="#2b2438" stroke-width="9"/>
+<path d="M845 408 Q922 396 1000 408" fill="none" stroke="#c9c3d6" stroke-width="7" stroke-linecap="round"/>
+</svg>

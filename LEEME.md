@@ -106,19 +106,23 @@ Fondos, imágenes, gestos y acciones que vienen con la app. Salen de los videos 
 
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
-| Fondos | Súper (pasillo), Sala de servidores | Cuarto de madrugada, Tier list |
+| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche | Cuarto de madrugada, Tier list, Puerta de la recámara |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir | Multitud festejando |
 | Imágenes (Cosas) | Vela | |
-| Gestos | Harto, Desvelado | Silencio incómodo, Incrédulo, Sintiendo la canción |
-| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música |
+| Imágenes (Casa) | | Cama: cabecera, Cama: cobija |
+| Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
+| Gestos | Harto, Desvelado, Serio (voz de papá) | Silencio incómodo, Incrédulo, Sintiendo la canción |
+| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo) |
 | Adornos de los gestos | Ojeras | |
 | Sonidos rápidos | Clic (botón) | |
 
+Para meter personajes a la cama: pon la *Cama: cabecera* (se va sola detrás de los personajes), luego los personajes con la cabeza sobre las almohadas y al final la *Cama: cobija*, que los tapa hasta el cuello.
+
 Para agregar uno nuevo:
 1. Pon el archivo en `recursos/fondos/` o `recursos/imagenes/` (WebP; los fondos en 1080×1920 y 1920×1080) y su original editable en `recursos-fuentes/`.
-2. Agrega su renglón en `REC_FONDOS` o `REC_IMGS` en `index.html` (`pro:1` si es de Pro). Los gestos van en `EXPR` y las acciones en `ACTIONS`; si son de Pro, agrega su nombre a `REC_PRO`. Los adornos de los gestos van en `EMOTES` (y se dibujan en `drawEmotes`) y los sonidos rápidos en `QS` (se hacen con código, no son archivos).
+2. Agrega su renglón en `REC_FONDOS` o `REC_IMGS` en `index.html` (`pro:1` si es de Pro; `layer:'atras'` si la imagen va detrás de los personajes). Los gestos van en `EXPR` y las acciones en `ACTIONS`; si son de Pro, agrega su nombre a `REC_PRO`. Los adornos de los gestos van en `EMOTES` (y se dibujan en `drawEmotes`) y los sonidos rápidos en `QS` (se hacen con código, no son archivos).
 3. Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya había descargado.
 
 Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que las tuyas), así que el proyecto se ve igual aunque después cambie el recurso.

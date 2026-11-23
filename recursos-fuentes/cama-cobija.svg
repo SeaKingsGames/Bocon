@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="620" viewBox="0 0 1160 620">
+<defs><pattern id="q" width="120" height="120" patternUnits="userSpaceOnUse"><rect width="120" height="120" fill="#4f7fd9"/><path d="M0 60 H120 M60 0 V120" stroke="#3f6cc2" stroke-width="6"/><circle cx="60" cy="60" r="12" fill="#ffd36b" stroke="#2b2438" stroke-width="4"/><circle cx="0" cy="0" r="9" fill="#ff9fbf"/><circle cx="120" cy="0" r="9" fill="#ff9fbf"/><circle cx="0" cy="120" r="9" fill="#ff9fbf"/><circle cx="120" cy="120" r="9" fill="#ff9fbf"/></pattern></defs>
+<rect x="30" y="430" width="1100" height="120" rx="22" fill="#a06c48" stroke="#2b2438" stroke-width="10"/>
+<rect x="30" y="380" width="50" height="230" rx="18" fill="#8a5a3c" stroke="#2b2438" stroke-width="10"/>
+<rect x="1080" y="380" width="50" height="230" rx="18" fill="#8a5a3c" stroke="#2b2438" stroke-width="10"/>
+<path d="M60 70 Q580 40 1100 70 L1110 470 Q1080 500 1040 480 Q980 510 920 482 Q860 512 800 484 Q740 514 680 486 Q620 516 560 488 Q500 518 440 490 Q380 520 320 492 Q260 522 200 494 Q140 524 90 490 Q55 480 50 470 Z" fill="url(#q)" stroke="#2b2438" stroke-width="10" stroke-linejoin="round"/>
+<path d="M52 60 Q580 26 1108 60 L1110 150 Q580 120 50 150 Z" fill="#f7f3ea" stroke="#2b2438" stroke-width="10" stroke-linejoin="round"/>
+<path d="M80 128 Q580 100 1080 128" fill="none" stroke="#d9d2e6" stroke-width="7"/>
+<path d="M300 170 Q320 300 290 450" fill="none" stroke="#2f5aab" stroke-width="9" stroke-linecap="round" opacity=".7"/>
+<path d="M580 170 Q600 300 570 450" fill="none" stroke="#2f5aab" stroke-width="9" stroke-linecap="round" opacity=".7"/>
+<path d="M860 170 Q880 300 850 450" fill="none" stroke="#2f5aab" stroke-width="9" stroke-linecap="round" opacity=".7"/>
+</svg>
