@@ -108,7 +108,7 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
-| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina | Cuarto de madrugada, Tier list, Puerta de la recámara |
+| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina, Casita (cuarto turquesa) | Cuarto de madrugada, Tier list, Puerta de la recámara |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir | Multitud festejando |
@@ -118,9 +118,11 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 | Imágenes (Sustos) | | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
 | Imágenes (Cocina) | Cartón de huevos, Cartón de huevos vacío | |
+| Imágenes (Redes) | Palomita (sí), Tache (no) | |
+| Imágenes (Cosas) | | Polilla (no hay nada) |
 | Ropa | Mandil de mamá | Uniforme naranja, Tubos para el pelo |
-| Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo) | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui), Apenado (¡qué bruto!) |
-| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño), ¡Se me olvidó! (manos a la cabeza) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo), Secarse la frente, Persignarse, ¡Qué bruto! (palmada en la frente) |
+| Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo), Carcajada (muerto de risa) | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui), Apenado (¡qué bruto!) |
+| Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño), ¡Se me olvidó! (manos a la cabeza), Reírse a carcajadas | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo), Secarse la frente, Persignarse, ¡Qué bruto! (palmada en la frente), Tirarse al piso (acostado) |
 | Adornos de los gestos | Ojeras | |
 | Sonidos rápidos | Clic (botón), Gotera (plip), Reja (barrotes), Palmada | |
 | Sonidos (archivos) | Audios virales: Vine boom, Among Us: impostor, Rizz, Oh yeah, ¡Nooo!, Gato riendo, M-E-O-W, Pollo gritando, Sorpresa, Idea brillante, Homero quejándose, «¿Pero esto qué es?», «Qué difícil me la pusiste, diablo», «Me salí de mi casa a los 26», POV: yéndome a dormir, «El monte Everest…», Push push push. Además: Teclado de compu, Pasos corriendo | |
