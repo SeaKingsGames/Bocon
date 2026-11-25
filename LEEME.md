@@ -108,18 +108,18 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
-| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina, Casita (cuarto turquesa), Calle de la colonia | Cuarto de madrugada, Tier list, Puerta de la recámara |
+| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina, Casita (cuarto turquesa), Calle de la colonia | Cuarto de madrugada, Tier list, Puerta de la recámara, Mictlán |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
-| Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir | Multitud festejando |
-| Imágenes (Cosas) | Vela | |
+| Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir, Palomita (sí), Tache (no) | Multitud festejando |
+| Imágenes (Cosas) | Vela, Control de videojuego | Polilla (no hay nada) |
+| Imágenes (Dibujos) | Garabato: pollo con ansiedad | |
+| Imágenes (Día de Muertos) | | Cempasúchil |
 | Imágenes (Casa) | | Cama: cabecera, Cama: cobija |
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Imágenes (Sustos) | | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
 | Imágenes (Cocina) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete | |
-| Imágenes (Redes) | Palomita (sí), Tache (no) | |
-| Imágenes (Cosas) | | Polilla (no hay nada) |
 | Ropa | Mandil de mamá | Uniforme naranja, Tubos para el pelo |
 | Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo), Carcajada (muerto de risa), Llorando de risa (XD), Aguantándose la risa | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui), Apenado (¡qué bruto!) |
 | Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño), ¡Se me olvidó! (manos a la cabeza), Reírse a carcajadas, Aguantarse la risa (mano en la boca) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo), Secarse la frente, Persignarse, ¡Qué bruto! (palmada en la frente), Tirarse al piso (acostado), Risa histérica (dándose en la pierna), Revolcarse de risa (en el piso) |
