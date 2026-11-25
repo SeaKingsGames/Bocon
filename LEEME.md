@@ -119,7 +119,7 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Imágenes (Sustos) | | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
-| Imágenes (Cocina) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete | |
+| Imágenes (Cocina) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete | 143 íconos de cocina: utensilios, ollas y sartenes, aparatos (batidoras, licuadoras, cafeteras, arrocera…), frutas, verduras, panes y comidas (PNG en `recursos/imagenes/cocina/`) |
 | Ropa | Mandil de mamá | Uniforme naranja, Tubos para el pelo |
 | Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo), Carcajada (muerto de risa), Llorando de risa (XD), Aguantándose la risa | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui), Apenado (¡qué bruto!) |
 | Acciones | Señalar arriba (der. e izq.), Presionar botón, Cabeceando (sueño), ¡Se me olvidó! (manos a la cabeza), Reírse a carcajadas, Aguantarse la risa (mano en la boca) | Explicar (una mano), Explicar (dos manos), ¿Es en serio?, Balancearse con la música, Regañar (dedo), Secarse la frente, Persignarse, ¡Qué bruto! (palmada en la frente), Tirarse al piso (acostado), Risa histérica (dándose en la pierna), Revolcarse de risa (en el piso) |
