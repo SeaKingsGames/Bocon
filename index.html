@@ -392,6 +392,15 @@ details.sec.hl>summary{color:var(--blue)}
 .mcard .mb{padding:4px 16px 14px;display:flex;flex-direction:column;gap:12px}
 .mcard footer{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.dib-fila{display:flex;gap:8px;margin-bottom:10px}
+.dib-fila input{flex:1;min-width:0}
+.dib-prev{position:relative;width:min(100%,46vh,340px);aspect-ratio:1/1;margin:0 auto 10px;border-radius:12px;display:grid;place-items:center;overflow:hidden;background-color:#1e5a48;
+  background-image:linear-gradient(rgba(255,255,255,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.15) 1px,transparent 1px);background-size:20% 20%;box-shadow:inset 0 0 0 1px var(--line)}
+.dib-prev img{width:80%;height:80%;object-fit:contain;filter:drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 4px 0 #fff) drop-shadow(0 -4px 0 #fff) drop-shadow(0 8px 8px rgba(0,0,0,.35))}
+.dib-prev p{margin:0;padding:18px;max-width:30ch;text-align:center;color:#e8f3ee;font-size:13px;line-height:1.45}
+.dib-prev.cargando p{animation:dibLate 1.2s ease-in-out infinite}
+@keyframes dibLate{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.dib-prev.cargando p{animation:none}}
 .pgrid .pick canvas{width:96px;height:64px}
 .pgrid .pick.sq canvas{width:64px;height:64px}
 .grid-pick .pick,.rec-grid .pick{position:relative}
@@ -8864,7 +8873,7 @@ function exProWanted(c){
   return null;
 }
 // ----- ventanas: Pro y cuenta -----
-const PRO_PERKS=[['Sin marca de agua','en tus videos, GIF y en vivo'],['1080p Full HD','para YouTube y TikTok'],['Sin fondo','GIF transparente y cuadros PNG para CapCut, Premiere o DaVinci'],['Personajes sin límite','todos los que quieras en la misma escena (gratis: '+FREE_CHARS+')'],['Ropa y accesorios ✦','turbantes, uniformes, alas, gorros, objetos para la mano y todo lo nuevo que vaya saliendo'],['Fondos, imágenes, gestos y acciones ✦','los recursos de Bocón marcados con ✦ y los que vayan saliendo'],['Texto a voz sin límite','textos largos de una sola vez (gratis: '+TTS_FREE+' letras)'],['Tus propios efectos de voz','ajusta tono, timbre y más, y guárdalos con su nombre']];
+const PRO_PERKS=[['Sin marca de agua','en tus videos, GIF y en vivo'],['Más dibujos con IA','escribe qué quieres y sale un dibujo de caricatura para tu escena; muchos más al mes que en el plan gratis'],['1080p Full HD','para YouTube y TikTok'],['Sin fondo','GIF transparente y cuadros PNG para CapCut, Premiere o DaVinci'],['Personajes sin límite','todos los que quieras en la misma escena (gratis: '+FREE_CHARS+')'],['Ropa y accesorios ✦','turbantes, uniformes, alas, gorros, objetos para la mano y todo lo nuevo que vaya saliendo'],['Fondos, imágenes, gestos y acciones ✦','los recursos de Bocón marcados con ✦ y los que vayan saliendo'],['Texto a voz sin límite','textos largos de una sola vez (gratis: '+TTS_FREE+' letras)'],['Tus propios efectos de voz','ajusta tono, timbre y más, y guárdalos con su nombre']];
 function openPro(why,tip){
   if(!PLAN.cfg){toast('Bocón Pro todavía no está disponible aquí');return;}
   const C=PLAN.cfg,u=PLAN.user,info=PLAN.info||{},pro=isPro();
@@ -10123,10 +10132,10 @@ async function recSyncFormat(){
 function openRecImgs(){
   const cats=[...new Set(REC_IMGS.map(i=>i.cat))];
   openModal({title:'Imagen',wide:true,
-    body:`<div class="btns"><button type="button" class="btn sm primary" data-recup="1">Subir de tu equipo…</button></div><p class="note">O usa una de las que vienen con Bocón${isPro()?'':' (las que tienen ✦ son de Bocón Pro)'}:</p>`+
+    body:`<div class="btns"><button type="button" class="btn sm primary" data-recup="1">Subir de tu equipo…</button><button type="button" class="btn sm" data-recdib="1">Dibujar con IA</button></div><p class="note">O usa una de las que vienen con Bocón${isPro()?'':' (las que tienen ✦ son de Bocón Pro)'}:</p>`+
       cats.map(c=>`<div class="eyebrow">${esc(c)}</div><div class="pgrid rec-grid">${REC_IMGS.filter(i=>i.cat===c).map(i=>`<button type="button" class="pick" data-pk="${i.k}">${recItemTag(i)}<img src="${i.src}" alt="" loading="lazy">${esc(i.label)}</button>`).join('')}</div>`).join(''),
     actions:[{label:'Cerrar'}],
-    onOpen:c=>{c.querySelector('[data-recup]').onclick=()=>{closeModal();pickImage();};},
+    onOpen:c=>{c.querySelector('[data-recup]').onclick=()=>{closeModal();pickImage();};c.querySelector('[data-recdib]').onclick=()=>{closeModal();openDibujar();};},
     onPick:k=>useRecImg(k)});
 }
 async function useRecImg(k){
@@ -10134,6 +10143,98 @@ async function useRecImg(k){
   try{const id=await recAsset(it.src,it.label+'.'+it.src.split('.').pop());addMedia(id,'img');const p=placeImage(id,{t:S.t});if(p&&it.layer){p.layer=it.layer;refreshAll();save();}toast(`«${it.label}» en la escena`);}
   catch(e){toast('No pude traer la imagen; revisa tu internet');}
 }
+// ===== Dibujar con IA (Trazo): unos cuantos al mes gratis (con cuenta) y más con Bocón Pro =====
+// La IA escribe el dibujo como código SVG (caricatura, contorno grueso) y aquí se vuelve estampita con borde blanco.
+const DIB={que:'',svg:'',url:'',ocupado:false,cuenta:null};
+const DIB_FIG=new Set(['svg','g','path','circle','ellipse','rect','line','polyline','polygon','title','desc','defs','linearGradient','radialGradient','stop','clipPath','use']);
+function dibLimpiar(texto){
+  const m=String(texto||'').match(/<svg[\s\S]*<\/svg>/i);if(!m) return null;
+  const doc=new DOMParser().parseFromString(m[0],'image/svg+xml'),r=doc.documentElement;
+  if(r.nodeName!=='svg'||doc.getElementsByTagName('parsererror').length) return null;
+  (function pasa(n){for(const h of [...n.children]){
+    if(!DIB_FIG.has(h.localName)){h.remove();continue;}
+    for(const a of [...h.attributes]){const k=a.name.toLowerCase(),v=a.value;if(k.startsWith('on')||k==='style'||((k==='href'||k==='xlink:href')&&!v.startsWith('#'))||/url\(\s*['"]?(?!#)/i.test(v)) h.removeAttribute(a.name);}
+    pasa(h);}})(r);
+  for(const a of [...r.attributes]) if(a.name.startsWith('on')||a.name==='style'||a.name==='width'||a.name==='height') r.removeAttribute(a.name);
+  if(!r.getAttribute('viewBox')) r.setAttribute('viewBox','0 0 512 512');r.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  if(!r.querySelector('path,circle,ellipse,rect,polygon,polyline,line')) return null;
+  return new XMLSerializer().serializeToString(r);
+}
+function dibPintar(svg,lado){return new Promise((ok,mal)=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=lado;c.getContext('2d').drawImage(img,0,0,lado,lado);ok(c);};img.onerror=()=>mal(new Error('no se pudo convertir'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg.replace(/<svg\b/,`<svg width="${lado}" height="${lado}"`));});}
+function dibRecortar(c,m){
+  const x=c.getContext('2d'),w=c.width,h=c.height,d=x.getImageData(0,0,w,h).data;let a=w,b=h,z=-1,y=-1;
+  for(let j=0;j<h;j++) for(let i=0;i<w;i++) if(d[(j*w+i)*4+3]>8){if(i<a)a=i;if(i>z)z=i;if(j<b)b=j;if(j>y)y=j;}
+  if(z<0) return c;const o=document.createElement('canvas');o.width=z-a+1+m*2;o.height=y-b+1+m*2;o.getContext('2d').drawImage(c,a,b,z-a+1,y-b+1,m,m,z-a+1,y-b+1);return o;
+}
+// estampita: el dibujo con un borde blanco alrededor, igual que las imágenes de Bocón
+async function dibEstampita(svg,lado=768,borde=20){
+  const base=await dibPintar(svg,lado),m=borde+4,c=document.createElement('canvas');c.width=c.height=lado+m*2;
+  const s=document.createElement('canvas');s.width=s.height=lado;const sx=s.getContext('2d');sx.drawImage(base,0,0);sx.globalCompositeOperation='source-in';sx.fillStyle='#fff';sx.fillRect(0,0,lado,lado);
+  const x=c.getContext('2d');for(const r of [borde,borde*.55]) for(let k=0;k<36;k++){const t=k/36*Math.PI*2;x.drawImage(s,m+Math.cos(t)*r,m+Math.sin(t)*r);}
+  x.drawImage(base,m,m);return dibRecortar(c,4);
+}
+function openDibujar(){
+  if(!PLAN.cfg){toast('Dibujar con IA funciona en tu Bocón publicado, con las cuentas de Bocón Pro');return;}
+  if(!PLAN.user){openPro('Dibujar con IA','Entra a tu cuenta para usarlo: con la cuenta gratis tienes algunos dibujos al mes.');return;}
+  openModal({title:'Dibujar con IA',
+    body:`<form class="dib-fila" id="dibForm"><input type="text" id="dibQue" maxlength="200" autocomplete="off" placeholder="Una manzana mordida" aria-label="Qué quieres dibujar" value="${esc(DIB.que)}"><button type="submit" class="btn primary">Dibujar</button></form>
+      <div class="dib-prev" id="dibPrev"><img id="dibImg" alt="" hidden><p id="dibMsg">Escribe qué quieres y sale un dibujo de caricatura con contorno grueso.</p></div>
+      <form class="dib-fila" id="dibCambio" hidden><input type="text" id="dibCambioTxt" maxlength="200" autocomplete="off" placeholder="¿Le cambias algo? Ponle hojas verdes" aria-label="Qué le cambias al dibujo"><button type="submit" class="btn">Cambiar</button></form>
+      <p class="note" id="dibCuenta"></p>`,
+    actions:[{label:'Otra versión',id:'dibOtra',keep:true,run:()=>dibPedir({otra:true})},{label:'Poner en la escena',cls:'primary',id:'dibPoner',keep:true,run:dibPoner}],
+    onOpen:c=>{
+      c.querySelector('#dibForm').onsubmit=e=>{e.preventDefault();dibPedir();};
+      c.querySelector('#dibCambio').onsubmit=e=>{e.preventDefault();const t=$('#dibCambioTxt').value.trim();if(t) dibPedir({cambio:t});else $('#dibCambioTxt').focus();};
+      if(DIB.svg) dibMostrar();else dibBotones();
+      dibCuentaCargar();setTimeout(()=>{const q=$('#dibQue');if(q) q.focus();},30);
+    }});
+}
+const dibAbierta=()=>!!$('#dibPrev');
+function dibBotones(){
+  if(!dibAbierta()) return;const hay=!!DIB.svg,oc=DIB.ocupado;
+  for(const id of ['dibOtra','dibPoner']){const b=$('#'+id);if(b) b.disabled=!hay||oc;}
+  $$('#dibForm button,#dibCambio button').forEach(b=>b.disabled=oc);
+  $('#dibCambio').hidden=!hay;$('#dibPrev').classList.toggle('cargando',oc);
+}
+function dibAviso(t){if(!dibAbierta()) return;$('#dibImg').hidden=true;$('#dibMsg').hidden=false;$('#dibMsg').textContent=t;}
+function dibMostrar(){
+  if(!dibAbierta()||!DIB.svg) return;if(DIB.url) URL.revokeObjectURL(DIB.url);
+  DIB.url=URL.createObjectURL(new Blob([DIB.svg],{type:'image/svg+xml'}));
+  const i=$('#dibImg');i.src=DIB.url;i.alt='Dibujo de '+DIB.que;i.hidden=false;$('#dibMsg').hidden=true;dibBotones();
+}
+function dibCuentaPinta(){
+  if(!dibAbierta()||!DIB.cuenta) return;const c=DIB.cuenta,q=Math.max(0,c.tope-c.usados),el=$('#dibCuenta'),gratis=c.pro===false;
+  el.innerHTML=esc(q?`Te ${q===1?'queda 1 dibujo':'quedan '+q+' dibujos'}${gratis?' gratis':''} de ${c.tope} este mes.`:`Ya usaste tus ${c.tope} dibujos${gratis?' gratis':''} de este mes. Se renuevan el día 1.`)+
+    (gratis&&c.topePro?` <a href="#" data-dibpro="1">Con Bocón Pro tienes ${c.topePro} al mes.</a>`:'');
+  const a=el.querySelector('[data-dibpro]');if(a) a.onclick=e=>{e.preventDefault();closeModal();openPro('Más dibujos con IA');};
+}
+async function dibCuentaCargar(){
+  try{const j=await planApi('dibujar');DIB.cuenta={usados:j.usados,tope:j.tope,topePro:j.topePro,pro:j.pro};
+    if(!j.tope&&!j.pro){closeModal();openPro('Dibujar con IA');return;}dibCuentaPinta();}catch(_){}
+}
+async function dibPedir(extra){
+  if(DIB.ocupado) return;extra=extra||{};
+  const que=extra.cambio||extra.otra?DIB.que:($('#dibQue')?$('#dibQue').value.trim():'');
+  if(!que){if($('#dibQue')) $('#dibQue').focus();return;}
+  DIB.ocupado=true;dibBotones();dibAviso('Dibujando… tarda unos segundos.');
+  try{
+    const j=await planApi('dibujar',Object.assign({que},extra,extra.cambio?{svg:DIB.svg}:{}));
+    const svg=dibLimpiar(j.svg);if(!svg) throw new Error('La IA no regresó un dibujo. Intenta otra vez.');
+    DIB.que=que;DIB.svg=svg;DIB.cuenta=Object.assign({},DIB.cuenta,{usados:j.usados,tope:j.tope});
+    if(extra.cambio&&$('#dibCambioTxt')) $('#dibCambioTxt').value='';
+    DIB.ocupado=false;dibMostrar();dibCuentaPinta();
+  }catch(e){DIB.ocupado=false;dibAviso(e.message||'No se pudo dibujar.');dibCuentaCargar();}
+  finally{DIB.ocupado=false;dibBotones();}
+}
+async function dibPoner(){
+  if(!DIB.svg||DIB.ocupado) return;
+  try{
+    const c=await dibEstampita(DIB.svg);let b=await new Promise(r=>c.toBlob(r,'image/webp',.92)),ext='webp';
+    if(!b||b.type!=='image/webp'){b=await new Promise(r=>c.toBlob(r,'image/png'));ext='png';}
+    const id=await addAsset(b,DIB.que.slice(0,40)+'.'+ext);addMedia(id,'img');closeModal();placeImage(id,{t:S.t});toast(`«${DIB.que}» en la escena`);
+  }catch(e){toast('No pude poner el dibujo en la escena');}
+}
+CMDS.dibujar=()=>openDibujar();
 CMDS.recFondos=()=>openRecFondos();
 insp.addEventListener('click',e=>{if(e.target.closest('[data-act="recFondos"]')) openRecFondos();});
 

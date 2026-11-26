@@ -20,5 +20,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/dibujar.js": {
+      "maxDuration": 60
+    }
+  }
 }
