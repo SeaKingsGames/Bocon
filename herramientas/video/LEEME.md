@@ -49,6 +49,10 @@ with Bocon() as b:
 - `b.catalogo()`: las claves de gestos, poses, acciones, estilos de texto, fondos, imágenes y sonidos rápidos.
 - `b.js("código", arg)`: para todo lo que no tenga atajo (cámara, movimientos, varias escenas). Ahí están `S`, `cur()`, `newProp`, `fixMove`, etc.
 - `b.errores`: errores de la app durante la sesión.
+- `b.dialogo(audio, lineas, colores)`: un audio con varias voces. Cada línea va al personaje que la dice (solo él mueve la boca) y sus subtítulos salen de su color.
+- `b.mover(id, t0, t1, x=, y=, s=, o=)`: mueve, escala o desvanece un personaje o una imagen (pasa siempre x, y y s).
+- `b.desde_imagen('personaje.png', 'Nombre')`: arma una marioneta con «Marioneta desde una imagen» (PNG transparente o fondo verde).
+- `b.texto(..., scale=2.5)`: si no le das `wrap`, lo calcula para que el texto quepa a lo ancho (el ancho crece con la escala).
 - `b.guardar_proyecto('video.bocon.json')`: solo si se necesita el proyecto para editarlo en Bocón.
 
 ## Archivos

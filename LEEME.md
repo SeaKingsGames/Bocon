@@ -123,15 +123,16 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 | Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina, Casita (cuarto turquesa), Calle de la colonia | Cuarto de madrugada, Tier list, Puerta de la recámara, Mictlán, Estudio de noticias |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
-| Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir, Palomita (sí), Tache (no) | Multitud festejando |
-| Imágenes (Cosas) | Vela, Control de videojuego, Calendario (ponle la fecha con texto), Mazo de juez | Polilla (no hay nada), Cuchillo clavado (pégalo al personaje y lo sigue aunque esté acostado) |
+| Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir, Palomita (sí), Tache (no) | Multitud festejando, Barra de carga atorada en 1 % |
+| Imágenes (Cosas) | Vela, Control de videojuego, Calendario (ponle la fecha con texto), Mazo de juez, Contrato (firma aquí) | Polilla (no hay nada), Cuchillo clavado (pégalo al personaje y lo sigue aunque esté acostado) |
 | Imágenes (Animales) | Huellita | |
 | Imágenes (Noticias) | | Escritorio de noticias (va enfrente del personaje) |
-| Imágenes (Dibujos) | Garabato: pollo con ansiedad | |
+| Imágenes (Dibujos) | Garabato: pollo con ansiedad, Taco feliz con lentes (hecho en Trazo) | Aguacate kawaii (hecho en Trazo) |
+| Imágenes (Frutas kawaii, sin boca: sirven para «Marioneta desde una imagen») | Manzana, Naranja, Limón | Fresa, Piña, Uvas, Mora azul, Kiwi, Sandía |
 | Imágenes (Día de Muertos) | | Cempasúchil |
 | Imágenes (Casa) | | Cama: cabecera, Cama: cobija |
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
-| Imágenes (Sustos) | | Fantasma: señora de vestido azul |
+| Imágenes (Sustos) | Telaraña con araña | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
 | Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`) |
 | Estilos de texto | Noticiero (cintillo rojo) | |

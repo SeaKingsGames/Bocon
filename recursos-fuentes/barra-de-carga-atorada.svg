@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="260" viewBox="0 0 560 260"><g stroke-linejoin="round" stroke-linecap="round">
+<rect x="20" y="20" width="520" height="220" rx="30" fill="#fff" stroke="#fff" stroke-width="28"/>
+<rect x="20" y="20" width="520" height="220" rx="30" fill="#232a3d" stroke="#14182b" stroke-width="8"/>
+<path d="M24 74 H536" stroke="#14182b" stroke-width="6"/>
+<path d="M24 74 V50 Q24 24 50 24 H510 Q536 24 536 50 V74 Z" fill="#3a4460"/>
+<circle cx="56" cy="49" r="10" fill="#ff5d50" stroke="#14182b" stroke-width="4"/><circle cx="88" cy="49" r="10" fill="#ffd23f" stroke="#14182b" stroke-width="4"/><circle cx="120" cy="49" r="10" fill="#3fcf8e" stroke="#14182b" stroke-width="4"/>
+<text x="60" y="124" font-family="DejaVu Sans" font-weight="bold" font-size="30" fill="#ffffff">Exportando video…</text>
+<rect x="60" y="148" width="440" height="40" rx="20" fill="#11151f" stroke="#14182b" stroke-width="6"/>
+<rect x="66" y="154" width="22" height="28" rx="12" fill="#3fcf8e"/>
+<text x="60" y="222" font-family="DejaVu Sans" font-weight="bold" font-size="22" fill="#c9d1dc">1 %  ·  quedan 9,999 h</text>
+<g fill="none" stroke="#e8edf5" stroke-width="3" opacity=".9">
+<path d="M536 170 L476 236 M536 196 L506 236 M536 150 L440 236"/>
+<path d="M536 160 Q512 196 486 225 M536 186 Q520 208 498 230 M536 212 Q526 224 512 234"/>
+</g>
+
+</g></svg>

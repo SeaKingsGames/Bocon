@@ -159,8 +159,41 @@ class Bocon:
                         'x': x, 'y': y, 's': escala, 't0': t0, 't1': t1, 'e': ent, 'a': anim, 'x2': extra})
 
     def texto(self, texto, t0, t1, preset='comic', **extra):
+        """Texto en pantalla. El ancho (wrap) crece con la escala: si no se da, se calcula para que quepa en el cuadro."""
+        if 'scale' in extra and 'wrap' not in extra:
+            extra['wrap'] = round(9 / extra['scale'], 2)
         return self.js("""const o=arg,p=newProp('texto',Object.assign({},TEXT_PRESETS[o.p]||{},{text:o.t,t0:o.t0,t1:o.t1},o.x));
             cur().props.push(p);refreshAll();return p.id;""", {'t': texto, 't0': t0, 't1': t1, 'p': preset, 'x': extra})
+
+    def mover(self, id_, t0, t1, ease='suave', **to):
+        """Movimiento de un personaje o imagen hasta to = x, y, s (escala), o (opacidad), r (giro).
+        Pasa siempre x, y y s: lo que falte se va al centro y a escala 1."""
+        self.js("""const o=arg,sc=cur(),it=sc.chars.find(c=>c.id===o.id)||sc.props.find(p=>p.id===o.id);
+            it.moves.push(fixMove({id:'m'+uid(),t0:o.t0,t1:o.t1,ease:o.e,to:o.to}));refreshAll();""",
+                {'id': id_, 't0': t0, 't1': t1, 'e': ease, 'to': to})
+
+    def desde_imagen(self, ruta, nombre='Mi personaje'):
+        """Marioneta con «Marioneta desde una imagen» (PNG transparente o fondo verde). Regresa el id del personaje.
+        La app reacomoda a todos al crearla: acomódalos después."""
+        b64 = base64.b64encode(open(ruta, 'rb').read()).decode()
+        return self.js("""const o=arg,r=await fetch('data:'+o.t+';base64,'+o.b),f=new File([await r.blob()],o.n+'.'+o.x,{type:o.t});
+            await openOneImg(f);$('#oiName').value=o.n;await oiCreate();closeEditor();const cs=cur().chars;return cs[cs.length-1].id;""",
+                       {'b': b64, 't': mimetypes.guess_type(ruta)[0] or 'image/png', 'n': nombre, 'x': ruta.rsplit('.', 1)[-1]})
+
+    def dialogo(self, audio, lineas, colores, desfase=.35, y=None):
+        """Un audio con varias voces. lineas = [(id_personaje, t_inicio, t_fin, palabras)] en tiempo del audio
+        (palabras de transcribir.py que caen en esa línea). Cada línea va como voz del que habla, así solo él mueve
+        la boca, y sus subtítulos salen del color de ese personaje (colores = {id: '#hex'})."""
+        tmp = tempfile.mkdtemp()
+        subs = []
+        for i, (ch, t0, t1, ws) in enumerate(lineas):
+            clip = os.path.join(tmp, f'linea-{i}.wav')
+            args = ['ffmpeg', '-v', 'error', '-y', '-ss', f'{t0:.3f}', '-i', audio] + (['-t', f'{t1 - t0:.3f}'] if t1 else [])
+            subprocess.run(args + ['-af', 'afade=t=in:d=0.02,areverse,afade=t=in:d=0.04,areverse', '-ar', '48000', '-ac', '1', clip], check=True)
+            self.voz(ch, clip, t=desfase + t0)
+            if ws: subs.append([self.subtitulos(ch, ws, desfase=desfase, color=colores.get(ch, '#ffe14d'), y=y), ws[0]['a'] + desfase])
+        for (sid, _), (_, sig) in zip(subs, subs[1:]):  # que un subtítulo se quite cuando habla el siguiente
+            self.js("const o=arg,p=cur().props.find(q=>q.id===o.id);p.t1=Math.min(p.t1,o.f);refreshAll();", {'id': sid, 'f': sig - .06})
 
     def catalogo(self):
         """Claves de todo lo que trae Bocón: gestos, poses, acciones, textos, fondos, imágenes y sonidos rápidos."""
