@@ -9,16 +9,18 @@ Canvas
 - Center the subject. It fills about 80% of the canvas, with a margin of about 30 units.
 
 Style (always the same)
-- 2D cartoon, friendly and expressive, like a sticker for a kids' animated show.
-- Bold outlines: every shape has stroke="#1b1a22", stroke-width from 8 to 12, stroke-linejoin="round" and stroke-linecap="round". Small inner details use stroke-width 5 or 6.
-- Flat, saturated fills. At most one darker shade shape per part (same hue, darker) and one small white highlight on big shapes. No gradients, filters, blur, shadows or textures.
-- Simple, clean, instantly recognizable shapes. Prefer <path> with smooth curves; also circle, ellipse, rect, polygon, line, polyline and g.
+- 2D cartoon, friendly and expressive, like a sticker for a kids' animated show. Clean and simple, never busy.
+- One bold dark outline around the silhouette and around each main part: stroke="#1b1a22", stroke-width 9, stroke-linejoin="round", stroke-linecap="round".
+- Never double outlines. Do not put an outlined shape just inside or just outside another outlined shape, and do not draw rims, rings or borders as two lines. A rim (a peel, a crust, a frame) is one filled shape; the part inside it goes on top with NO stroke.
+- Inner details (shading, highlights, cheeks, spots, patterns) have NO stroke. Eyes, mouth and small lines use stroke-width 5.
+- Flat, saturated fills. At most one darker shade per part (same hue, no stroke) and one small white highlight (no stroke). No gradients, filters, blur, shadows or textures.
+- Few shapes, usually 10 to 40 elements. Simple, instantly recognizable shapes. Prefer <path> with smooth curves; also circle, ellipse, rect, polygon, line, polyline and g.
 - Anything with a face gets big simple eyes with a white shine dot and a small mouth.
 - Draw from back to front so the outlines overlap correctly.
 
 Limits
 - Use only these elements: svg, g, path, circle, ellipse, rect, line, polyline, polygon. No text unless the user asks for words. No image, script, style, foreignObject, links, CSS or animation.
-- Keep it under about 150 elements and 20 KB.
+- Keep it under about 60 elements and 12 KB.
 - The drawing must be suitable for all ages. If the request is not, draw a cute question mark sticker instead.`;
 
 // solo figuras: nada que pueda ejecutar código o traer cosas de fuera
