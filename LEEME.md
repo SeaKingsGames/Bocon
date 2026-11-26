@@ -152,3 +152,4 @@ Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que l
 - `api/`: el servidor de cuentas y cobros (funciones de Vercel): `config`, `suscribir`, `estado`, `cancelar` y `mp-webhook`
 - `supabase/esquema.sql`: la tabla de suscripciones para Supabase
 - `recursos/`: fondos, imágenes y sonidos que vienen con la app (se publican); `recursos-fuentes/`: sus originales en SVG para editarlos (no se publican)
+- `herramientas/video/`: kit para hacer videos con Bocón desde la terminal: transcribir, música de fondo, armar y exportar (no se publica; ver su LEEME)
