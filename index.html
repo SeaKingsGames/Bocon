@@ -1788,6 +1788,7 @@ const TEXT_PRESETS={
   comic:{label:'Cómic',font:'Bangers',weight:400,color:'#ffd23f',stroke:'#14110f',strokeW:.16,box:'',boxOp:.7,upper:false,scale:1.5,text:'¡ZAS!'},
   meme:{label:'Meme',font:'Anton',weight:400,color:'#ffffff',stroke:'#000000',strokeW:.16,box:'',boxOp:.7,upper:true,scale:1.2,text:'Cuando llega el lunes'},
   subtitulo:{label:'Subtítulo',font:'Onest',weight:700,color:'#ffffff',stroke:'',strokeW:0,box:'#0b1116',boxOp:.72,upper:false,scale:.75,text:'Escribe aquí lo que dicen'},
+  noticiero:{label:'Noticiero (cintillo)',font:'Anton',weight:400,color:'#ffffff',stroke:'',strokeW:0,box:'#d62828',boxOp:1,upper:true,scale:.95,text:'Última hora'},
   mano:{label:'A mano',font:'Permanent Marker',weight:400,color:'#1b2a33',stroke:'#ffffff',strokeW:.14,box:'',boxOp:.7,upper:false,scale:1.1,text:'¡Hola!'},
   redondita:{label:'Redondita',font:'Fredoka',weight:700,color:'#ff6fa3',stroke:'#ffffff',strokeW:.16,box:'',boxOp:.7,upper:false,scale:1.2,text:'Súper lindo'}
 };
@@ -8692,7 +8693,13 @@ const QS=[
     // dos golpes de tambor y el platillo
     const tom=(t0,f0,g)=>{const i0=Math.round(t0*QS_SR),lp=qsBiq('lp');let ph=0;for(let i=i0;i<b.length;i++){const t=(i-i0)/QS_SR;if(t>.4) break;const f=f0*(1+.6*Math.exp(-t*30));ph+=TAU*f/QS_SR;b[i]+=(Math.sin(ph)*Math.exp(-t*9)+lp(r(),2500,.7)*Math.exp(-t*60)*.5)*qsAtk(t,.001)*g;}};
     tom(0,170,.8);tom(.15,120,.85);
-    const hp=qsBiq('hp'),bp=qsBiq('bp'),i0=Math.round(.33*QS_SR);for(let i=i0;i<b.length;i++){const t=(i-i0)/QS_SR;const n=r();b[i]+=(hp(n,6000,.7)*.8+bp(n,9000,1.5)*.5)*Math.exp(-t*2.6)*qsAtk(t,.002)*.75+Math.sin(TAU*3300*t+Math.sin(TAU*4700*t)*2)*Math.exp(-t*4)*.08;}}}
+    const hp=qsBiq('hp'),bp=qsBiq('bp'),i0=Math.round(.33*QS_SR);for(let i=i0;i<b.length;i++){const t=(i-i0)/QS_SR;const n=r();b[i]+=(hp(n,6000,.7)*.8+bp(n,9000,1.5)*.5)*Math.exp(-t*2.6)*qsAtk(t,.002)*.75+Math.sin(TAU*3300*t+Math.sin(TAU*4700*t)*2)*Math.exp(-t*4)*.08;}}},
+  {k:'noticiero',n:'Entrada de noticiero',g:'Escena',d:2.4,f(b,r){
+    // ta-ta-taaan de metales con un golpe grave abajo
+    const stab=(t0,len,fs,g)=>{const i0=Math.round(t0*QS_SR),n=Math.round(len*QS_SR);for(let i=0;i<n&&i0+i<b.length;i++){const t=i/QS_SR;let v=0;for(const f of fs) for(let h=1;h<=6;h++) v+=Math.sin(TAU*f*h*t*(1+.002*Math.sin(TAU*5*t)))/h*(h===1?1:.55);
+      const env=qsAtk(t,.012)*(len<.5?Math.exp(-t*7):Math.min(1,Math.exp(-(t-.6)*2.2)));b[i0+i]+=v*env*g*.11;}};
+    stab(0,.22,[261.6,329.6,392],1);stab(.2,.22,[261.6,329.6,392],1);stab(.42,1.9,[293.7,370,440,587.3],1.15);
+    const lp=qsBiq('lp'),i0=Math.round(.42*QS_SR);for(let i=i0;i<b.length;i++){const t=(i-i0)/QS_SR;b[i]+=(Math.sin(TAU*55*t)*Math.exp(-t*3)*.7+lp(r(),300,.7)*Math.exp(-t*8)*.6)*qsAtk(t,.004);}}}
 ];
 const QS_GROUPS=['Caricatura','Escena','Tienda y casa'];
 function qsMake(k){
@@ -9879,7 +9886,8 @@ const REC_FONDOS=[
   {k:'cocina',label:'Cocina',v:'recursos/fondos/cocina-vertical.webp',h:'recursos/fondos/cocina-horizontal.webp'},
   {k:'casita',label:'Casita (cuarto turquesa)',v:'recursos/fondos/casita-vertical.webp',h:'recursos/fondos/casita-horizontal.webp'},
   {k:'calle',label:'Calle de la colonia',v:'recursos/fondos/calle-vertical.webp',h:'recursos/fondos/calle-horizontal.webp'},
-  {k:'mictlan',label:'Mictlán',v:'recursos/fondos/mictlan-vertical.webp',h:'recursos/fondos/mictlan-horizontal.webp',pro:1}
+  {k:'mictlan',label:'Mictlán',v:'recursos/fondos/mictlan-vertical.webp',h:'recursos/fondos/mictlan-horizontal.webp',pro:1},
+  {k:'estudio',label:'Estudio de noticias',v:'recursos/fondos/estudio-vertical.webp',h:'recursos/fondos/estudio-horizontal.webp',pro:1}
 ];
 const REC_IMGS=[
   {k:'queso',label:'Queso en bolsa',src:'recursos/imagenes/queso-en-bolsa.webp',cat:'Súper'},
@@ -10053,7 +10061,11 @@ const REC_IMGS=[
   {k:'cocPizza',label:'Pizza',src:'recursos/imagenes/cocina/pizza.png',cat:'Cocina',pro:1},
   {k:'cocHuevoEstrellado',label:'Huevo estrellado',src:'recursos/imagenes/cocina/huevo-estrellado.png',cat:'Cocina',pro:1},
   {k:'cocPolloRostizado',label:'Pollo rostizado',src:'recursos/imagenes/cocina/pollo-rostizado.png',cat:'Cocina',pro:1},
-  {k:'cocTaco',label:'Taco',src:'recursos/imagenes/cocina/taco.png',cat:'Cocina',pro:1}
+  {k:'cocTaco',label:'Taco',src:'recursos/imagenes/cocina/taco.png',cat:'Cocina',pro:1},
+  {k:'escritorio',label:'Escritorio de noticias (va enfrente)',src:'recursos/imagenes/escritorio-noticias.webp',cat:'Noticias',pro:1},
+  {k:'calendario',label:'Calendario (ponle la fecha con texto)',src:'recursos/imagenes/calendario.webp',cat:'Cosas'},
+  {k:'huellita',label:'Huellita',src:'recursos/imagenes/huellita.webp',cat:'Animales'},
+  {k:'mazo',label:'Mazo de juez',src:'recursos/imagenes/mazo.webp',cat:'Cosas'}
 ];
 // gestos (EXPR) y acciones (ACTIONS) de la app que son de Pro; los demás son gratis
 const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio','sintiendo','balancearse','reganar','secarse','inocente','persignarse','apenado','palmadaFrente','tirarse','risaHisterica','revolcarse']);
