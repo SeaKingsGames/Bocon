@@ -406,6 +406,14 @@ details.sec.hl>summary{color:var(--blue)}
 .grid-pick .pick,.rec-grid .pick{position:relative}
 .rec-grid img{width:100%;height:84px;object-fit:contain;border-radius:6px}
 .rec-grid.tall img{height:150px}
+details.rec-cat{border:1px solid var(--line);border-radius:10px;margin-top:8px;background:var(--panel)}
+details.rec-cat>summary{padding:10px 12px;font-size:13px}
+details.rec-cat>.rec-grid{padding:0 10px 10px}
+.rec-nota{margin-top:14px}
+.my-img{position:relative}
+.my-img .pick{width:100%;height:100%}
+.my-del{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:var(--panel-3);color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.my-del:hover{background:var(--red);color:#fff}
 .pgrid .pick{padding:8px 6px;font-size:12px}
 .pgrid .pick small{font-weight:400;color:var(--muted);font-size:11px;text-align:center}
 .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
@@ -5618,7 +5626,7 @@ function propSections(p){
   if(p.kind==='subs') return subsSections(p);
   let h='';
   if(p.kind==='img'){
-    h+=sec('img','Imagen',fText('data-f','name','Nombre',p.name)+'<div class="btns"><button type="button" class="btn sm" data-act="asBg">Usar como fondo</button><button type="button" class="btn sm" data-act="replaceImg">Cambiar imagen</button><button type="button" class="btn sm" data-act="addBocaHere">Ponerle boca</button><button type="button" class="btn sm" data-act="keyBg" title="Quita la pantalla verde o un fondo liso">Quitar fondo</button><button type="button" class="btn sm" data-act="cutout" title="Separa un mueble u objeto de esta imagen para poner personajes detrás">✂ Recortar un objeto</button></div>');
+    h+=sec('img','Imagen',fText('data-f','name','Nombre',p.name)+'<div class="btns"><button type="button" class="btn sm" data-act="asBg">Usar como fondo</button><button type="button" class="btn sm" data-act="replaceImg">Cambiar imagen</button><button type="button" class="btn sm" data-act="saveImg">Guardar en mis imágenes</button><button type="button" class="btn sm" data-act="addBocaHere">Ponerle boca</button><button type="button" class="btn sm" data-act="keyBg" title="Quita la pantalla verde o un fondo liso">Quitar fondo</button><button type="button" class="btn sm" data-act="cutout" title="Separa un mueble u objeto de esta imagen para poner personajes detrás">✂ Recortar un objeto</button></div>');
     const k=cropOf(p),cropped=k.l||k.r||k.t||k.b||(p.mask&&p.mask!=='rect');
     h+=sec('crop','Recortar bordes',fRange('data-f','cl','Izquierda',0,90,Math.round(k.l*100),'pct')+fRange('data-f','cr','Derecha',0,90,Math.round(k.r*100),'pct')+fRange('data-f','ct','Arriba',0,90,Math.round(k.t*100),'pct')+fRange('data-f','cb','Abajo',0,90,Math.round(k.b*100),'pct')+fSelect('data-f','mask','Forma',optsOf(MASKS),p.mask||'rect')+
       `<p class="note">Muestra solo una parte de la imagen. Para que se vaya descubriendo, usa una entrada de "Se revela…" en Aparición.</p>${cropped?'<div class="btns"><button type="button" class="btn sm" data-act="cropReset">Quitar recorte</button></div>':''}`,{open:!!cropped,cnt:cropped?'•':null});
@@ -5769,6 +5777,7 @@ insp.addEventListener('click',e=>{
   else if(act==='pcolReset'&&o){o.phue=0;o.psat=100;o.pbri=100;refreshAll();save();}
   else if(act==='libSave'&&o) saveToLibrary(o);
   else if(act==='asBg'&&o){const sc=cur();sc.bgImg=o.aid;sc.bg='img';sc.props=sc.props.filter(x=>x!==o);S.selObj=null;S.sel=null;refreshAll();save();toast('Ahora es el fondo de la escena');}
+  else if(act==='saveImg'&&o){myImgSave(o.aid,o.name,'Mis imágenes');}
   else if(act==='replaceImg'){pendingReplace=o&&o.id;const fi=$('#fileImage');fi.value='';fi.click();}
   else if(act==='reanalyze'){const sc=selClip();if(sc){const au=sc.a;au.segs=null;au.energy=null;ensureVoice(au);refreshAll();save();toast('Lip-sync recalculado: '+au.segs.length+' bocas');}}
   else if(act==='sceneDup') duplicateScene();
@@ -6428,14 +6437,14 @@ const saveLib=storeSoon;
 // tus sonidos rápidos sirven en todos los proyectos: su audio no se borra al abrir otro
 function libAudRefs(){return new Set(MYSFX.map(f=>f.aid).filter(Boolean));}
 function keepLibAudio(){const k=libAudRefs();for(const id of Object.keys(S.audio)) if(!k.has(id)) delete S.audio[id];}
-function libRefs(){const s=new Set();for(const id of setRefs()) s.add(id);for(const x of MYFXP) if(x.st&&x.st.aid) s.add(x.st.aid);for(const it of LIB){if(it.puppet) for(const id of Object.values(it.puppet.slots||{})) s.add(id);for(const a of it.acc||[]) if(a.aid) s.add(a.aid);}return s;}
+function libRefs(){const s=new Set();for(const id of setRefs()) s.add(id);for(const x of MYIMGS) if(x.aid) s.add(x.aid);for(const x of MYFXP) if(x.st&&x.st.aid) s.add(x.st.aid);for(const it of LIB){if(it.puppet) for(const id of Object.values(it.puppet.slots||{})) s.add(id);for(const a of it.acc||[]) if(a.aid) s.add(a.aid);}return s;}
 const imgRec=a=>({blob:a.blob,name:a.name});
 const audRec=a=>({name:a.name,kind:a.kind,bytes:a.bytes||null,pcm:a.pcm||null,sr:a.sr||0,peaks:a.peaks,prate:a.prate,energy:a.energy||null,erate:a.erate||0});
 async function doSave(){
   saveTimer=0;if(saving){saveAgain=true;return;}saving=true;
   try{
     const doc=serializeDoc(),{imgs,auds}=refsOf(doc);for(const id of libRefs()) imgs.add(id);for(const id of libAudRefs()) auds.add(id);
-    const puts=[['proyecto',doc],['lib',{items:LIB,acts:MYACT,sets:MYSETS,sfx:MYSFX,gestos:MYEXPR,voces:MYVFX,letras:MYTXT,memes:MYMEME,efectos:MYFXP}]],live=new Set();
+    const puts=[['proyecto',doc],['lib',{items:LIB,acts:MYACT,sets:MYSETS,sfx:MYSFX,gestos:MYEXPR,voces:MYVFX,letras:MYTXT,memes:MYMEME,efectos:MYFXP,imagenes:MYIMGS}]],live=new Set();
     for(const id of imgs){const k='img:'+id,a=S.assets[id];if(!a) continue;live.add(k);if(!persisted.has(k)) puts.push([k,imgRec(a)]);}
     for(const id of auds){const k='aud:'+id,a=S.audio[id];if(!a) continue;live.add(k);if(!persisted.has(k)) puts.push([k,audRec(a)]);}
     const dels=[...persisted].filter(k=>!live.has(k));
@@ -6471,7 +6480,7 @@ async function restore(){
   let got=null;
   try{got=await Promise.race([store.getMany(['proyecto','lib']),new Promise(r=>setTimeout(()=>r(null),1500))]);}catch(e){storeOK=false;setSaveState('Sin guardado automático aquí');}
   if(!got) return false;
-  const d=got.proyecto;LIB=(got.lib&&got.lib.items)||[];MYACT=(got.lib&&got.lib.acts)||[];MYSETS=(got.lib&&got.lib.sets)||[];MYSFX=(got.lib&&got.lib.sfx)||[];{const L=got.lib||{};MYEXPR=L.gestos||[];MYVFX=L.voces||[];MYTXT=L.letras||[];MYMEME=L.memes||[];MYFXP=L.efectos||[];}exprRegister();
+  const d=got.proyecto;LIB=(got.lib&&got.lib.items)||[];MYACT=(got.lib&&got.lib.acts)||[];MYSETS=(got.lib&&got.lib.sets)||[];MYSFX=(got.lib&&got.lib.sfx)||[];{const L=got.lib||{};MYEXPR=L.gestos||[];MYVFX=L.voces||[];MYTXT=L.letras||[];MYMEME=L.memes||[];MYFXP=L.efectos||[];MYIMGS=L.imagenes||[];}exprRegister();
   const li=libRefs(),la=libAudRefs();if(li.size||la.size) await loadRecords(li,la);
   if(!d||!(d.scenes||d.chars)) return false;
   if(!d.v||d.v<3){keepLibAudio();applyDoc(await migrateOld(d));return true;}
@@ -9918,12 +9927,12 @@ const REC_IMGS=[
   {k:'fantasmaSenora',label:'Fantasma: señora de vestido azul',src:'recursos/imagenes/fantasma-senora.webp',cat:'Sustos',pro:1},
   {k:'charquito',label:'Charquito de agua',src:'recursos/imagenes/charquito.webp',cat:'Cárcel',layer:'atras'},
   {k:'gota',label:'Gota de agua',src:'recursos/imagenes/gota.webp',cat:'Cárcel'},
-  {k:'huevos',label:'Cartón de huevos',src:'recursos/imagenes/huevos.webp',cat:'Cocina'},
-  {k:'huevosVacio',label:'Cartón de huevos vacío',src:'recursos/imagenes/huevos-vacio.webp',cat:'Cocina'},
+  {k:'huevos',label:'Cartón de huevos',src:'recursos/imagenes/huevos.webp',cat:'Comida'},
+  {k:'huevosVacio',label:'Cartón de huevos vacío',src:'recursos/imagenes/huevos-vacio.webp',cat:'Comida'},
   {k:'palomita',label:'Palomita (sí)',src:'recursos/imagenes/palomita.webp',cat:'Redes'},
   {k:'tache',label:'Tache (no)',src:'recursos/imagenes/tache.webp',cat:'Redes'},
   {k:'polilla',label:'Polilla (no hay nada)',src:'recursos/imagenes/polilla.webp',cat:'Cosas',pro:1},
-  {k:'platano',label:'Plátano',src:'recursos/imagenes/platano.webp',cat:'Cocina'},
+  {k:'platano',label:'Plátano',src:'recursos/imagenes/platano.webp',cat:'Frutas y verduras'},
   {k:'molcajete',label:'Molcajete',src:'recursos/imagenes/molcajete.webp',cat:'Cocina'},
   {k:'garabatoPollo',label:'Garabato: pollo con ansiedad',src:'recursos/imagenes/garabato-pollo.webp',cat:'Dibujos'},
   {k:'control',label:'Control de videojuego',src:'recursos/imagenes/control-videojuego.webp',cat:'Cosas'},
@@ -9952,30 +9961,30 @@ const REC_IMGS=[
   {k:'cocOllaDePresionElectrica',label:'Olla de presión eléctrica',src:'recursos/imagenes/cocina/olla-de-presion-electrica.png',cat:'Cocina',pro:1},
   {k:'cocMaquinaDeSoda',label:'Máquina de soda',src:'recursos/imagenes/cocina/maquina-de-soda.png',cat:'Cocina',pro:1},
   {k:'cocSopleteDeCocina',label:'Soplete de cocina',src:'recursos/imagenes/cocina/soplete-de-cocina.png',cat:'Cocina',pro:1},
-  {k:'cocCaqui',label:'Caqui',src:'recursos/imagenes/cocina/caqui.png',cat:'Cocina',pro:1},
-  {k:'cocHigo',label:'Higo',src:'recursos/imagenes/cocina/higo.png',cat:'Cocina',pro:1},
-  {k:'cocDatiles',label:'Dátiles',src:'recursos/imagenes/cocina/datiles.png',cat:'Cocina',pro:1},
-  {k:'cocArandanosRojos',label:'Arándanos rojos',src:'recursos/imagenes/cocina/arandanos-rojos.png',cat:'Cocina',pro:1},
-  {k:'cocCarambola',label:'Carambola',src:'recursos/imagenes/cocina/carambola.png',cat:'Cocina',pro:1},
-  {k:'cocCarambola2',label:'Carambola (2)',src:'recursos/imagenes/cocina/carambola-2.png',cat:'Cocina',pro:1},
-  {k:'cocGuayaba',label:'Guayaba',src:'recursos/imagenes/cocina/guayaba.png',cat:'Cocina',pro:1},
-  {k:'cocMaracuya',label:'Maracuyá',src:'recursos/imagenes/cocina/maracuya.png',cat:'Cocina',pro:1},
-  {k:'cocCalabacita',label:'Calabacita',src:'recursos/imagenes/cocina/calabacita.png',cat:'Cocina',pro:1},
-  {k:'cocPepino',label:'Pepino',src:'recursos/imagenes/cocina/pepino.png',cat:'Cocina',pro:1},
-  {k:'cocCalabazaButternut',label:'Calabaza butternut',src:'recursos/imagenes/cocina/calabaza-butternut.png',cat:'Cocina',pro:1},
-  {k:'cocBokChoy',label:'Bok choy',src:'recursos/imagenes/cocina/bok-choy.png',cat:'Cocina',pro:1},
-  {k:'cocPoro',label:'Poro',src:'recursos/imagenes/cocina/poro.png',cat:'Cocina',pro:1},
-  {k:'cocHinojo',label:'Hinojo',src:'recursos/imagenes/cocina/hinojo.png',cat:'Cocina',pro:1},
-  {k:'cocHinojo2',label:'Hinojo (2)',src:'recursos/imagenes/cocina/hinojo-2.png',cat:'Cocina',pro:1},
-  {k:'cocAlcachofa',label:'Alcachofa',src:'recursos/imagenes/cocina/alcachofa.png',cat:'Cocina',pro:1},
-  {k:'cocPanNaan',label:'Pan naan',src:'recursos/imagenes/cocina/pan-naan.png',cat:'Cocina',pro:1},
-  {k:'cocCuernito',label:'Cuernito',src:'recursos/imagenes/cocina/cuernito.png',cat:'Cocina',pro:1},
-  {k:'cocBagel',label:'Bagel',src:'recursos/imagenes/cocina/bagel.png',cat:'Cocina',pro:1},
-  {k:'cocBurrito',label:'Burrito',src:'recursos/imagenes/cocina/burrito.png',cat:'Cocina',pro:1},
-  {k:'cocBowlDeBurrito',label:'Bowl de burrito',src:'recursos/imagenes/cocina/bowl-de-burrito.png',cat:'Cocina',pro:1},
-  {k:'cocTacosDePollo',label:'Tacos de pollo',src:'recursos/imagenes/cocina/tacos-de-pollo.png',cat:'Cocina',pro:1},
-  {k:'cocWaffleConFresas',label:'Waffle con fresas',src:'recursos/imagenes/cocina/waffle-con-fresas.png',cat:'Cocina',pro:1},
-  {k:'cocCorteDeCarne',label:'Corte de carne',src:'recursos/imagenes/cocina/corte-de-carne.png',cat:'Cocina',pro:1},
+  {k:'cocCaqui',label:'Caqui',src:'recursos/imagenes/cocina/caqui.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocHigo',label:'Higo',src:'recursos/imagenes/cocina/higo.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocDatiles',label:'Dátiles',src:'recursos/imagenes/cocina/datiles.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocArandanosRojos',label:'Arándanos rojos',src:'recursos/imagenes/cocina/arandanos-rojos.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocCarambola',label:'Carambola',src:'recursos/imagenes/cocina/carambola.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocCarambola2',label:'Carambola (2)',src:'recursos/imagenes/cocina/carambola-2.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocGuayaba',label:'Guayaba',src:'recursos/imagenes/cocina/guayaba.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocMaracuya',label:'Maracuyá',src:'recursos/imagenes/cocina/maracuya.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocCalabacita',label:'Calabacita',src:'recursos/imagenes/cocina/calabacita.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPepino',label:'Pepino',src:'recursos/imagenes/cocina/pepino.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocCalabazaButternut',label:'Calabaza butternut',src:'recursos/imagenes/cocina/calabaza-butternut.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocBokChoy',label:'Bok choy',src:'recursos/imagenes/cocina/bok-choy.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPoro',label:'Poro',src:'recursos/imagenes/cocina/poro.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocHinojo',label:'Hinojo',src:'recursos/imagenes/cocina/hinojo.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocHinojo2',label:'Hinojo (2)',src:'recursos/imagenes/cocina/hinojo-2.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocAlcachofa',label:'Alcachofa',src:'recursos/imagenes/cocina/alcachofa.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPanNaan',label:'Pan naan',src:'recursos/imagenes/cocina/pan-naan.png',cat:'Comida',pro:1},
+  {k:'cocCuernito',label:'Cuernito',src:'recursos/imagenes/cocina/cuernito.png',cat:'Comida',pro:1},
+  {k:'cocBagel',label:'Bagel',src:'recursos/imagenes/cocina/bagel.png',cat:'Comida',pro:1},
+  {k:'cocBurrito',label:'Burrito',src:'recursos/imagenes/cocina/burrito.png',cat:'Comida',pro:1},
+  {k:'cocBowlDeBurrito',label:'Bowl de burrito',src:'recursos/imagenes/cocina/bowl-de-burrito.png',cat:'Comida',pro:1},
+  {k:'cocTacosDePollo',label:'Tacos de pollo',src:'recursos/imagenes/cocina/tacos-de-pollo.png',cat:'Comida',pro:1},
+  {k:'cocWaffleConFresas',label:'Waffle con fresas',src:'recursos/imagenes/cocina/waffle-con-fresas.png',cat:'Comida',pro:1},
+  {k:'cocCorteDeCarne',label:'Corte de carne',src:'recursos/imagenes/cocina/corte-de-carne.png',cat:'Comida',pro:1},
   {k:'cocArrocera',label:'Arrocera',src:'recursos/imagenes/cocina/arrocera.png',cat:'Cocina',pro:1},
   {k:'cocVaporera',label:'Vaporera',src:'recursos/imagenes/cocina/vaporera.png',cat:'Cocina',pro:1},
   {k:'cocJuegoDeUtensilios',label:'Juego de utensilios',src:'recursos/imagenes/cocina/juego-de-utensilios.png',cat:'Cocina',pro:1},
@@ -9983,7 +9992,7 @@ const REC_IMGS=[
   {k:'cocPrensaDeAjos',label:'Prensa de ajos',src:'recursos/imagenes/cocina/prensa-de-ajos.png',cat:'Cocina',pro:1},
   {k:'cocExprimidor2',label:'Exprimidor (2)',src:'recursos/imagenes/cocina/exprimidor-2.png',cat:'Cocina',pro:1},
   {k:'cocPelador',label:'Pelador',src:'recursos/imagenes/cocina/pelador.png',cat:'Cocina',pro:1},
-  {k:'cocAguacate',label:'Aguacate',src:'recursos/imagenes/cocina/aguacate.png',cat:'Cocina',pro:1},
+  {k:'cocAguacate',label:'Aguacate',src:'recursos/imagenes/cocina/aguacate.png',cat:'Frutas y verduras',pro:1},
   {k:'cocTeteraDeEstufa',label:'Tetera de estufa',src:'recursos/imagenes/cocina/tetera-de-estufa.png',cat:'Cocina',pro:1},
   {k:'cocCuchilloDeChef',label:'Cuchillo de chef',src:'recursos/imagenes/cocina/cuchillo-de-chef.png',cat:'Cocina',pro:1},
   {k:'cocChairaAfilador',label:'Chaira (afilador)',src:'recursos/imagenes/cocina/chaira-afilador.png',cat:'Cocina',pro:1},
@@ -10000,30 +10009,30 @@ const REC_IMGS=[
   {k:'cocBasculaDeCocina',label:'Báscula de cocina',src:'recursos/imagenes/cocina/bascula-de-cocina.png',cat:'Cocina',pro:1},
   {k:'cocBasculaDeCocina2',label:'Báscula de cocina (2)',src:'recursos/imagenes/cocina/bascula-de-cocina-2.png',cat:'Cocina',pro:1},
   {k:'cocPortacubiertos',label:'Portacubiertos',src:'recursos/imagenes/cocina/portacubiertos.png',cat:'Cocina',pro:1},
-  {k:'cocPera',label:'Pera',src:'recursos/imagenes/cocina/pera.png',cat:'Cocina',pro:1},
-  {k:'cocGranada',label:'Granada',src:'recursos/imagenes/cocina/granada.png',cat:'Cocina',pro:1},
-  {k:'cocCiruela',label:'Ciruela',src:'recursos/imagenes/cocina/ciruela.png',cat:'Cocina',pro:1},
-  {k:'cocKiwi',label:'Kiwi',src:'recursos/imagenes/cocina/kiwi.png',cat:'Cocina',pro:1},
-  {k:'cocKiwiEntero',label:'Kiwi entero',src:'recursos/imagenes/cocina/kiwi-entero.png',cat:'Cocina',pro:1},
-  {k:'cocPapaya',label:'Papaya',src:'recursos/imagenes/cocina/papaya.png',cat:'Cocina',pro:1},
-  {k:'cocFrambuesa',label:'Frambuesa',src:'recursos/imagenes/cocina/frambuesa.png',cat:'Cocina',pro:1},
-  {k:'cocMango',label:'Mango',src:'recursos/imagenes/cocina/mango.png',cat:'Cocina',pro:1},
-  {k:'cocPapa',label:'Papa',src:'recursos/imagenes/cocina/papa.png',cat:'Cocina',pro:1},
-  {k:'cocPimientoAmarillo',label:'Pimiento amarillo',src:'recursos/imagenes/cocina/pimiento-amarillo.png',cat:'Cocina',pro:1},
-  {k:'cocBerenjena',label:'Berenjena',src:'recursos/imagenes/cocina/berenjena.png',cat:'Cocina',pro:1},
-  {k:'cocEspinaca',label:'Espinaca',src:'recursos/imagenes/cocina/espinaca.png',cat:'Cocina',pro:1},
-  {k:'cocRabano',label:'Rábano',src:'recursos/imagenes/cocina/rabano.png',cat:'Cocina',pro:1},
-  {k:'cocRabano2',label:'Rábano (2)',src:'recursos/imagenes/cocina/rabano-2.png',cat:'Cocina',pro:1},
-  {k:'cocCol',label:'Col',src:'recursos/imagenes/cocina/col.png',cat:'Cocina',pro:1},
-  {k:'cocEsparragos',label:'Espárragos',src:'recursos/imagenes/cocina/esparragos.png',cat:'Cocina',pro:1},
-  {k:'cocBaguette',label:'Baguette',src:'recursos/imagenes/cocina/baguette.png',cat:'Cocina',pro:1},
-  {k:'cocPretzel',label:'Pretzel',src:'recursos/imagenes/cocina/pretzel.png',cat:'Cocina',pro:1},
-  {k:'cocDona',label:'Dona',src:'recursos/imagenes/cocina/dona.png',cat:'Cocina',pro:1},
-  {k:'cocBurrito2',label:'Burrito (2)',src:'recursos/imagenes/cocina/burrito-2.png',cat:'Cocina',pro:1},
-  {k:'cocBurritoEnvuelto',label:'Burrito envuelto',src:'recursos/imagenes/cocina/burrito-envuelto.png',cat:'Cocina',pro:1},
-  {k:'cocHotCakes',label:'Hot cakes',src:'recursos/imagenes/cocina/hot-cakes.png',cat:'Cocina',pro:1},
-  {k:'cocSushi',label:'Sushi',src:'recursos/imagenes/cocina/sushi.png',cat:'Cocina',pro:1},
-  {k:'cocCorteDeCarne2',label:'Corte de carne (2)',src:'recursos/imagenes/cocina/corte-de-carne-2.png',cat:'Cocina',pro:1},
+  {k:'cocPera',label:'Pera',src:'recursos/imagenes/cocina/pera.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocGranada',label:'Granada',src:'recursos/imagenes/cocina/granada.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocCiruela',label:'Ciruela',src:'recursos/imagenes/cocina/ciruela.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocKiwi',label:'Kiwi',src:'recursos/imagenes/cocina/kiwi.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocKiwiEntero',label:'Kiwi entero',src:'recursos/imagenes/cocina/kiwi-entero.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPapaya',label:'Papaya',src:'recursos/imagenes/cocina/papaya.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocFrambuesa',label:'Frambuesa',src:'recursos/imagenes/cocina/frambuesa.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocMango',label:'Mango',src:'recursos/imagenes/cocina/mango.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPapa',label:'Papa',src:'recursos/imagenes/cocina/papa.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPimientoAmarillo',label:'Pimiento amarillo',src:'recursos/imagenes/cocina/pimiento-amarillo.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocBerenjena',label:'Berenjena',src:'recursos/imagenes/cocina/berenjena.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocEspinaca',label:'Espinaca',src:'recursos/imagenes/cocina/espinaca.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocRabano',label:'Rábano',src:'recursos/imagenes/cocina/rabano.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocRabano2',label:'Rábano (2)',src:'recursos/imagenes/cocina/rabano-2.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocCol',label:'Col',src:'recursos/imagenes/cocina/col.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocEsparragos',label:'Espárragos',src:'recursos/imagenes/cocina/esparragos.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocBaguette',label:'Baguette',src:'recursos/imagenes/cocina/baguette.png',cat:'Comida',pro:1},
+  {k:'cocPretzel',label:'Pretzel',src:'recursos/imagenes/cocina/pretzel.png',cat:'Comida',pro:1},
+  {k:'cocDona',label:'Dona',src:'recursos/imagenes/cocina/dona.png',cat:'Comida',pro:1},
+  {k:'cocBurrito2',label:'Burrito (2)',src:'recursos/imagenes/cocina/burrito-2.png',cat:'Comida',pro:1},
+  {k:'cocBurritoEnvuelto',label:'Burrito envuelto',src:'recursos/imagenes/cocina/burrito-envuelto.png',cat:'Comida',pro:1},
+  {k:'cocHotCakes',label:'Hot cakes',src:'recursos/imagenes/cocina/hot-cakes.png',cat:'Comida',pro:1},
+  {k:'cocSushi',label:'Sushi',src:'recursos/imagenes/cocina/sushi.png',cat:'Comida',pro:1},
+  {k:'cocCorteDeCarne2',label:'Corte de carne (2)',src:'recursos/imagenes/cocina/corte-de-carne-2.png',cat:'Comida',pro:1},
   {k:'cocGorroDeChef',label:'Gorro de chef',src:'recursos/imagenes/cocina/gorro-de-chef.png',cat:'Cocina',pro:1},
   {k:'cocChef',label:'Chef',src:'recursos/imagenes/cocina/chef.png',cat:'Cocina',pro:1},
   {k:'cocMandil',label:'Mandil',src:'recursos/imagenes/cocina/mandil.png',cat:'Cocina',pro:1},
@@ -10048,29 +10057,29 @@ const REC_IMGS=[
   {k:'cocHervidor',label:'Hervidor',src:'recursos/imagenes/cocina/hervidor.png',cat:'Cocina',pro:1},
   {k:'cocCubiertos',label:'Cubiertos',src:'recursos/imagenes/cocina/cubiertos.png',cat:'Cocina',pro:1},
   {k:'cocCubiertos2',label:'Cubiertos (2)',src:'recursos/imagenes/cocina/cubiertos-2.png',cat:'Cocina',pro:1},
-  {k:'cocManzana',label:'Manzana',src:'recursos/imagenes/cocina/manzana.png',cat:'Cocina',pro:1},
-  {k:'cocPlatano2',label:'Plátano (2)',src:'recursos/imagenes/cocina/platano-2.png',cat:'Cocina',pro:1},
-  {k:'cocUvas',label:'Uvas',src:'recursos/imagenes/cocina/uvas.png',cat:'Cocina',pro:1},
-  {k:'cocNaranja',label:'Naranja',src:'recursos/imagenes/cocina/naranja.png',cat:'Cocina',pro:1},
-  {k:'cocPina',label:'Piña',src:'recursos/imagenes/cocina/pina.png',cat:'Cocina',pro:1},
-  {k:'cocFresa',label:'Fresa',src:'recursos/imagenes/cocina/fresa.png',cat:'Cocina',pro:1},
-  {k:'cocFresa2',label:'Fresa (2)',src:'recursos/imagenes/cocina/fresa-2.png',cat:'Cocina',pro:1},
-  {k:'cocSandia',label:'Sandía',src:'recursos/imagenes/cocina/sandia.png',cat:'Cocina',pro:1},
-  {k:'cocZanahoria',label:'Zanahoria',src:'recursos/imagenes/cocina/zanahoria.png',cat:'Cocina',pro:1},
-  {k:'cocBrocoli',label:'Brócoli',src:'recursos/imagenes/cocina/brocoli.png',cat:'Cocina',pro:1},
-  {k:'cocJitomate',label:'Jitomate',src:'recursos/imagenes/cocina/jitomate.png',cat:'Cocina',pro:1},
-  {k:'cocCebolla',label:'Cebolla',src:'recursos/imagenes/cocina/cebolla.png',cat:'Cocina',pro:1},
-  {k:'cocPimientoAmarillo2',label:'Pimiento amarillo (2)',src:'recursos/imagenes/cocina/pimiento-amarillo-2.png',cat:'Cocina',pro:1},
-  {k:'cocPimientoRojo',label:'Pimiento rojo',src:'recursos/imagenes/cocina/pimiento-rojo.png',cat:'Cocina',pro:1},
-  {k:'cocChampinon',label:'Champiñón',src:'recursos/imagenes/cocina/champinon.png',cat:'Cocina',pro:1},
-  {k:'cocElote',label:'Elote',src:'recursos/imagenes/cocina/elote.png',cat:'Cocina',pro:1},
-  {k:'cocPanDeCaja',label:'Pan de caja',src:'recursos/imagenes/cocina/pan-de-caja.png',cat:'Cocina',pro:1},
-  {k:'cocCuernito2',label:'Cuernito (2)',src:'recursos/imagenes/cocina/cuernito-2.png',cat:'Cocina',pro:1},
-  {k:'cocHamburguesa',label:'Hamburguesa',src:'recursos/imagenes/cocina/hamburguesa.png',cat:'Cocina',pro:1},
-  {k:'cocPizza',label:'Pizza',src:'recursos/imagenes/cocina/pizza.png',cat:'Cocina',pro:1},
-  {k:'cocHuevoEstrellado',label:'Huevo estrellado',src:'recursos/imagenes/cocina/huevo-estrellado.png',cat:'Cocina',pro:1},
-  {k:'cocPolloRostizado',label:'Pollo rostizado',src:'recursos/imagenes/cocina/pollo-rostizado.png',cat:'Cocina',pro:1},
-  {k:'cocTaco',label:'Taco',src:'recursos/imagenes/cocina/taco.png',cat:'Cocina',pro:1},
+  {k:'cocManzana',label:'Manzana',src:'recursos/imagenes/cocina/manzana.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPlatano2',label:'Plátano (2)',src:'recursos/imagenes/cocina/platano-2.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocUvas',label:'Uvas',src:'recursos/imagenes/cocina/uvas.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocNaranja',label:'Naranja',src:'recursos/imagenes/cocina/naranja.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPina',label:'Piña',src:'recursos/imagenes/cocina/pina.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocFresa',label:'Fresa',src:'recursos/imagenes/cocina/fresa.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocFresa2',label:'Fresa (2)',src:'recursos/imagenes/cocina/fresa-2.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocSandia',label:'Sandía',src:'recursos/imagenes/cocina/sandia.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocZanahoria',label:'Zanahoria',src:'recursos/imagenes/cocina/zanahoria.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocBrocoli',label:'Brócoli',src:'recursos/imagenes/cocina/brocoli.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocJitomate',label:'Jitomate',src:'recursos/imagenes/cocina/jitomate.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocCebolla',label:'Cebolla',src:'recursos/imagenes/cocina/cebolla.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPimientoAmarillo2',label:'Pimiento amarillo (2)',src:'recursos/imagenes/cocina/pimiento-amarillo-2.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPimientoRojo',label:'Pimiento rojo',src:'recursos/imagenes/cocina/pimiento-rojo.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocChampinon',label:'Champiñón',src:'recursos/imagenes/cocina/champinon.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocElote',label:'Elote',src:'recursos/imagenes/cocina/elote.png',cat:'Frutas y verduras',pro:1},
+  {k:'cocPanDeCaja',label:'Pan de caja',src:'recursos/imagenes/cocina/pan-de-caja.png',cat:'Comida',pro:1},
+  {k:'cocCuernito2',label:'Cuernito (2)',src:'recursos/imagenes/cocina/cuernito-2.png',cat:'Comida',pro:1},
+  {k:'cocHamburguesa',label:'Hamburguesa',src:'recursos/imagenes/cocina/hamburguesa.png',cat:'Comida',pro:1},
+  {k:'cocPizza',label:'Pizza',src:'recursos/imagenes/cocina/pizza.png',cat:'Comida',pro:1},
+  {k:'cocHuevoEstrellado',label:'Huevo estrellado',src:'recursos/imagenes/cocina/huevo-estrellado.png',cat:'Comida',pro:1},
+  {k:'cocPolloRostizado',label:'Pollo rostizado',src:'recursos/imagenes/cocina/pollo-rostizado.png',cat:'Comida',pro:1},
+  {k:'cocTaco',label:'Taco',src:'recursos/imagenes/cocina/taco.png',cat:'Comida',pro:1},
   {k:'escritorio',label:'Escritorio de noticias (va enfrente)',src:'recursos/imagenes/escritorio-noticias.webp',cat:'Noticias',pro:1},
   {k:'calendario',label:'Calendario (ponle la fecha con texto)',src:'recursos/imagenes/calendario.webp',cat:'Cosas'},
   {k:'huellita',label:'Huellita',src:'recursos/imagenes/huellita.webp',cat:'Animales'},
@@ -10129,14 +10138,37 @@ async function recSyncFormat(){
   recSyncing=false;if(n){refreshAll();save();}
 }
 {const rz=resize;resize=function(){rz();recSyncFormat();};}
+// tus imágenes (las guardadas y los dibujos con IA) sirven en todos los proyectos
+let MYIMGS=[];
+const REC_ABIERTAS=new Set();
+function myImgSave(aid,name,cat){
+  if(!aid||!S.assets[aid]) return false;
+  if(MYIMGS.some(x=>x.aid===aid)){toast('Ya está en tus imágenes');return false;}
+  MYIMGS.unshift({id:'m'+uid(),aid,name:String(name||S.assets[aid].name||'Imagen').replace(/\.[a-z0-9]+$/i,'').slice(0,40),cat:cat||'Mis imágenes'});
+  saveLib();toast(`Guardada en ${cat==='Dibujos con IA'?'tus dibujos con IA':'tus imágenes'}`);return true;
+}
 function openRecImgs(){
-  const cats=[...new Set(REC_IMGS.map(i=>i.cat))];
+  const mine=MYIMGS.filter(x=>S.assets[x.aid]),cats=[...new Set(REC_IMGS.map(i=>i.cat))];
+  const myCats=['Dibujos con IA','Mis imágenes'].map(c=>[c,mine.filter(x=>(x.cat||'Mis imágenes')===c)]).filter(([,l])=>l.length);
+  const myCard=x=>`<div class="my-img"><button type="button" class="pick" data-pk="my:${x.id}"><img data-myimg="${x.aid}" alt="">${esc(x.name)}</button><button type="button" class="my-del" data-pk="mydel:${x.id}" title="Quitar de mis imágenes" aria-label="Quitar ${esc(x.name)} de mis imágenes">×</button></div>`;
+  const sec=(key,title,n,inner,open)=>`<details class="sec rec-cat" data-cat="${esc(key)}"${open?' open':''}><summary>${esc(title)}<span class="cnt">${n}</span></summary><div class="pgrid rec-grid">${inner}</div></details>`;
   openModal({title:'Imagen',wide:true,
-    body:`<div class="btns"><button type="button" class="btn sm primary" data-recup="1">Subir de tu equipo…</button><button type="button" class="btn sm" data-recdib="1">Dibujar con IA</button></div><p class="note">O usa una de las que vienen con Bocón${isPro()?'':' (las que tienen ✦ son de Bocón Pro)'}:</p>`+
-      cats.map(c=>`<div class="eyebrow">${esc(c)}</div><div class="pgrid rec-grid">${REC_IMGS.filter(i=>i.cat===c).map(i=>`<button type="button" class="pick" data-pk="${i.k}">${recItemTag(i)}<img src="${i.src}" alt="" loading="lazy">${esc(i.label)}</button>`).join('')}</div>`).join(''),
-    actions:[{label:'Cerrar'}],
-    onOpen:c=>{c.querySelector('[data-recup]').onclick=()=>{closeModal();pickImage();};c.querySelector('[data-recdib]').onclick=()=>{closeModal();openDibujar();};},
-    onPick:k=>useRecImg(k)});
+    body:`<div class="btns"><button type="button" class="btn sm primary" data-recup="1">Subir de tu equipo…</button><button type="button" class="btn sm" data-recdib="1">Dibujar con IA</button></div>`+
+      (myCats.length?myCats.map(([c,l])=>sec('my:'+c,c,l.length,l.map(myCard).join(''),!REC_ABIERTAS.size||REC_ABIERTAS.has('my:'+c))).join(''):'<p class="note">Lo que dibujes con IA y las imágenes que guardes («Guardar en mis imágenes») aparecen aquí, en todos tus proyectos.</p>')+
+      `<p class="note rec-nota">Las que vienen con Bocón${isPro()?'':' (las que tienen ✦ son de Bocón Pro)'}:</p>`+
+      cats.map(c=>{const l=REC_IMGS.filter(i=>i.cat===c);return sec(c,c,l.length,l.map(i=>`<button type="button" class="pick" data-pk="${i.k}">${recItemTag(i)}<img src="${i.src}" alt="" loading="lazy">${esc(i.label)}</button>`).join(''),REC_ABIERTAS.has(c));}).join(''),
+    actions:[{label:'Cerrar'}],keepOnPick:true,
+    onOpen:c=>{
+      c.querySelector('[data-recup]').onclick=()=>{closeModal();pickImage();};c.querySelector('[data-recdib]').onclick=()=>{closeModal();openDibujar();};
+      c.querySelectorAll('img[data-myimg]').forEach(im=>{const a=S.assets[im.dataset.myimg];if(a&&a.url) im.src=a.url;else if(a&&a.blob) im.src=URL.createObjectURL(a.blob);});
+      c.querySelectorAll('details.rec-cat').forEach(d=>d.addEventListener('toggle',()=>{if(d.open) REC_ABIERTAS.add(d.dataset.cat);else REC_ABIERTAS.delete(d.dataset.cat);}));
+    },
+    onPick:k=>{
+      if(k.startsWith('mydel:')){const x=MYIMGS.find(m=>m.id===k.slice(6));if(!x) return;MYIMGS=MYIMGS.filter(m=>m!==x);saveLib();openRecImgs();toast(`«${x.name}» ya no está en tus imágenes`);return;}
+      closeModal();
+      if(k.startsWith('my:')){const x=MYIMGS.find(m=>m.id===k.slice(3));if(!x||!S.assets[x.aid]) return;addMedia(x.aid,'img');placeImage(x.aid,{t:S.t});toast(`«${x.name}» en la escena`);return;}
+      useRecImg(k);
+    }});
 }
 async function useRecImg(k){
   const it=REC_IMGS.find(x=>x.k===k);if(!it||!recItemRoom(it)) return;
@@ -10181,7 +10213,7 @@ function openDibujar(){
       <div class="dib-prev" id="dibPrev"><img id="dibImg" alt="" hidden><p id="dibMsg">Escribe qué quieres y sale un dibujo de caricatura con contorno grueso.</p></div>
       <form class="dib-fila" id="dibCambio" hidden><input type="text" id="dibCambioTxt" maxlength="200" autocomplete="off" placeholder="¿Le cambias algo? Ponle hojas verdes" aria-label="Qué le cambias al dibujo"><button type="submit" class="btn">Cambiar</button></form>
       <p class="note" id="dibCuenta"></p>`,
-    actions:[{label:'Otra versión',id:'dibOtra',keep:true,run:()=>dibPedir({otra:true})},{label:'Poner en la escena',cls:'primary',id:'dibPoner',keep:true,run:dibPoner}],
+    actions:[{label:'Otra versión',id:'dibOtra',keep:true,run:()=>dibPedir({otra:true})},{label:'Guardar',id:'dibGuardar',keep:true,run:()=>dibPoner(false)},{label:'Poner en la escena',cls:'primary',id:'dibPoner',keep:true,run:()=>dibPoner(true)}],
     onOpen:c=>{
       c.querySelector('#dibForm').onsubmit=e=>{e.preventDefault();dibPedir();};
       c.querySelector('#dibCambio').onsubmit=e=>{e.preventDefault();const t=$('#dibCambioTxt').value.trim();if(t) dibPedir({cambio:t});else $('#dibCambioTxt').focus();};
@@ -10192,7 +10224,7 @@ function openDibujar(){
 const dibAbierta=()=>!!$('#dibPrev');
 function dibBotones(){
   if(!dibAbierta()) return;const hay=!!DIB.svg,oc=DIB.ocupado;
-  for(const id of ['dibOtra','dibPoner']){const b=$('#'+id);if(b) b.disabled=!hay||oc;}
+  for(const id of ['dibOtra','dibGuardar','dibPoner']){const b=$('#'+id);if(b) b.disabled=!hay||oc;}
   $$('#dibForm button,#dibCambio button').forEach(b=>b.disabled=oc);
   $('#dibCambio').hidden=!hay;$('#dibPrev').classList.toggle('cargando',oc);
 }
@@ -10226,13 +10258,22 @@ async function dibPedir(extra){
   }catch(e){DIB.ocupado=false;dibAviso(e.message||'No se pudo dibujar.');dibCuentaCargar();}
   finally{DIB.ocupado=false;dibBotones();}
 }
-async function dibPoner(){
+// cada dibujo se guarda una sola vez en «Dibujos con IA» (aunque se ponga varias veces)
+async function dibAsset(){
+  if(DIB.aid&&DIB.aidSvg===DIB.svg&&S.assets[DIB.aid]) return DIB.aid;
+  const c=await dibEstampita(DIB.svg);let b=await new Promise(r=>c.toBlob(r,'image/webp',.92)),ext='webp';
+  if(!b||b.type!=='image/webp'){b=await new Promise(r=>c.toBlob(r,'image/png'));ext='png';}
+  const id=await addAsset(b,DIB.que.slice(0,40)+'.'+ext);DIB.aid=id;DIB.aidSvg=DIB.svg;
+  if(!MYIMGS.some(x=>x.aid===id)){MYIMGS.unshift({id:'m'+uid(),aid:id,name:DIB.que.slice(0,40),cat:'Dibujos con IA'});saveLib();}
+  return id;
+}
+async function dibPoner(poner){
   if(!DIB.svg||DIB.ocupado) return;
   try{
-    const c=await dibEstampita(DIB.svg);let b=await new Promise(r=>c.toBlob(r,'image/webp',.92)),ext='webp';
-    if(!b||b.type!=='image/webp'){b=await new Promise(r=>c.toBlob(r,'image/png'));ext='png';}
-    const id=await addAsset(b,DIB.que.slice(0,40)+'.'+ext);addMedia(id,'img');closeModal();placeImage(id,{t:S.t});toast(`«${DIB.que}» en la escena`);
-  }catch(e){toast('No pude poner el dibujo en la escena');}
+    const id=await dibAsset();
+    if(poner){addMedia(id,'img');closeModal();placeImage(id,{t:S.t});toast(`«${DIB.que}» en la escena y en tus dibujos con IA`);}
+    else toast('Guardado en Imagen → Dibujos con IA');
+  }catch(e){toast('No pude guardar el dibujo');}
 }
 CMDS.dibujar=()=>openDibujar();
 CMDS.recFondos=()=>openRecFondos();

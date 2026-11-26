@@ -96,6 +96,8 @@ Los precios se cambian aquí sin tocar código. Quien ya está suscrito conserva
 - Una IA de texto (Gemini) escribe el dibujo como código SVG, siempre en caricatura con contorno grueso, y Bocón lo vuelve estampita con borde blanco.
 - Hay que entrar a la cuenta. Gratis: 10 al mes (`DIBUJOS_GRATIS`); Pro: 30 al mes (`DIBUJOS_POR_MES`). El servidor revisa el plan y lleva la cuenta del mes en `bocon_dibujos`; si la IA falla, el dibujo no se cuenta. Se renueva el día 1 (hora de México).
 - Los dibujos gratis gastan del mismo tope diario de Gemini que los de Pro. Si algún día se acaba seguido, baja `DIBUJOS_GRATIS` (o ponlo en `0`) antes que quitarle a Pro.
+- Cada dibujo se puede «Guardar» (o se guarda solo al «Poner en la escena») en **Imagen → Dibujos con IA**, y sirve en todos los proyectos. Cualquier imagen de la escena se guarda con **Guardar en mis imágenes** (en sus ajustes) y aparece en **Imagen → Mis imágenes**. Se quitan con la ×.
+- En la ventana Imagen cada categoría es un desplegable; Bocón recuerda cuáles abriste.
 - Con el nivel gratis de Gemini el tope de peticiones es por proyecto de Google y se ve en AI Studio. Si la página de Trazo también usa Gemini, conviene que tenga su propio proyecto de Google para que no se repartan el tope. En el nivel gratis, Google puede usar lo que se manda para mejorar sus productos.
 
 ### Qué es gratis y qué es Pro hoy
@@ -131,7 +133,7 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Imágenes (Sustos) | | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
-| Imágenes (Cocina) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete | 143 íconos de cocina: utensilios, ollas y sartenes, aparatos (batidoras, licuadoras, cafeteras, arrocera…), frutas, verduras, panes y comidas (PNG en `recursos/imagenes/cocina/`) |
+| Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`) |
 | Estilos de texto | Noticiero (cintillo rojo) | |
 | Ropa | Mandil de mamá | Uniforme naranja, Tubos para el pelo |
 | Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo), Carcajada (muerto de risa), Llorando de risa (XD), Aguantándose la risa | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui), Apenado (¡qué bruto!) |
