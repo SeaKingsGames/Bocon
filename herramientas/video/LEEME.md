@@ -39,7 +39,7 @@ with Bocon() as b:
     b.subtitulos(ch, palabras, desfase=v['inicio'])
     b.bloques(ch, gestos=[('feliz', 0, 2)], poses=[('saludar', 0, 1.5)])
     b.imagen('manzana.webp', 1, 3, x=.7, y=.35, anim='flotar')
-    b.texto('¡Atención!', 0, 2, preset='impacto', y=.15)
+    b.texto('¡Atención!', 0, 2, preset='comic', y=.15)
     b.sonido('pop', 1.0)
     b.musica(estilo='chill')                  # al final: dura lo que dure el video
     b.hoja([0.5, 2, 4], 'revisar.jpg')

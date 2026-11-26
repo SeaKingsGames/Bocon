@@ -26,7 +26,9 @@ class Bocon:
         self.raiz, self.puerto, self.chrome = raiz, puerto, chrome
         self.origen = f'http://localhost:{puerto}'
         self.esperar = esperar or "typeof S!=='undefined' && S.scenes && S.scenes.length>0"
-        self.css = open(os.path.join(CACHE, 'fuentes', 'fuentes.css'), encoding='utf-8').read()
+        # rutas absolutas al mismo origen de la app: si quedan relativas, el navegador las pide a fonts.googleapis.com y fallan
+        self.css = open(os.path.join(CACHE, 'fuentes', 'fuentes.css'), encoding='utf-8').read() \
+            .replace('url(/__kit/fuentes/', f'url({self.origen}/__kit/fuentes/')
 
     # ---------- abrir y cerrar ----------
     def __enter__(self):
