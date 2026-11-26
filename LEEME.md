@@ -87,18 +87,20 @@ En tu proyecto → **Settings → Environment Variables**, agrega y luego haz **
 | `LOGIN_GOOGLE` | `1` si activaste Google en Supabase |
 | `GEMINI_API_KEY` | llave de Gemini para «Dibujar con IA» ([Google AI Studio](https://aistudio.google.com) → Get API key; el nivel gratis no pide tarjeta) |
 | `DIBUJOS_POR_MES` | dibujos con IA por cuenta Pro al mes (vacío = 30) |
+| `DIBUJOS_GRATIS` | dibujos con IA por cuenta gratis al mes (vacío = 10; `0` = solo Pro) |
 | `GEMINI_MODELOS` | opcional: modelos a probar en orden, separados por coma (vacío = `gemini-flash-latest,gemini-flash-lite-latest`) |
 
 Los precios se cambian aquí sin tocar código. Quien ya está suscrito conserva el precio con el que entró.
 
 ### Dibujar con IA (Trazo)
 - Una IA de texto (Gemini) escribe el dibujo como código SVG, siempre en caricatura con contorno grueso, y Bocón lo vuelve estampita con borde blanco.
-- Solo para Pro. El servidor revisa que la cuenta sea Pro y lleva la cuenta del mes en `bocon_dibujos`; si la IA falla, el dibujo no se cuenta. Se renueva el día 1 (hora de México).
+- Hay que entrar a la cuenta. Gratis: 10 al mes (`DIBUJOS_GRATIS`); Pro: 30 al mes (`DIBUJOS_POR_MES`). El servidor revisa el plan y lleva la cuenta del mes en `bocon_dibujos`; si la IA falla, el dibujo no se cuenta. Se renueva el día 1 (hora de México).
+- Los dibujos gratis gastan del mismo tope diario de Gemini que los de Pro. Si algún día se acaba seguido, baja `DIBUJOS_GRATIS` (o ponlo en `0`) antes que quitarle a Pro.
 - Con el nivel gratis de Gemini el tope de peticiones es por proyecto de Google y se ve en AI Studio. Si la página de Trazo también usa Gemini, conviene que tenga su propio proyecto de Google para que no se repartan el tope. En el nivel gratis, Google puede usar lo que se manda para mejorar sus productos.
 
 ### Qué es gratis y qué es Pro hoy
-- **Gratis:** todo el editor; hasta 2 personajes por escena (las bocas sobre fotos no cuentan); la ropa y accesorios básicos; los efectos de voz listos; los recursos de Bocón sin ✦; texto a voz de hasta 200 letras; exporta MP4 720p y GIF con la marquita (en video vertical va arriba a la izquierda para no taparse con los botones de TikTok).
-- **Pro:** sin marquita (también en vivo), MP4 en 1080p, GIF sin fondo y cuadros PNG sin fondo; personajes sin límite; la ropa y accesorios marcados con ✦; los fondos, imágenes, gestos y acciones de Bocón marcados con ✦; texto a voz sin límite; guardar tus propios efectos de voz; «Dibujar con IA» (Imagen → Dibujar con IA: escribes qué quieres y sale una estampita de caricatura, 30 al mes con `DIBUJOS_POR_MES`).
+- **Gratis:** todo el editor; hasta 2 personajes por escena (las bocas sobre fotos no cuentan); la ropa y accesorios básicos; los efectos de voz listos; los recursos de Bocón sin ✦; texto a voz de hasta 200 letras; «Dibujar con IA» con cuenta, 10 al mes; exporta MP4 720p y GIF con la marquita (en video vertical va arriba a la izquierda para no taparse con los botones de TikTok).
+- **Pro:** sin marquita (también en vivo), MP4 en 1080p, GIF sin fondo y cuadros PNG sin fondo; personajes sin límite; la ropa y accesorios marcados con ✦; los fondos, imágenes, gestos y acciones de Bocón marcados con ✦; texto a voz sin límite; guardar tus propios efectos de voz; «Dibujar con IA» con más dibujos al mes (30; Imagen → Dibujar con IA: escribes qué quieres y sale una estampita de caricatura).
 - Los límites solo se aplican cuando ya hay cuentas (variables puestas en Vercel). Los proyectos y marionetas que ya traen cosas Pro se abren y se ven igual; el candado solo está al agregar algo nuevo.
 - Lo que es Pro se cambia en `index.html`: `ACC_PRO` (accesorios), `REC_PRO` (gestos y acciones de Bocón), `pro:1` en `REC_FONDOS` y `REC_IMGS` (fondos e imágenes de Bocón), `FREE_CHARS` (personajes) y `TTS_FREE` (letras de texto a voz).
 - Precios recomendados para el lanzamiento: `PRO_PRECIO_MENSUAL=79`, `PRO_PRECIO_ANUAL=690`, `PRO_FUNDADOR_PRECIO=49`, `PRO_FUNDADOR_CUPO=100`, `PRO_PRUEBA_DIAS=7`.
