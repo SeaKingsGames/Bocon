@@ -124,7 +124,7 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir, Palomita (sí), Tache (no) | Multitud festejando |
-| Imágenes (Cosas) | Vela, Control de videojuego, Calendario (ponle la fecha con texto), Mazo de juez | Polilla (no hay nada) |
+| Imágenes (Cosas) | Vela, Control de videojuego, Calendario (ponle la fecha con texto), Mazo de juez | Polilla (no hay nada), Cuchillo clavado (pégalo al personaje y lo sigue aunque esté acostado) |
 | Imágenes (Animales) | Huellita | |
 | Imágenes (Noticias) | | Escritorio de noticias (va enfrente del personaje) |
 | Imágenes (Dibujos) | Garabato: pollo con ansiedad | |

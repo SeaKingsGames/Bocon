@@ -2222,7 +2222,11 @@ function xfOf(par,t){
   if(isProp(par)){const st=propState(par,t);if(!st) return null;const uu=un*st.sc,fx=st.pl.fx;
     return {x:st.pl.x+(fx?fx.jx:0)+st.jx*uu*(ah/aw),y:st.pl.y-(fx?fx.hopH+fx.hopU*uu:0)+st.dy*uu,s:st.sc,o:st.op,r:st.pl.r+(st.rot+(fx?fx.tilt+fx.spin:0))*180/Math.PI};}
   const pl=placeAt(par,t),fx=pl.fx;
-  return {x:pl.x+(fx?fx.jx:0),y:pl.y-(fx?fx.hopH+fx.hopU*un*pl.s:0),s:pl.s,o:pl.o,r:pl.r+(fx?(fx.tilt+fx.spin)*180/Math.PI:0)};
+  // el personaje gira desde los pies (ver bodyM): lo que lleva pegado tiene que girar igual o se le despega
+  const a=pl.r*Math.PI/180+(fx?fx.tilt:0),sp=fx?fx.spin:0,F=footY(par,un*pl.s);
+  const qx=sp?.45*F*Math.sin(sp):0,dy=(sp?.45*F*(1-Math.cos(sp)):0)-F;
+  const ax=qx*Math.cos(a)-dy*Math.sin(a),ay=F+qx*Math.sin(a)+dy*Math.cos(a);
+  return {x:pl.x+(fx?fx.jx:0)+ax*(ah/aw),y:pl.y-(fx?fx.hopH+fx.hopU*un*pl.s:0)+ay,s:pl.s,o:pl.o,r:pl.r+(fx?(fx.tilt+fx.spin)*180/Math.PI:0)};
 }
 function parentPlace(o,t){
   const f=findObj(o.parent);if(!f||f.o===o||f.o.parent===o.id) return null;
@@ -10083,7 +10087,8 @@ const REC_IMGS=[
   {k:'escritorio',label:'Escritorio de noticias (va enfrente)',src:'recursos/imagenes/escritorio-noticias.webp',cat:'Noticias',pro:1},
   {k:'calendario',label:'Calendario (ponle la fecha con texto)',src:'recursos/imagenes/calendario.webp',cat:'Cosas'},
   {k:'huellita',label:'Huellita',src:'recursos/imagenes/huellita.webp',cat:'Animales'},
-  {k:'mazo',label:'Mazo de juez',src:'recursos/imagenes/mazo.webp',cat:'Cosas'}
+  {k:'mazo',label:'Mazo de juez',src:'recursos/imagenes/mazo.webp',cat:'Cosas'},
+  {k:'cuchilloClavado',label:'Cuchillo clavado',src:'recursos/imagenes/cuchillo-clavado.webp',cat:'Cosas',pro:1}
 ];
 // gestos (EXPR) y acciones (ACTIONS) de la app que son de Pro; los demás son gratis
 const REC_PRO=new Set(['incomodo','incredulo','explicar','explicar2','enSerio','sintiendo','balancearse','reganar','secarse','inocente','persignarse','apenado','palmadaFrente','tirarse','risaHisterica','revolcarse']);

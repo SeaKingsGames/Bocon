@@ -25,7 +25,9 @@ class Bocon:
     def __init__(self, raiz=REPO, puerto=8765, chrome='/usr/bin/google-chrome', esperar=None):
         self.raiz, self.puerto, self.chrome = raiz, puerto, chrome
         self.origen = f'http://localhost:{puerto}'
-        self.esperar = esperar or "typeof S!=='undefined' && S.scenes && S.scenes.length>0"
+        # esperar a que se quite el letrero de «Abriendo tu proyecto…»: antes de eso el ejemplo todavía puede cambiar S.format
+        self.esperar = esperar or ("typeof S!=='undefined' && S.scenes && S.scenes.length>0 && "
+                                   "(!document.getElementById('boot') || document.getElementById('boot').classList.contains('off'))")
         # rutas absolutas al mismo origen de la app: si quedan relativas, el navegador las pide a fonts.googleapis.com y fallan
         self.css = open(os.path.join(CACHE, 'fuentes', 'fuentes.css'), encoding='utf-8').read() \
             .replace('url(/__kit/fuentes/', f'url({self.origen}/__kit/fuentes/')
@@ -86,7 +88,9 @@ class Bocon:
               if(o.n) ch.name=o.n;cur().chars.push(ch);refreshAll();return ch.id;""",
                            {'k': fuente, 'x': x, 'y': y, 's': escala, 'n': nombre})
         datos = json.load(open(fuente, encoding='utf-8'))
-        return self.js("""const o=arg;await importPuppetData(o.d);const cs=cur().chars,ch=cs[cs.length-1];
+        # al importar, la app reacomoda a los que ya estaban: se les regresa su lugar
+        return self.js("""const o=arg,antes=cur().chars.map(c=>[c,c.x,c.y,c.scale]);await importPuppetData(o.d);
+              for(const [c,x,y,s] of antes){c.x=x;c.y=y;c.scale=s;}const cs=cur().chars,ch=cs[cs.length-1];
               ch.x=o.x;ch.y=o.y==null?.66:o.y;ch.scale=o.s==null?2:o.s;if(o.n) ch.name=o.n;refreshAll();return ch.id;""",
                        {'d': datos, 'x': x, 'y': y, 's': escala, 'n': nombre})
 
