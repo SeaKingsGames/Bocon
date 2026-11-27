@@ -1127,7 +1127,7 @@ details.rec-cat>.rec-grid{padding:0 10px 10px}
           <label class="chk"><input type="checkbox" id="oiArms"> Brazos que se mueven (círculo en cada mano)</label>
           <label class="chk"><input type="checkbox" id="oiFeet"> Pies que dan pasitos (óvalos verdes)</label>
         </div>
-        <p class="pe-tip">Funciona mejor con el personaje <b>completo, de frente o 3/4, sin boca</b> y con contorno, sobre fondo verde o transparente. Si los brazos están separados del cuerpo y los pies abiertos, también los separo para que se muevan. Después puedes subirle más caras de gestos en "Editar marioneta".</p>
+        <p class="pe-tip">Funciona mejor con el personaje <b>completo, de frente o 3/4, sin boca</b> y con contorno, sobre fondo verde o transparente. Si los brazos están separados del cuerpo y los pies abiertos, también los separo para que se muevan. Si no trae ojos, le pongo ojos listos que puedes cambiar. Después puedes subirle más caras de gestos en "Editar marioneta".</p>
       </div>
     </div>
   </div>
@@ -1616,11 +1616,11 @@ const PROP_ANIM={ninguna:'Ninguna',flotar:'Flotar',balancear:'Balancearse',latir
 const PROC_TPLS=['ajolote','gato','robot','calavera'];
 // Marionetas PNG: cada pieza pertenece a un grupo; todas las piezas de un grupo comparten posición y tamaño.
 const PGROUPS=['cuerpo','cabeza','ojos','cejas','boca','extra','encima','detras','cola','brazos','pies'];
-const GROUP_LABEL={cuerpo:'Cuerpo',cabeza:'Cabeza',ojos:'Ojos (abiertos, cerrados y de gestos)',cejas:'Cejas (todas)',boca:'Bocas (todas se mueven juntas)',extra:'Extras de gestos',encima:'Encima',detras:'Detrás de la cabeza',cola:'Cola',bocaVec:'Boca lista',brazos:'Brazos (los cuatro juntos)',pies:'Pies (los dos juntos)'};
+const GROUP_LABEL={cuerpo:'Cuerpo',cabeza:'Cabeza',ojos:'Ojos (abiertos, cerrados y de gestos)',cejas:'Cejas (todas)',boca:'Bocas (todas se mueven juntas)',extra:'Extras de gestos',encima:'Encima',detras:'Detrás de la cabeza',cola:'Cola',bocaVec:'Boca lista',ojosVec:'Ojos listos',brazos:'Brazos (los cuatro juntos)',pies:'Pies (los dos juntos)'};
 const MFB={Neutral:['M'],M:['Neutral'],Aa:['Uh','D','Oh'],D:['Ee','Aa','Uh'],Ee:['D','S','Aa'],F:['M','Neutral'],L:['D','Aa','Uh'],Oh:['W-Oo','Uh','Aa'],R:['Oh','W-Oo','Uh'],S:['Ee','D'],Uh:['Aa','Oh','D'],'W-Oo':['Oh','Uh']};
 const SECTIONS=[
   {title:'Base',note:'La cabeza y lo que va encima giran desde el cuello; el cuerpo se queda quieto. Si tu cabeza ya trae los ojos dibujados, no subas Ojos: sube la cabeza de cada gesto en su sección.',slots:[['cuerpo','Cuerpo','Torso y brazos; va hasta atrás'],['cabeza','Cabeza','Sin boca; con o sin ojos'],['cabezaCerrada','Cabeza parpadeando','Opcional: la misma cabeza con los ojos cerrados'],['encima','Encima','Opcional: pelo, gorra o lentes sobre la cara'],['detras','Detrás de la cabeza','Opcional: pelo largo u orejas; va detrás de todo y gira con la cabeza'],['cola','Cola','Opcional: cola, caparazón o alas; va detrás del cuerpo y no gira con la cabeza']]},
-  {title:'Ojos y cejas',slots:[['ojos','Ojos abiertos','Los dos ojos juntos'],['pupilas','Pupilas','Opcional: se mueven para mirar al que habla'],['ojosCerrados','Ojos cerrados','Para el parpadeo automático'],['cejas','Cejas','Opcional; suben un poco al hablar']]},
+  {title:'Ojos y cejas',vojos:true,slots:[['ojos','Ojos abiertos','Los dos ojos juntos'],['pupilas','Pupilas','Opcional: se mueven para mirar al que habla'],['ojosCerrados','Ojos cerrados','Para el parpadeo automático'],['cejas','Cejas','Opcional; suben un poco al hablar']]},
   {title:'Brazos y pies',note:'Opcional. Dibuja los brazos colgando (en reposo). Con el brazo completo basta; si separas el antebrazo, se dobla en el codo. Derecho e izquierdo son los del personaje, como si te viera de frente. Mueve los círculos rojos al hombro y al codo. Los pies dan pasitos solos al caminar o correr.',arms:true,slots:[['brazoA','Brazo derecho','El que ves a la izquierda: del hombro al codo, o completo'],['antebrazoA','Antebrazo derecho','Opcional: del codo a la mano'],['brazoB','Brazo izquierdo','El que ves a la derecha: del hombro al codo, o completo'],['antebrazoB','Antebrazo izquierdo','Opcional: del codo a la mano'],['pieA','Pie derecho','El que ves a la izquierda, con su pierna si tiene'],['pieB','Pie izquierdo','El que ves a la derecha, con su pierna si tiene']]},
   {title:'Bocas para el lip-sync',mouth:true,note:'Con 3 bocas ya funciona (Neutral, Aa y Oh). Las vacías usan la más parecida.',slots:['Neutral','M','Aa','D','Ee','F','L','Oh','R','S','Uh','W-Oo'].map(v=>['boca:'+v,v,'Suena como: '+VIS_HINT[v]])},
   ...['feliz','triste','enojado','sorprendido','guino','picaro'].map(e=>({title:'Gesto: '+EXPR[e].label,expr:e,note:'Solo sube lo que cambia en este gesto; lo demás usa las piezas normales. Si subes la cabeza completa, ya no se dibujan los ojos ni las cejas normales encima.',slots:[[e+':cabeza','Cabeza completa','Con los ojos y cejas del gesto, sin boca'],[e+':ojos','Ojos',''],[e+':cejas','Cejas',''],[e+':boca','Boca en reposo','Cuando no está hablando'],[e+':extra','Extra','Lágrimas, rubor o símbolos']]}))
@@ -1751,6 +1751,97 @@ function drawFace(c,u,T,p,po){
   else drawMouth(c,u,po.m,clamp(ex.smile+T.baseSmile*(1-Math.abs(ex.smile)),-1,1),f,p);
   if(ex.tear>.5&&!po.gfx){const x=f.eyeX*u+f.r*u*.7,y=(f.eyeY+f.r*1.25)*u;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+.07*u,y+.12*u,x,y+.17*u);c.quadraticCurveTo(x-.07*u,y+.12*u,x,y);fill(c,'#7cc4f2');}
   if(ex.anger>.5&&!po.gfx){c.save();c.translate(.8*u,-.8*u);c.beginPath();for(let i=0;i<4;i++){c.rotate(Math.PI/2);c.moveTo(.05*u,.16*u);c.quadraticCurveTo(.05*u,.05*u,.16*u,.05*u);}stroke(c,'#e0352b',.05*u);c.restore();}
+}
+// ===== Ojos listos: ojos dibujados con código para marionetas PNG (como las bocas listas) =====
+// Cada estilo hace solo todos los gestos: párpado, pupila, cejas, guiño, ojos felices y los especiales (estrellas, corazones…).
+const OJOS_STYLES={
+  brillantes:{label:'Brillantes',col:'#1f1720',rx:.8,ry:1},
+  puntitos:{label:'Puntitos',col:'#1f1720',rx:.48,ry:.58},
+  caricatura:{label:'Caricatura',col:'#1f1720',rx:1,ry:1},
+  color:{label:'Con color',col:'#4f8fe8',rx:1,ry:1},
+  pestanas:{label:'Con pestañas',col:'#1f1720',rx:1,ry:1},
+  anime:{label:'Anime',col:'#7a5ae8',rx:.86,ry:1.12,pro:1},
+  gato:{label:'De gato',col:'#e9b838',rx:1,ry:1,pro:1},
+  clasicos:{label:'Clásicos',col:'#1f1720',rx:.72,ry:1.12,pro:1},
+  pantalla:{label:'Pantalla',col:'#55eaff',rx:.82,ry:1,pro:1},
+  botones:{label:'Botones',col:'#4a3127',rx:.9,ry:.9,pro:1}
+};
+const OJOS_INK='#1f1720';
+const hasVecEyes=pp=>!!(pp&&pp.veyes&&pp.veyes.style&&OJOS_STYLES[pp.veyes.style]);
+const ojosCol=k=>(OJOS_STYLES[k]||OJOS_STYLES.caricatura).col;
+function vecEyeOpen(c,k,cx,cy,r,rx,ry,s,gx,gy,pu,col,ink,lw){
+  const W='#fff';
+  switch(k){
+    case 'brillantes':{const ox=gx*r*.18,oy=gy*r*.14;ell(c,cx+ox,cy+oy,rx,ry);fill(c,col);const h=r*(.2*pu+.07);ell(c,cx-rx*.32+ox,cy-ry*.36+oy,h,h);fill(c,W);ell(c,cx+rx*.3+ox,cy+ry*.3+oy,r*.1,r*.1);fill(c,W);break;}
+    case 'puntitos':{const ox=gx*r*.3,oy=gy*r*.22,k2=.8+.2*pu;ell(c,cx+ox,cy+oy,rx*k2,ry*k2);fill(c,col);ell(c,cx-rx*.32+ox,cy-ry*.38+oy,r*.12,r*.12);fill(c,W);break;}
+    case 'color':{ell(c,cx,cy,rx,ry);fill(c,W);c.save();ell(c,cx,cy,rx,ry);c.clip();const ox=gx*r*.38,oy=gy*r*.26,ix=cx+ox,iy=cy+r*.04+oy;ell(c,ix,iy,r*.62,r*.62);fill(c,col);ell(c,ix,iy,r*.3*pu,r*.3*pu);fill(c,ink);ell(c,ix-r*.22,iy-r*.2,r*.14,r*.14);fill(c,W);c.restore();ell(c,cx,cy,rx,ry);stroke(c,ink,lw);break;}
+    case 'anime':{ell(c,cx,cy,rx,ry);fill(c,W);c.save();ell(c,cx,cy,rx,ry);c.clip();const ox=gx*r*.3,oy=gy*r*.2,ix=cx+ox,iy=cy+ry*.1+oy;ell(c,ix,iy,rx*.8,ry*.84);fill(c,col);c.globalAlpha=.4;ell(c,ix,iy-ry*.46,rx*.8,ry*.48);fill(c,ink);c.globalAlpha=1;ell(c,ix,iy,rx*.34*pu,ry*.38*pu);fill(c,ink);ell(c,ix-rx*.32,iy-ry*.34,r*.22,r*.22);fill(c,W);ell(c,ix+rx*.3,iy+ry*.3,r*.1,r*.1);fill(c,W);c.restore();
+      ell(c,cx,cy,rx,ry);stroke(c,ink,lw*.6);c.beginPath();c.ellipse(cx,cy,rx*1.02,ry*1.02,0,Math.PI*1.08,Math.PI*1.92);stroke(c,ink,lw*1.8);break;}
+    case 'gato':{ell(c,cx,cy,rx,ry);fill(c,col);c.save();ell(c,cx,cy,rx,ry);c.clip();const ox=gx*r*.4,oy=gy*r*.25;ell(c,cx+ox,cy+oy,r*.2*pu,r*.8*Math.min(1,pu+.15));fill(c,ink);ell(c,cx-r*.32+ox*.6,cy-r*.36+oy*.6,r*.15,r*.15);fill(c,W);c.restore();ell(c,cx,cy,rx,ry);stroke(c,ink,lw);break;}
+    case 'clasicos':{ell(c,cx,cy,rx,ry);fill(c,W);c.save();ell(c,cx,cy,rx,ry);c.clip();const px=cx+gx*r*.3,py=cy+ry*.22+gy*r*.3;ell(c,px,py,rx*.5*pu,ry*.6*pu);fill(c,col);c.beginPath();c.moveTo(px+rx*.08,py-ry*.08);c.lineTo(px+rx*.5,py-ry*.6);c.lineTo(px+rx*.02,py-ry*.64);c.closePath();fill(c,W);c.restore();ell(c,cx,cy,rx,ry);stroke(c,ink,lw);break;}
+    case 'pantalla':{const ox=gx*r*.25,oy=gy*r*.18;c.save();c.shadowColor=col;c.shadowBlur=r*.7;ell(c,cx+ox,cy+oy,rx,ry);fill(c,col);c.restore();if(pu<.8){ell(c,cx+ox,cy+oy,rx*.38,ry*.4);fill(c,'#103038');}ell(c,cx-rx*.32+ox,cy-ry*.38+oy,r*.11,r*.17);fill(c,'rgba(255,255,255,.75)');break;}
+    case 'botones':{const bx=cx+gx*r*.12,by=cy+gy*r*.1;ell(c,bx,by,rx,ry);fill(c,col);ell(c,bx,by,rx*.76,ry*.76);stroke(c,'rgba(255,255,255,.3)',lw*.6);for(const [dx,dy] of [[-1,-1],[1,-1],[-1,1],[1,1]]){ell(c,bx+dx*rx*.24,by+dy*ry*.24,r*.1,r*.1);fill(c,'rgba(0,0,0,.55)');}ell(c,bx,by,rx,ry);stroke(c,ink,lw*.8);break;}
+    default:{ell(c,cx,cy,rx,ry);fill(c,W);c.save();ell(c,cx,cy,rx,ry);c.clip();const ox=gx*r*.4,oy=gy*r*.28;ell(c,cx+ox,cy+r*.06+oy,r*.5*pu,r*.5*pu);fill(c,col);ell(c,cx-r*.17+ox,cy-r*.12+oy,r*.14,r*.14);fill(c,W);c.restore();ell(c,cx,cy,rx,ry);stroke(c,ink,lw);
+      if(k==='pestanas') for(let i=0;i<3;i++){const a=-Math.PI/2+s*(.42+i*.32),x0=cx+Math.cos(a)*rx,y0=cy+Math.sin(a)*ry;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+Math.cos(a)*r*.36,y0+Math.sin(a)*r*.36);stroke(c,ink,lw*.8);}}
+  }
+}
+// u = unidad de la cara; V = pp.veyes; filt = filtro de color de la marioneta (solo para el párpado, que debe combinar con la piel)
+function drawVecEyes(c,u,V,po,filt){
+  const st=OJOS_STYLES[V.style]||OJOS_STYLES.caricatura,col=V.col||st.col,ex=po.ex||EXPR.neutral,ink=OJOS_INK,f0=c.filter;
+  const gz=po.gaze||{x:0,y:0},gx=gz.x||0,gy=gz.y||0,anger=Math.max(0,ex.brow||0),sad=Math.max(0,-(ex.brow||0));
+  const os=po.ojos!=null&&po.ojos!==''?po.ojos:(ex.ojos||''),sep=(V.sep||.62)*u,R=(V.r||.3)*u;
+  const noF=()=>{if(filt) c.filter='none';},siF=()=>{if(filt) c.filter=filt;};
+  noF();
+  for(const s of [-1,1]){
+    const cx=s*sep,cy=0,r=R*(ex.eye||1),lw=Math.max(u*.03,r*.16),rx=r*st.rx,ry=r*st.ry;
+    if(os&&os!=='felices'){drawEyeStyle(c,os,{x:cx,y:cy,r:R*1.05},ink,po.t||0,s,null);continue;}
+    if(os==='felices'||ex.happy>.5||(ex.wink>.5&&s===1)){c.beginPath();c.arc(cx,cy+ry*.45,rx*.85,Math.PI*1.15,Math.PI*1.85);stroke(c,ink,lw);continue;}
+    const lid=Math.max((ex.lid||0)*(ex.cock>.5&&s===-1?.25:1),po.blink||0);
+    if(lid>.9){c.beginPath();c.arc(cx,cy-ry*.15,rx*.85,Math.PI*.18,Math.PI*.82);stroke(c,ink,lw*.85);continue;}
+    vecEyeOpen(c,V.style,cx,cy,r,rx,ry,s,gx,gy,ex.pupil||1,col,ink,lw);
+    if(lid>.02||anger>.02||sad>.02){
+      c.save();ell(c,cx,cy,rx*1.1,ry*1.12);c.clip();c.translate(cx,cy);c.rotate(s*(sad*.38-anger*.45));
+      const yl=-ry*1.14+lid*2.25*ry+anger*.32*ry+sad*.15*ry;
+      siF();c.fillStyle=V.lid||'#f2c9a8';c.fillRect(-rx*1.8,-ry*2.3,rx*3.6,yl+ry*2.3);noF();
+      c.beginPath();c.moveTo(-rx*1.5,yl);c.lineTo(rx*1.5,yl);stroke(c,ink,lw*.75);c.restore();
+    }
+  }
+  if(V.cejas!==false) for(const s of [-1,1]){
+    const cx=s*sep,ry=R*st.ry;let by=-ry*1.5-R*.25+(ex.browY||0)*.32*u;
+    if(ex.cock>.5) by+=s===-1?-.1*u:.03*u;
+    const ox=cx+s*R*1.05,ix=cx-s*R*.95,oy=by+sad*.05*u,iy=by+anger*.15*u-sad*.13*u;
+    c.beginPath();c.moveTo(ox,oy);c.quadraticCurveTo(cx,Math.min(oy,iy)-.06*u,ix,iy);stroke(c,ink,Math.max(u*.035,R*.18));
+  }
+  c.filter=f0;
+}
+function drawOjosThumb(canvas,key,col){
+  const {c,w,h}=fitCanvas(canvas);rr(c,0,0,w,h,8);fill(c,'#f0d2bd');
+  c.save();c.translate(w/2,h*.58);drawVecEyes(c,Math.min(w/2.2,h/1.45),{style:key,col,sep:.62,r:.3,cejas:true,lid:'#f0d2bd'},{ex:EXPR.neutral,gaze:{x:0,y:0},t:0});c.restore();
+}
+// color de la cara alrededor de los ojos, para el párpado (el más repetido de varios puntos)
+function sampleLid(pp){
+  try{
+    const m=grpMat(pp,'ojosVec'),u=vecUnit(pp),V=pp.veyes,sep=(V.sep||.62)*u,R=(V.r||.3)*u,cols=[];
+    const pts=[[0,0],[0,R*1.3],[0,R*2],[-sep-R*1.7,0],[sep+R*1.7,0],[-sep,R*1.8],[sep,R*1.8]].map(([x,y])=>m.transformPoint({x,y}));
+    for(const k of ['cabeza','cuerpo']){if(!hasSlot(pp,k)) continue;const a=S.assets[pp.slots[k]],Mi=pieceMat(pp,k).inverse(),cv=document.createElement('canvas');cv.width=a.w;cv.height=a.h;const g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(a.img,0,0);
+      for(const W of pts){const q=Mi.transformPoint(W),px=Math.round(q.x+a.w/2),py=Math.round(q.y+a.h/2);if(px<0||py<0||px>=a.w||py>=a.h) continue;const d=g.getImageData(px,py,1,1).data;if(d[3]>200&&d[0]+d[1]+d[2]>120) cols.push([d[0],d[1],d[2]]);}
+      if(cols.length>=2) break;}
+    if(cols.length){const key=c=>c.map(v=>v>>5).join(','),cnt={};let best=cols[0],bn=0;for(const c of cols){const k=key(c);cnt[k]=(cnt[k]||0)+1;if(cnt[k]>bn){bn=cnt[k];best=c;}}
+      const same=cols.filter(c=>key(c)===key(best)),avg=[0,1,2].map(i=>Math.round(same.reduce((t,c)=>t+c[i],0)/same.length));
+      return '#'+avg.map(v=>v.toString(16).padStart(2,'0')).join('');}
+  }catch(e){}
+  return '#f2c9a8';
+}
+function setVecEyes(pp,style){
+  if(!pp.veyes) pp.veyes={style:'',col:'',sep:.62,r:.3,cejas:true};
+  if(style) pp.veyes.last=style;pp.veyes.style=style||'';
+  if(style&&!pp.g.ojosVec){
+    let w;const u=vecUnit(pp);
+    if(pp.eyePts&&pp.eyePts.length===2){const M=grpMat(pp,'cabeza'),a=M.transformPoint(pp.eyePts[0]),b=M.transformPoint(pp.eyePts[1]);w={x:(a.x+b.x)/2,y:(a.y+b.y)/2};pp.veyes.sep=Math.round(clamp(Math.hypot(b.x-a.x,b.y-a.y)/2/u,.3,1.4)*100)/100;pp.veyes.r=Math.round(clamp(pp.eyePts[0].r*Math.hypot(M.a,M.b)/u,.12,.6)*100)/100;}
+    else{const r=partRect(pp,'cabeza')||partRect(pp,'cuerpo');w=r?{x:(r.x0+r.x1)/2,y:r.y0+(r.y1-r.y0)*.42}:{x:0,y:0};}
+    pp.g.ojosVec={x:0,y:0,s:1};const P=grpParent(pp,'ojosVec'),q=P?P.inverse().transformPoint(w):w,k=P?1/Math.hypot(P.a,P.b):1;pp.g.ojosVec={x:Math.round(q.x),y:Math.round(q.y),s:Math.round(k*1000)/1000};
+  }
+  if(style&&!pp.veyes.lid) pp.veyes.lid=sampleLid(pp);
 }
 
 
@@ -2712,7 +2803,7 @@ const addAsset=(blob,name)=>loadAsset('a'+uid(),blob,name);
 function mouthFor(pp,v){const has=x=>hasSlot(pp,'boca:'+x);if(has(v)) return v;for(const f of MFB[v]||[]) if(has(f)) return f;for(const f of ['Neutral','M','Uh','Aa','Oh']) if(has(f)) return f;return VIS.find(has)||null;}
 const grpOf=(pp,k)=>pp.g[k]||(pp.g[k]={x:0,y:0,s:1});
 // la cara va pegada a la cabeza: ojos, cejas, bocas, extras, lo de encima y lo de detrás se mueven, giran y crecen con ella
-const FACE_GROUPS={ojos:1,cejas:1,boca:1,bocaVec:1,extra:1,encima:1,detras:1};
+const FACE_GROUPS={ojos:1,cejas:1,boca:1,bocaVec:1,ojosVec:1,extra:1,encima:1,detras:1};
 function grpParent(pp,grp){if(!FACE_GROUPS[grp]) return null;if(!pp.faceRel) faceMigrate(pp);return xfMat(grpOf(pp,'cabeza'));}
 function grpMat(pp,grp){const P=grpParent(pp,grp),L=xfMat(grpOf(pp,grp));return P?P.multiply(L):L;}
 // marionetas de antes: la cara estaba suelta; se convierte sin que nada cambie de lugar
@@ -2739,6 +2830,7 @@ function keepAt(t,parent,C,ch){
 }
 // boca lista (vectorial) en una marioneta PNG: se acomoda con su propio grupo "bocaVec"
 const hasVecMouth=pp=>!!(pp.vmouth&&pp.vmouth.style);
+const VEC_K={bocaVec:1,ojosVec:1};
 function vecUnit(pp){const r=partRect(pp,'cabeza');return (r?r.x1-r.x0:(pp.w||400)*.5)*.26;}
 function setVecMouth(pp,style){
   if(!pp.vmouth) pp.vmouth={style:'',col:''};if(style) pp.vmouth.last=style;pp.vmouth.style=style||'';
@@ -2746,6 +2838,7 @@ function setVecMouth(pp,style){
     pp.g.bocaVec={x:0,y:0,s:1};const P=grpParent(pp,'bocaVec'),q=P?P.inverse().transformPoint(w):w,k=P?1/Math.hypot(P.a,P.b):1;pp.g.bocaVec={x:Math.round(q.x),y:Math.round(q.y),s:Math.round(k*1000)/1000};}
 }
 function partRect(pp,key){
+  if(key==='ojosVec'){if(!hasVecEyes(pp)) return null;const u=vecUnit(pp),V=pp.veyes,m=grpMat(pp,'ojosVec'),X=((V.sep||.62)+(V.r||.3)*1.2)*u,Y=(V.r||.3)*u;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const [x,y] of [[-X,-Y*2.6],[X,-Y*2.6],[-X,Y*1.3],[X,Y*1.3]]){const p=m.transformPoint({x,y});x0=Math.min(x0,p.x);x1=Math.max(x1,p.x);y0=Math.min(y0,p.y);y1=Math.max(y1,p.y);}return {x0,y0,x1,y1};}
   if(key==='bocaVec'){if(!hasVecMouth(pp)) return null;const u=vecUnit(pp),m=grpMat(pp,'bocaVec');let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const [x,y] of [[-.72*u,-.45*u],[.72*u,-.45*u],[-.72*u,.6*u],[.72*u,.6*u]]){const p=m.transformPoint({x,y});x0=Math.min(x0,p.x);x1=Math.max(x1,p.x);y0=Math.min(y0,p.y);y1=Math.max(y1,p.y);}return {x0,y0,x1,y1};}
   if(!key||!hasSlot(pp,key)) return null;const a=S.assets[pp.slots[key]],b=a.bbox||{x0:0,y0:0,x1:a.w,y1:a.h},m=pieceMat(pp,key);let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
   for(const [x,y] of [[b.x0,b.y0],[b.x1,b.y0],[b.x0,b.y1],[b.x1,b.y1]]){const p=m.transformPoint({x:x-a.w/2,y:y-a.h/2});if(p.x<x0)x0=p.x;if(p.x>x1)x1=p.x;if(p.y<y0)y0=p.y;if(p.y>y1)y1=p.y;}
@@ -2860,8 +2953,8 @@ function drawSleeve(c,pp,key,col){
 const LAYERS=['detras','cola','pieA','pieB','cuerpo','brazoA','brazoB','cabeza','ojos','pupilas','cejas','boca','extra','encima'];
 const LAYER_LABEL={detras:'Detrás de la cabeza',cola:'Cola',pieA:'Pie derecho',pieB:'Pie izquierdo',cuerpo:'Cuerpo',brazoA:'Brazo derecho',brazoB:'Brazo izquierdo',cabeza:'Cabeza',ojos:'Ojos',pupilas:'Pupilas',cejas:'Cejas',boca:'Bocas',extra:'Extras de gestos',encima:'Encima'};
 const HEAD_LAYERS={cabeza:1,ojos:1,pupilas:1,cejas:1,boca:1,extra:1,encima:1};
-function slotLayer(k){if(k==='bocaVec'||k.startsWith('boca:')) return 'boca';if(k==='cabezaCerrada'||k.endsWith(':cabeza')) return 'cabeza';if(/^(ante)?brazo[AB]$/.test(k)) return 'brazo'+k.slice(-1);if(k==='ojosCerrados') return 'ojos';const i=k.indexOf(':');if(i>0){const p=k.slice(i+1);return p==='ojos'||p==='cejas'||p==='boca'?p:'extra';}return k;}
-const layerSlots=(pp,L)=>{const r=Object.keys(pp.slots).filter(k=>slotLayer(k)===L&&hasSlot(pp,k));if(L==='boca'&&hasVecMouth(pp)) r.unshift('bocaVec');return r;};
+function slotLayer(k){if(k==='ojosVec') return 'ojos';if(k==='bocaVec'||k.startsWith('boca:')) return 'boca';if(k==='cabezaCerrada'||k.endsWith(':cabeza')) return 'cabeza';if(/^(ante)?brazo[AB]$/.test(k)) return 'brazo'+k.slice(-1);if(k==='ojosCerrados') return 'ojos';const i=k.indexOf(':');if(i>0){const p=k.slice(i+1);return p==='ojos'||p==='cejas'||p==='boca'?p:'extra';}return k;}
+const layerSlots=(pp,L)=>{const r=Object.keys(pp.slots).filter(k=>slotLayer(k)===L&&hasSlot(pp,k));if(L==='boca'&&hasVecMouth(pp)) r.unshift('bocaVec');if(L==='ojos'&&hasVecEyes(pp)) r.unshift('ojosVec');return r;};
 function layerOrder(pp){
   let o=Array.isArray(pp.order)?pp.order.filter((k,i,a)=>LAYERS.includes(k)&&a.indexOf(k)===i):null;
   if(!o){o=LAYERS.slice();if(pp.armsBack){o=o.filter(k=>k!=='brazoA'&&k!=='brazoB');o.splice(o.indexOf('cuerpo'),0,'brazoA','brazoB');}return o;}
@@ -2894,9 +2987,10 @@ function drawPuppetInner(c,ch,po,tilt,arms,fx){
     c.save();headT();
     if(L==='detras') drawPart(c,pp,'detras');
     else if(L==='cabeza'){if(A) accDraw(c,A.head.back,F,0,lw);drawPart(c,pp,spEye&&pk.head==='cabeza'&&hasSlot(pp,'cabezaSinOjos')?'cabezaSinOjos':pk.head);}
+    else if(L==='ojos'&&hasVecEyes(pp)){const m=grpMat(pp,'ojosVec'),u=vecUnit(pp),V=pp.veyes;c.save();c.transform(m.a,m.b,m.c,m.d,m.e,m.f);if(PE_REC){const X=((V.sep||.62)+(V.r||.3)*1.2)*u,Y=(V.r||.3)*u;PE_REC.push({k:'ojosVec',M:c.getTransform(),box:[-X,-Y*2.6,X,Y*1.3]});}drawVecEyes(c,u,V,Object.assign({},po,{ex}),c.filter&&c.filter!=='none'?c.filter:'');c.restore();}
     else if(L==='ojos'){if(spEye){eg().eyes.forEach((e,j)=>drawEyeStyle(c,eSt,e,'#1f1720',po.t||0,j?1:-1,null));}else drawPart(c,pp,pk.eyes,ownEyes?1:ex.eye,open&&!hasPup?gz.x*ref*.008:0,open&&!hasPup?gz.y*ref*.006:0);}
-    else if(L==='pupilas'){if(open&&hasPup&&!spEye) drawPart(c,pp,'pupilas',ex.eye,gz.x*ref*.022,gz.y*ref*.014);}
-    else if(L==='cejas') drawPart(c,pp,pk.brows,1,0,(ownBrows?0:(ex.browY*.05+Math.max(0,ex.brow)*.015-Math.max(0,-ex.brow)*.01)*ref)-(po.en||0)*.012*ref);
+    else if(L==='pupilas'){if(open&&hasPup&&!spEye&&!hasVecEyes(pp)) drawPart(c,pp,'pupilas',ex.eye,gz.x*ref*.022,gz.y*ref*.014);}
+    else if(L==='cejas'){if(!(hasVecEyes(pp)&&pp.veyes.cejas!==false)) drawPart(c,pp,pk.brows,1,0,(ownBrows?0:(ex.browY*.05+Math.max(0,ex.brow)*.015-Math.max(0,-ex.brow)*.01)*ref)-(po.en||0)*.012*ref);}
     else if(L==='boca'){if(hasVecMouth(pp)){const m=grpMat(pp,'bocaVec'),f1=c.filter;c.save();if(f1&&f1!=='none') c.filter='none';c.transform(m.a,m.b,m.c,m.d,m.e,m.f);const u=vecUnit(pp);if(PE_REC) PE_REC.push({k:'bocaVec',M:c.getTransform(),box:[-.72*u,-.45*u,.72*u,.6*u]});drawStyleMouth(c,u,pp.vmouth.style,pp.vmouth.col,po);c.restore();}else drawPart(c,pp,pk.mouth);}
     else if(L==='extra') drawPart(c,pp,pk.extra);
     else if(L==='encima') drawPart(c,pp,'encima');
@@ -3021,7 +3115,7 @@ function peView(){if(!pe.view) pe.view=peFitView();return pe.view;}
 // "Ajustar": encuadra lo que está dibujado (no el lienzo vacío) y deja aire para las manijas
 function peFitView(){
   const B=peBase();if(!pe.png) return {z:1,cx:B.cx,cy:B.cy};
-  const pp=pe.ch.puppet,ks=Object.keys(pp.slots).filter(k=>hasSlot(pp,k));if(hasVecMouth(pp)) ks.push('bocaVec');
+  const pp=pe.ch.puppet,ks=Object.keys(pp.slots).filter(k=>hasSlot(pp,k));if(hasVecMouth(pp)) ks.push('bocaVec');if(hasVecEyes(pp)) ks.push('ojosVec');
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const k of ks){const r=partRect(pp,k);if(!r) continue;x0=Math.min(x0,r.x0);y0=Math.min(y0,r.y0);x1=Math.max(x1,r.x1);y1=Math.max(y1,r.y1);}
   if(x1<=x0||y1<=y0) return {z:1,cx:0,cy:0};
   const W=pe.w>40?pe.w:400,H=pe.h>40?pe.h:400,F=Math.min((W-56)/(x1-x0),(H-92)/(y1-y0)),Fb=Math.min(W,H)*.86/B.ref;
@@ -3114,6 +3208,15 @@ function renderSlots(){
       return `<div class="slot${pe.slot===k?' on':''}" data-k="${k}" role="button" tabindex="0" aria-label="${esc(lbl)}"><span class="th${a?'':' empty'}">${a?`<canvas data-th="${pp.slots[k]}"${q&&(q.fx||q.fy)?` style="transform:scale(${q.fx?-1:1},${q.fy?-1:1})"`:''}></canvas>`:ICON_PLUS}</span><span class="sl-tx"><b>${esc(lbl)}</b><small>${a?esc(a.name)+tag:esc(hint||'Opcional')}</small>${fb?`<small class="fb">${fb}</small>`:''}</span><span class="sl-btns"><button type="button" class="btn sm" data-up="${k}">${a?'Cambiar':'Subir'}</button>${a?`<button type="button" class="btn sm icon danger" data-rm="${k}" aria-label="Quitar ${esc(lbl)}">×</button>`:''}</span></div>`;
     }).join('');
     const open=!sec.expr||filled>0||keys.includes(pe.slot);
+    if(sec.vojos){
+      const vec=hasVecEyes(pp),V=pp.veyes||{},st=vec?V.style:'',col=V.col||ojosCol(st||'caricatura');
+      const chooser=`<div class="mmode"><div class="seg"><button type="button" data-emode="png" aria-pressed="${!vec}">Mis ojos PNG</button><button type="button" data-emode="vec" aria-pressed="${vec}">Ojos listos</button></div></div>`;
+      const body=vec?`<div class="mstyles">${Object.keys(OJOS_STYLES).map(k=>{const O=OJOS_STYLES[k];return `<button type="button" class="mst${k===st?' on':''}" data-est="${k}" title="${esc(O.label)}"><canvas data-ost="${k}"></canvas><span>${esc(O.label)}${O.pro?' ✦':''}</span></button>`;}).join('')}</div>
+        <div class="pe-btns mrow"><label class="chk">Color <input type="color" id="peECol" value="${col}"></label><button type="button" class="btn sm ghost" data-ecolreset="1">Normal</button><label class="chk">Párpado <input type="color" id="peELid" value="${V.lid||'#f2c9a8'}"></label><label class="chk"><input type="checkbox" id="peECejas"${V.cejas!==false?' checked':''}> Cejas</label></div>
+        <div class="pe-btns mrow"><label class="chk">Tamaño <input type="range" id="peESize" min="12" max="60" value="${Math.round((V.r||.3)*100)}"></label><label class="chk">Separación <input type="range" id="peESep" min="25" max="140" value="${Math.round((V.sep||.62)*100)}"></label><button type="button" class="btn sm" data-emove="1">Mover</button></div>
+        <p class="sec-note">Hacen solos todos los gestos: parpadean, miran al que habla, se enojan, se asustan y más. El párpado toma el color de la cara; cámbialo si no combina. Tus ojos PNG se guardan por si regresas a ellos.</p>`:rows;
+      return `<details class="slot-sec"${open||vec?' open':''}><summary><span>${sec.title}</span><span class="cnt${vec||filled===keys.length?' full':''}">${vec?esc(OJOS_STYLES[st].label):filled+'/'+keys.length}</span></summary>${chooser}${body}</details>`;
+    }
     if(sec.mouth){
       const vec=hasVecMouth(pp),st=vec?pp.vmouth.style:'',col=(pp.vmouth&&pp.vmouth.col)||bocaCol(st||'caricatura');
       const chooser=`<div class="mmode"><div class="seg"><button type="button" data-mmode="png" aria-pressed="${!vec}">Mis bocas PNG</button><button type="button" data-mmode="vec" aria-pressed="${vec}">Boca lista</button></div></div>`;
@@ -3125,6 +3228,7 @@ function renderSlots(){
   }).join('');
   drawPieceThumbs('#peSlots');
   $$('#peSlots canvas[data-bst]').forEach(x=>drawBocaThumb(x,x.dataset.bst,pp.vmouth&&pp.vmouth.col));
+  $$('#peSlots canvas[data-ost]').forEach(x=>drawOjosThumb(x,x.dataset.ost,pp.veyes&&pp.veyes.col));
   renderLayers();
 }
 // miniaturas recortadas al dibujo (sin el espacio transparente)
@@ -3192,7 +3296,7 @@ function pePieceTools(){
   $('#peFlipX').setAttribute('aria-pressed',String(!!t.fx));$('#peFlipY').setAttribute('aria-pressed',String(!!t.fy));
   const mb=$('#peMirror');mb.hidden=!(m&&hasSlot(pp,pe.slot));if(m) mb.textContent='Copiar reflejado al otro lado';
   $('#peNeck').hidden=!(grp==='cabeza'&&(pp.neck||pp.pivot));
-  $('#peKey').hidden=pe.slot==='bocaVec'||!hasSlot(pp,pe.slot);
+  $('#peKey').hidden=!!VEC_K[pe.slot]||!hasSlot(pp,pe.slot);
   const f=layerFilled(pp),li=f.indexOf(slotLayer(pe.slot));$('#peLyFront').disabled=$('#peLyUp').disabled=li<0||li===f.length-1;$('#peLyDown').disabled=$('#peLyBack').disabled=li<=0;
 }
 // copia un brazo o pie al otro lado, reflejado como en un espejo
@@ -3249,11 +3353,23 @@ function slotForName(name){
   if(isMouth){for(let i=rest.length-1;i>=0;i--) if(VN[rest[i]]) return 'boca:'+VN[rest[i]];}
   return null;
 }
+function peUseEyes(style){
+  const pp=pe.ch.puppet;if(style&&OJOS_STYLES[style]&&OJOS_STYLES[style].pro&&!isPro()){openPro('Ojos listos ✦','Los estilos de ojos con ✦ son de Bocón Pro.');return;}
+  setVecEyes(pp,style);renderSlots();peSelect(style?'ojosVec':(hasSlot(pp,'ojos')?'ojos':'cabeza'));pe.dirty=true;save();
+}
+$('#peSlots').addEventListener('input',e=>{if(!pe) return;const V=pe.ch.puppet.veyes,id=e.target.id;if(!V) return;
+  if(id==='peECol') V.col=e.target.value;else if(id==='peELid') V.lid=e.target.value;else if(id==='peESize') V.r=+e.target.value/100;else if(id==='peESep') V.sep=+e.target.value/100;else return;pe.dirty=true;});
+$('#peSlots').addEventListener('change',e=>{if(!pe) return;const V=pe.ch.puppet.veyes,id=e.target.id;if(!V) return;
+  if(id==='peECejas'){V.cejas=e.target.checked;pe.dirty=true;save();}else if(['peECol','peELid','peESize','peESep'].includes(id)){save();if(id==='peECol') renderSlots();}});
 function peUseVec(style){const pp=pe.ch.puppet;setVecMouth(pp,style);renderSlots();if(style){peSelect('bocaVec');pe.vis='Aa';$('#peVis').value='Aa';}else{const v=mouthFor(pp,'Neutral');peSelect('boca:'+(v||'Neutral'));}pe.dirty=true;save();}
 $('#peSlots').addEventListener('input',e=>{if(!pe||e.target.id!=='peMCol') return;const pp=pe.ch.puppet;if(pp.vmouth){pp.vmouth.col=e.target.value;pe.dirty=true;}});
 $('#peSlots').addEventListener('change',e=>{if(pe&&e.target.id==='peMCol'){save();renderSlots();}if(pe&&e.target.id==='peTail'){pe.ch.puppet.colaMov=+e.target.value;pe.dirty=true;save();}});
 $('#peSlots').addEventListener('click',e=>{
   if(!pe) return;const pp=pe.ch.puppet;
+  const em=e.target.closest('[data-emode]');if(em){peUseEyes(em.dataset.emode==='vec'?(pp.veyes&&pp.veyes.last)||'brillantes':'');return;}
+  const es=e.target.closest('[data-est]');if(es){peUseEyes(es.dataset.est);return;}
+  if(e.target.closest('[data-emove]')){peSelect('ojosVec');pe.dirty=true;return;}
+  if(e.target.closest('[data-ecolreset]')){if(pp.veyes) pp.veyes.col='';renderSlots();pe.dirty=true;save();return;}
   const mm=e.target.closest('[data-mmode]');if(mm){peUseVec(mm.dataset.mmode==='vec'?(pp.vmouth&&pp.vmouth.last)||'caricatura':'');return;}
   const ms=e.target.closest('[data-mst]');if(ms){peUseVec(ms.dataset.mst);return;}
   if(e.target.closest('[data-mmove]')){peSelect('bocaVec');pe.vis='Aa';$('#peVis').value='Aa';pe.dirty=true;return;}
@@ -3303,7 +3419,7 @@ function recHit(r,dp){
 }
 function pePickAll(P){const dp={x:P.x*pe.dpr,y:P.y*pe.dpr},out=[];for(let i=pe.prec.length-1;i>=0;i--){const r=pe.prec[i];if(!out.includes(r.k)&&recHit(r,dp)) out.push(r.k);}return out;}
 // lo que se ajusta ahora: el grupo o la pieza sola (con la matriz de su grupo)
-function peTgt(){const pp=pe.ch.puppet,grp=slotGroup(pe.slot);return pe.mode==='pieza'&&pe.slot!=='bocaVec'?{t:pieceXf(pp,pe.slot),parent:grpMat(pp,grp)}:{t:grpOf(pp,grp),parent:grpParent(pp,grp)};}
+function peTgt(){const pp=pe.ch.puppet,grp=slotGroup(pe.slot);return pe.mode==='pieza'&&!VEC_K[pe.slot]?{t:pieceXf(pp,pe.slot),parent:grpMat(pp,grp)}:{t:grpOf(pp,grp),parent:grpParent(pp,grp)};}
 function peSelCenter(){const r=partRect(pe.ch.puppet,pe.slot);if(r) return {x:(r.x0+r.x1)/2,y:(r.y0+r.y1)/2};const T=peTgt(),o=(T.parent||new DOMMatrix()).transformPoint({x:T.t.x||0,y:T.t.y||0});return {x:o.x,y:o.y};}
 const fmtN=v=>(Math.round(v*10)/10).toString().replace('-','−');
 function piecePointer(P,touch){
@@ -3338,7 +3454,7 @@ function piecePointer(P,touch){
 function puppetVisible(grp){return (pe.prec.find(r=>slotGroup(r.k)===grp)||{}).k||null;}
 function peMoveFn(W){
   const pp=pe.ch.puppet,grp=slotGroup(pe.slot);
-  if(pe.mode==='pieza'&&pe.slot!=='bocaVec'){const Gi=grpMat(pp,grp).inverse(),l0=Gi.transformPoint(W),slot=pe.slot;let q=null,x0=0,y0=0;
+  if(pe.mode==='pieza'&&!VEC_K[pe.slot]){const Gi=grpMat(pp,grp).inverse(),l0=Gi.transformPoint(W),slot=pe.slot;let q=null,x0=0,y0=0;
     return P2=>{if(!q){q=pieceXf(pp,slot);x0=q.x;y0=q.y;}const l=Gi.transformPoint(peToWorld(P2.x,P2.y));q.x=Math.round(x0+l.x-l0.x);q.y=Math.round(y0+l.y-l0.y);pe.hud='x '+fmtN(q.x)+' · y '+fmtN(q.y);};}
   const g=grpOf(pp,grp),x0=g.x||0,y0=g.y||0,P=grpParent(pp,grp);
   if(P){const Pi=P.inverse(),l0=Pi.transformPoint(W);return P2=>{const l=Pi.transformPoint(peToWorld(P2.x,P2.y));g.x=Math.round((x0+l.x-l0.x)*10)/10;g.y=Math.round((y0+l.y-l0.y)*10)/10;pe.hud='x '+fmtN(g.x)+' · y '+fmtN(g.y);};}
@@ -3468,9 +3584,9 @@ $('#peMirror').onclick=()=>{if(pe&&pe.png) peMirrorCopy();};
 for(const [id,op] of [['#peLyFront','front'],['#peLyUp','up'],['#peLyDown','down'],['#peLyBack','back']]) $(id).onclick=()=>{if(pe&&pe.png) moveLayer(slotLayer(pe.slot),op);};
 // regresa la pieza (o el grupo) a como se subió; se puede deshacer desde el aviso o con ↶
 $('#peCenter').onclick=()=>{
-  if(!pe||!pe.png) return;const pp=pe.ch.puppet,grp=slotGroup(pe.slot),piece=pe.mode==='pieza'&&pe.slot!=='bocaVec';
+  if(!pe||!pe.png) return;const pp=pe.ch.puppet,grp=slotGroup(pe.slot),piece=pe.mode==='pieza'&&!VEC_K[pe.slot];
   if(piece){if(!pp.xf||!pp.xf[pe.slot]){toast('Esta pieza ya está como la subiste');return;}delete pp.xf[pe.slot];}
-  else{const g=pp.g[grp]||{},vec=grp==='bocaVec';if((vec||(!g.x&&!g.y))&&(g.s||1)===1&&!g.r&&!g.fx&&!g.fy){toast('Ya está como la subiste');return;}
+  else{const g=pp.g[grp]||{},vec=!!VEC_K[grp];if((vec||(!g.x&&!g.y))&&(g.s||1)===1&&!g.r&&!g.fx&&!g.fy){toast('Ya está como la subiste');return;}
     // la boca lista se queda donde está y solo regresa a su tamaño; el cuello va pegado a la cabeza, así que se regresa con ella
     pp.g[grp]=vec?{x:g.x||0,y:g.y||0,s:1}:{x:0,y:0,s:1};}
   pePieceTools();renderSlots();pe.dirty=true;save();
@@ -5858,13 +5974,14 @@ $('#modal').addEventListener('click',e=>{
 function confirmModal(title,msg,ok,run){openModal({title,body:`<p class="note" style="font-size:13px">${msg}</p>`,actions:[{label:'Cancelar'},{label:ok,cls:'primary',run}]});}
 function openCharPicker(){
   const lib=LIB.map(it=>`<button type="button" class="pick sq" data-pk="lib:${it.id}"><canvas data-lib="${it.id}"></canvas>${esc(it.name)}<small>Biblioteca</small></button>`).join('');
-  openModal({title:'Agregar personaje',wide:true,body:`<div class="pgrid">${PROC_TPLS.map(k=>`<button type="button" class="pick sq" data-pk="${k}"><canvas data-tpl="${k}"></canvas>${TPL[k].label}</button>`).join('')}<button type="button" class="pick sq hot" data-pk="oneimg"><canvas data-up="3"></canvas>Desde una imagen<small>Se arma sola</small></button><button type="button" class="pick sq" data-pk="png"><canvas data-up="1"></canvas>Tus PNG<small>Por piezas</small></button><button type="button" class="pick sq" data-pk="import"><canvas data-up="2"></canvas>Importar<small>Archivo de marioneta</small></button>${lib}</div>${LIB.length?'':'<p class="note">Los personajes que guardes en la biblioteca aparecen aquí.</p>'}`,
+  openModal({title:'Agregar personaje',wide:true,body:`<div class="pgrid">${PROC_TPLS.map(k=>`<button type="button" class="pick sq" data-pk="${k}"><canvas data-tpl="${k}"></canvas>${TPL[k].label}</button>`).join('')}<button type="button" class="pick sq hot" data-pk="oneimg"><canvas data-up="3"></canvas>Desde una imagen<small>Se arma sola</small></button><button type="button" class="pick sq" data-pk="png"><canvas data-up="1"></canvas>Tus PNG<small>Por piezas</small></button><button type="button" class="pick sq" data-pk="import"><canvas data-up="2"></canvas>Importar<small>Archivo de marioneta</small></button>${lib}</div>${LIB.length?'':'<p class="note">Los personajes que guardes en la biblioteca aparecen aquí.</p>'}${recMarionetasHTML()}`,
     onOpen:c=>{c.querySelectorAll('canvas[data-tpl]').forEach(x=>drawAvatar(x,null,'feliz',x.dataset.tpl,'saludar'));c.querySelectorAll('canvas[data-lib]').forEach(x=>drawLibThumb(x,LIB.find(i=>i.id===x.dataset.lib)));c.querySelectorAll('canvas[data-up]').forEach(x=>drawIcon(x,x.dataset.up==='1'?'up':x.dataset.up==='3'?'magic':'file'));},
     onPick:k=>{
       if(!charRoom()) return;
       if(k==='import'){const fi=$('#filePuppet');fi.value='';fi.click();return;}
       if(k==='oneimg'){const fi=$('#fileOne');fi.value='';fi.click();return;}
       if(k.startsWith('lib:')){addFromLibrary(k.slice(4));return;}
+      if(k.startsWith('rec:')){useRecMarioneta(k.slice(4));return;}
       const T=TPL[k],base=T?T.label:'Mi marioneta',same=cur().chars.filter(c=>c.tpl===k).length;
       const ch=newChar(k,{name:same?base+' '+(same+1):base});cur().chars.push(ch);arrange();S.selObj=ch.id;S.sel=null;refreshAll();save();
       if(k==='png') openEditor(ch);else toast(ch.name+' entró a escena');
@@ -7261,7 +7378,7 @@ async function peKeySlot(k,auto){
   toast((auto?'Le quité ':'Quité ')+bgWord(nid),{label:auto?'Dejar el fondo':'Deshacer',run:()=>{if(pe&&pe.ch.puppet===pp&&pp.slots[k]===nid){pp.slots[k]=old;renderSlots();pe.dirty=true;save();}}});
   return true;
 }
-$('#peKey').onclick=()=>{if(pe&&pe.png&&pe.slot!=='bocaVec') peKeySlot(pe.slot,false);};
+$('#peKey').onclick=()=>{if(pe&&pe.png&&!VEC_K[pe.slot]) peKeySlot(pe.slot,false);};
 // ----- vestidor: accesorios con tu PNG -----
 async function peKeyAcc(a,auto){
   if(!a||a.k!=='img') return false;const old=a.aid,nid=await keyOutAsset(old,!auto);
@@ -9211,7 +9328,8 @@ function emGeoProc(ch,u){
 function emGeoPng(pp){
   const r=partRect(pp,'cabeza')||partRect(pp,'cuerpo')||{x0:-(pp.w||400)/2,x1:(pp.w||400)/2,y0:-(pp.h||400)/2,y1:0};
   const cx=(r.x0+r.x1)/2,R=(r.x1-r.x0)/2*.82,hh=r.y1-r.y0;let eyes=null;
-  if(pp.eyePts&&pp.eyePts.length){const M=grpMat(pp,'cabeza');eyes=pp.eyePts.map(e=>{const q=M.transformPoint({x:e.x,y:e.y});return {x:q.x,y:q.y,r:e.r*Math.hypot(M.a,M.b)};});}
+  if(hasVecEyes(pp)){const m=grpMat(pp,'ojosVec'),u=vecUnit(pp),V=pp.veyes,k=Math.hypot(m.a,m.b);eyes=[-1,1].map(q=>{const p=m.transformPoint({x:q*(V.sep||.62)*u,y:0});return {x:p.x,y:p.y,r:(V.r||.3)*u*k};});}
+  else if(pp.eyePts&&pp.eyePts.length){const M=grpMat(pp,'cabeza');eyes=pp.eyePts.map(e=>{const q=M.transformPoint({x:e.x,y:e.y});return {x:q.x,y:q.y,r:e.r*Math.hypot(M.a,M.b)};});}
   else{const o=hasSlot(pp,'ojos')&&partRect(pp,'ojos');
     if(o&&o.x1-o.x0>4){const h=o.y1-o.y0,cy=(o.y0+o.y1)/2,rr=Math.min(h*.5,(o.x1-o.x0)*.24);eyes=[{x:o.x0+rr*1.05,y:cy,r:rr},{x:o.x1-rr*1.05,y:cy,r:rr}];}
     else eyes=[-1,1].map(s=>({x:cx+s*R*.4,y:r.y0+hh*.47,r:R*.19}));}
@@ -9845,6 +9963,7 @@ function oiLimbMask(L,cut){
     try{
       for(const k of ['cabezaSinOjos','brazoA','brazoB','pieA','pieB']){if(!P0[k]) continue;const b=await new Promise(r=>P0[k].toBlob(r,'image/png'));pp.slots[k]=await addAsset(b,'marioneta-'+k+'.png');}
       if(keep.hasEyes&&keep.eyes.length) pp.eyePts=keep.eyes.map(e=>({x:Math.round(e.cx-W/2),y:Math.round(e.cy-H/2),r:Math.round((e.rx+e.ry)/2)}));
+      else if(!hasSlot(pp,'ojos')) setVecEyes(pp,'brillantes');
       for(const L of P0.limbs||[]) if(L.kind==='arm'){pp.arms=pp.arms||{A:{},B:{}};pp.arms[L.side]={sh:{x:Math.round(L.sh.cx-W/2),y:Math.round(L.sh.cy-H/2)},el:{x:Math.round((L.sh.cx+L.hand.cx)/2-W/2),y:Math.round((L.sh.cy+L.hand.cy)/2-H/2)}};}
       refreshAll();save();if(typeof pe!=='undefined'&&pe&&pe.ch===ch){renderSlots();renderLayers();pe.dirty=true;}
       const n=(P0.limbs||[]).length;if(n) toast(`${ch.name} quedó listo, con ${[(P0.limbs||[]).some(l=>l.kind==='arm')?'brazos':'',(P0.limbs||[]).some(l=>l.kind==='foot')?'pies':''].filter(Boolean).join(' y ')} que se mueven. Ajusta lo que quieras y toca Listo.`);
@@ -10136,6 +10255,23 @@ function recItemRoom(it){if(isPro()||!it.pro) return true;openPro('«'+it.label+
   addPose=k=>{if(recRoom(k)) ap(k);};
   setBlockField=function(f,el){if((f==='e'||f==='p')&&!recRoom(el.value)){const sb=selBlock();if(sb) el.value=sb.b[f];return;}sbf(f,el);};
   const at=aeTemplate;aeTemplate=k=>{if(k==='_blank'||recRoom(k)) at(k);};
+}
+// marionetas listas: personajes de Bocón ya armados (con brazos, pies, ojos y boca), unos gratis y otros Pro
+const REC_MARIONETAS=[
+  {k:'platano',label:'Plátano',cat:'Frutas'},{k:'fresa',label:'Fresa',cat:'Frutas'},{k:'naranja',label:'Naranja',cat:'Frutas'},
+  {k:'pina',label:'Piña',cat:'Frutas',pro:1},{k:'sandia',label:'Sandía',cat:'Frutas',pro:1},{k:'aguacate',label:'Aguacate',cat:'Frutas',pro:1},
+  {k:'uvas',label:'Uvas',cat:'Frutas',pro:1},{k:'mango',label:'Mango',cat:'Frutas',pro:1},{k:'coco',label:'Coco',cat:'Frutas',pro:1}
+];
+const recMarSrc=(m,ext)=>'recursos/marionetas/'+m.k+(ext||'.marioneta.json');
+function recMarionetasHTML(){
+  const cats=[...new Set(REC_MARIONETAS.map(m=>m.cat))];
+  return cats.map(cat=>{const items=REC_MARIONETAS.filter(m=>m.cat===cat);
+    return `<details class="sec rec-cat" open><summary>Marionetas listas: ${esc(cat)}<span class="cnt">${items.length}</span></summary><div class="pgrid rec-grid">${items.map(m=>`<button type="button" class="pick sq" data-pk="rec:${m.k}">${recItemTag(m)}<img src="${recMarSrc(m,'.webp')}" alt="" loading="lazy">${esc(m.label)}</button>`).join('')}</div></details>`;}).join('');
+}
+async function useRecMarioneta(k){
+  const m=REC_MARIONETAS.find(x=>x.k===k);if(!m||!recItemRoom(m)) return;
+  try{const r=await fetch(recMarSrc(m));if(!r.ok) throw 0;const d=await r.json();if(!d||d.tipo!=='bocon-marioneta') throw 0;d.nombre=m.label;await importPuppetData(d);}
+  catch(e){toast('No pude traer la marioneta; revisa tu internet');}
 }
 // se descarga y queda como imagen del proyecto (se guarda con él, igual que las tuyas)
 const REC_IDS={};
