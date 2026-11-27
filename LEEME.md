@@ -134,12 +134,17 @@ Fondos, imágenes, marionetas, ojos, ropa, gestos, acciones y sonidos que vienen
 | Imágenes (Dibujos) | Garabato: pollo con ansiedad, Taco feliz con lentes (hecho en Trazo) | Aguacate kawaii (hecho en Trazo) |
 | Imágenes (Frutas kawaii, sin boca: sirven para «Marioneta desde una imagen») | Manzana, Naranja, Limón | Fresa, Piña, Uvas, Mora azul, Kiwi, Sandía |
 | Imágenes (Día de Muertos) | | Cempasúchil |
-| Imágenes (Casa) | Mesa de comedor (va enfrente) | Cama: cabecera, Cama: cobija |
+| Imágenes (Casa; los muebles van detrás de los personajes) | Mesa de comedor (va enfrente), Sillón de dos plazas, Cama, Mesa de centro, Refrigerador | Cama: cabecera, Cama: cobija, Sillón individual, Librero, Buró con lámpara, Comedor, Ropero, Estufa, Escritorio, Cómoda |
 | Imágenes (Emociones) | Símbolo de enojo | |
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Imágenes (Sustos) | Telaraña con araña | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
-| Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete, Taza de café | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`); Hot cakes |
+| Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete, Taza de café, Microondas | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`); Hot cakes; Microondas y freidora de aire, Horno tostador, Tostador (2), Licuadora sonriente, Procesador de alimentos (2), Batidora de pedestal roja, Cafetera de goteo |
+| Imágenes (Señales) | Prohibido el paso, Precaución (triángulo vacío), Flecha a la derecha, Letrero de madera | Peatón, Hombres trabajando, Discapacidad, Reciclaje, Señal redonda amarilla (vacía), Señal de prohibido (vacía), Información |
+| Imágenes (Efectos cartoon) | Destello de golpe, Rayo, Explosión, Gotas de agua | Espiral de mareo, Fuego verde, Nube de humo, Corazón brillante, Nube de lluvia, Bomba, Bola de fuego, Brillitos, Burbujas |
+| Imágenes (Cielo y clima) | Sol, Nube, Luna | Arcoíris, Nube de tormenta, Lluvia de corazones, Tornado, Estrella fugaz, Estrellita, Planeta Tierra |
+| Imágenes (Stickers) | Corona, Letrero GO, Trébol | Trébol de 4 hojas, Llave, Llave dorada, Macarons, Globo aerostático, Cohete, Uvas, Cerezas, Hoja, Letrero DANGER |
+| Imágenes (Aparatos) | Lavadora, Televisión, Computadora | Secadora, Aspiradora, Aspiradora robot, Plancha y burro, Vaporizador de ropa, Pantalla curva, Laptop, Control de consola, Lentes de realidad virtual, Bocina, Radio |
 | Estilos de texto | Noticiero (cintillo rojo) | |
 | Ropa | Mandil de mamá | Uniforme naranja, Tubos para el pelo |
 | Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo), Carcajada (muerto de risa), Llorando de risa (XD), Aguantándose la risa | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui), Apenado (¡qué bruto!) |
@@ -155,8 +160,9 @@ Para meter personajes a la cama: pon la *Cama: cabecera* (se va sola detrás de 
 Para agregar uno nuevo:
 1. Pon el archivo en `recursos/fondos/` o `recursos/imagenes/` (WebP; los fondos en 1080×1920 y 1920×1080) y su original editable en `recursos-fuentes/`.
 2. Agrega su renglón en `REC_FONDOS` o `REC_IMGS` en `index.html` (`pro:1` si es de Pro; `layer:'atras'` si la imagen va detrás de los personajes). Los gestos van en `EXPR` y las acciones en `ACTIONS`; si son de Pro, agrega su nombre a `REC_PRO`. Los adornos de los gestos van en `EMOTES` (y se dibujan en `drawEmotes`) y los sonidos rápidos en `QS`: los que se hacen con código llevan `f`; los grabados van en `recursos/sonidos/` (MP3, sin silencio al principio y al final, a −16 LUFS) y en `QS` llevan `src` y su duración `d`.
-3. Marionetas listas: de una hoja de personajes sin ojos ni boca (brazos colgando y piernas abajo), recorta cada uno con fondo transparente a `recursos-fuentes/marionetas/`, sepáralo en piezas con `python3 herramientas/marionetas/separar.py <png> <carpeta>` (revisa `ver.png`) y ármalo con `python3 herramientas/marionetas/armar.py <Nombre> <carpeta> <clave> --guardar` (revisa `/tmp/<clave>-gestos.jpg`). Queda en `recursos/marionetas/<clave>.marioneta.json` con su miniatura `<clave>.webp`; agrega su renglón en `REC_MARIONETAS` (`cat` es la sección; `pro:1` si es de Pro). Los comandos con que se armaron las frutas están en `herramientas/marionetas/frutas.sh`.
-4. Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya había descargado.
+3. Hojas de stickers por tema (fondo magenta liso, 12 por hoja): guarda la hoja en `recursos-fuentes/temas/`, recórtala con `python3 herramientas/imagenes/recortar_stickers.py <hoja> /tmp/temas/<nombre>` (le quita el borde blanco de sticker; revisa `hoja-revision.jpg`; `--huecos 10` quita el blanco atrapado en el recorte 10) y pon sus renglones en `herramientas/imagenes/temas.py`, que publica los WebP en `recursos/imagenes/<tema>/` y deja los renglones para `REC_IMGS` en `/tmp/temas/rec_imgs.js`.
+4. Marionetas listas: de una hoja de personajes sin ojos ni boca (brazos colgando y piernas abajo), recorta cada uno con fondo transparente a `recursos-fuentes/marionetas/`, sepáralo en piezas con `python3 herramientas/marionetas/separar.py <png> <carpeta>` (revisa `ver.png`) y ármalo con `python3 herramientas/marionetas/armar.py <Nombre> <carpeta> <clave> --guardar` (revisa `/tmp/<clave>-gestos.jpg`). Queda en `recursos/marionetas/<clave>.marioneta.json` con su miniatura `<clave>.webp`; agrega su renglón en `REC_MARIONETAS` (`cat` es la sección; `pro:1` si es de Pro). Los comandos con que se armaron las frutas están en `herramientas/marionetas/frutas.sh`.
+5. Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya había descargado.
 
 Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que las tuyas), así que el proyecto se ve igual aunque después cambie el recurso.
 
@@ -171,5 +177,6 @@ Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que l
 - `api/`: el servidor de cuentas y cobros (funciones de Vercel): `config`, `suscribir`, `estado`, `cancelar` y `mp-webhook`; `dibujar` y `_trazo.js` son «Dibujar con IA» (el mismo estilo de la página de Trazo)
 - `supabase/esquema.sql`: la tabla de suscripciones para Supabase
 - `recursos/`: fondos, imágenes, marionetas y sonidos que vienen con la app (se publican); `recursos-fuentes/`: sus originales en SVG para editarlos (no se publican)
+- `herramientas/imagenes/`: recorta hojas de stickers por tema y las publica como imágenes de Bocón (no se publica).
 - `herramientas/marionetas/`: separa un personaje (fruta, objeto) en piezas y lo arma como marioneta lista (no se publica).
 - `herramientas/video/`: kit para hacer videos con Bocón desde la terminal: transcribir, música de fondo, armar y exportar (no se publica; ver su LEEME)
