@@ -124,16 +124,17 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir, Palomita (sí), Tache (no) | Multitud festejando |
-| Imágenes (Cosas) | Vela, Control de videojuego, Calendario (ponle la fecha con texto), Mazo de juez | Polilla (no hay nada) |
-| Imágenes (Animales) | Huellita | |
+| Imágenes (Cosas) | Vela, Control de videojuego, Calendario (ponle la fecha con texto), Mazo de juez | Polilla (no hay nada), Cuchillo clavado (pégalo al personaje y lo sigue aunque esté acostado) |
+| Imágenes (Animales) | Huellita, Osito | Oso grizzly rugiendo, Osito mareado, Rasguños de oso |
 | Imágenes (Noticias) | | Escritorio de noticias (va enfrente del personaje) |
 | Imágenes (Dibujos) | Garabato: pollo con ansiedad | |
 | Imágenes (Día de Muertos) | | Cempasúchil |
-| Imágenes (Casa) | | Cama: cabecera, Cama: cobija |
+| Imágenes (Casa) | Mesa de comedor (va enfrente) | Cama: cabecera, Cama: cobija |
+| Imágenes (Emociones) | Símbolo de enojo | |
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Imágenes (Sustos) | | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
-| Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`) |
+| Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete, Taza de café | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`); Hot cakes |
 | Estilos de texto | Noticiero (cintillo rojo) | |
 | Ropa | Mandil de mamá | Uniforme naranja, Tubos para el pelo |
 | Gestos | Harto, Desvelado, Serio (voz de papá), Aliviado, Malvado (mirada que da miedo), Carcajada (muerto de risa), Llorando de risa (XD), Aguantándose la risa | Silencio incómodo, Incrédulo, Sintiendo la canción, Inocente (yo no fui), Apenado (¡qué bruto!) |
