@@ -101,19 +101,21 @@ Los precios se cambian aquí sin tocar código. Quien ya está suscrito conserva
 - Con el nivel gratis de Gemini el tope de peticiones es por proyecto de Google y se ve en AI Studio. Si la página de Trazo también usa Gemini, conviene que tenga su propio proyecto de Google para que no se repartan el tope. En el nivel gratis, Google puede usar lo que se manda para mejorar sus productos.
 
 ### Qué es gratis y qué es Pro hoy
-- **Gratis:** todo el editor; hasta 2 personajes por escena (las bocas sobre fotos no cuentan); la ropa y accesorios básicos; los efectos de voz listos; los recursos de Bocón sin ✦; texto a voz de hasta 200 letras; «Dibujar con IA» con cuenta, 10 al mes; exporta MP4 720p y GIF con la marquita (en video vertical va arriba a la izquierda para no taparse con los botones de TikTok).
-- **Pro:** sin marquita (también en vivo), MP4 en 1080p, GIF sin fondo y cuadros PNG sin fondo; personajes sin límite; la ropa y accesorios marcados con ✦; los fondos, imágenes, gestos y acciones de Bocón marcados con ✦; texto a voz sin límite; guardar tus propios efectos de voz; «Dibujar con IA» con más dibujos al mes (30; Imagen → Dibujar con IA: escribes qué quieres y sale una estampita de caricatura).
+- **Gratis:** todo el editor; hasta 2 personajes por escena (las bocas sobre fotos no cuentan); la ropa y accesorios básicos; los efectos de voz listos; los recursos de Bocón sin ✦ (también los ojos listos y las marionetas listas sin ✦); texto a voz de hasta 200 letras; «Dibujar con IA» con cuenta, 10 al mes; exporta MP4 720p y GIF con la marquita (en video vertical va arriba a la izquierda para no taparse con los botones de TikTok).
+- **Pro:** sin marquita (también en vivo), MP4 en 1080p, GIF sin fondo y cuadros PNG sin fondo; personajes sin límite; la ropa y accesorios marcados con ✦; los fondos, imágenes, gestos, acciones, ojos listos y marionetas listas de Bocón marcados con ✦; texto a voz sin límite; guardar tus propios efectos de voz; «Dibujar con IA» con más dibujos al mes (30; Imagen → Dibujar con IA: escribes qué quieres y sale una estampita de caricatura).
 - Los límites solo se aplican cuando ya hay cuentas (variables puestas en Vercel). Los proyectos y marionetas que ya traen cosas Pro se abren y se ven igual; el candado solo está al agregar algo nuevo.
-- Lo que es Pro se cambia en `index.html`: `ACC_PRO` (accesorios), `REC_PRO` (gestos y acciones de Bocón), `pro:1` en `REC_FONDOS` y `REC_IMGS` (fondos e imágenes de Bocón), `FREE_CHARS` (personajes) y `TTS_FREE` (letras de texto a voz).
+- Lo que es Pro se cambia en `index.html`: `ACC_PRO` (accesorios), `REC_PRO` (gestos y acciones de Bocón), `pro:1` en `REC_FONDOS`, `REC_IMGS` y `REC_MARIONETAS` (fondos, imágenes y marionetas listas de Bocón), `pro:1` en `OJOS_STYLES` (ojos listos), `FREE_CHARS` (personajes) y `TTS_FREE` (letras de texto a voz).
 - Precios recomendados para el lanzamiento: `PRO_PRECIO_MENSUAL=79`, `PRO_PRECIO_ANUAL=690`, `PRO_FUNDADOR_PRECIO=49`, `PRO_FUNDADOR_CUPO=100`, `PRO_PRUEBA_DIAS=7`.
 - Si alguien cancela, ya no se le cobra y sigue con Pro hasta el final de lo que pagó.
 
 ## Recursos de Bocón
 
-Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen de los videos que se van haciendo con Bocón.
+Fondos, imágenes, marionetas, ojos, ropa, gestos, acciones y sonidos que vienen con la app. Salen de los videos que se van haciendo con Bocón.
 
 - **Fondos:** Escena → Fondo → *Fondos de Bocón…* (también en el menú Agregar). Cada fondo trae versión vertical y horizontal y se cambia sola si cambias el formato del video.
 - **Imágenes:** *+ Imagen* abre una ventana para subir la tuya o usar una de Bocón.
+- **Marionetas listas:** *+ Personaje* → abajo, *Marionetas listas*. Ya traen brazos y pies que se mueven, ojos listos y boca; se bajan al elegirlas y quedan dentro del proyecto.
+- **Ojos listos:** *Editar marioneta → Ojos y cejas → Ojos listos*. Ojos dibujados con código que hacen solos todos los gestos (parpadean, miran, se enojan, se asustan…), para personajes que no traen ojos; se les cambia color, tamaño, separación, color del párpado y cejas. *Marioneta desde una imagen* se los pone sola si la imagen no trae ojos.
 - **Gestos y acciones:** salen junto a los demás en el panel del personaje.
 - **Ropa:** en *Editar personaje → Ropa*, con las demás.
 - **Sonidos:** en *Sonidos rápidos*. Los de *Audios virales* (y el teclado y los pasos) son archivos: se bajan la primera vez que los tocas y quedan guardados dentro del proyecto.
@@ -121,6 +123,8 @@ Fondos, imágenes, ropa, gestos, acciones y sonidos que vienen con la app. Salen
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
 | Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina, Casita (cuarto turquesa), Calle de la colonia | Cuarto de madrugada, Tier list, Puerta de la recámara, Mictlán, Estudio de noticias |
+| Marionetas listas (Frutas) | Plátano, Fresa, Naranja | Piña, Sandía, Aguacate, Uvas, Mango, Coco |
+| Ojos listos | Brillantes, Puntitos, Caricatura, Con color, Con pestañas | Anime, De gato, Clásicos, Pantalla, Botones |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
 | Imágenes (Música) | Grabadora (apagada), Grabadora (sonando) | |
 | Imágenes (Redes) | Letrero «Link en mi perfil», Like y compartir, Palomita (sí), Tache (no) | Multitud festejando, Barra de carga atorada en 1 % |
@@ -151,7 +155,8 @@ Para meter personajes a la cama: pon la *Cama: cabecera* (se va sola detrás de 
 Para agregar uno nuevo:
 1. Pon el archivo en `recursos/fondos/` o `recursos/imagenes/` (WebP; los fondos en 1080×1920 y 1920×1080) y su original editable en `recursos-fuentes/`.
 2. Agrega su renglón en `REC_FONDOS` o `REC_IMGS` en `index.html` (`pro:1` si es de Pro; `layer:'atras'` si la imagen va detrás de los personajes). Los gestos van en `EXPR` y las acciones en `ACTIONS`; si son de Pro, agrega su nombre a `REC_PRO`. Los adornos de los gestos van en `EMOTES` (y se dibujan en `drawEmotes`) y los sonidos rápidos en `QS`: los que se hacen con código llevan `f`; los grabados van en `recursos/sonidos/` (MP3, sin silencio al principio y al final, a −16 LUFS) y en `QS` llevan `src` y su duración `d`.
-3. Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya había descargado.
+3. Marionetas listas: de una hoja de personajes sin ojos ni boca (brazos colgando y piernas abajo), recorta cada uno con fondo transparente a `recursos-fuentes/marionetas/`, sepáralo en piezas con `python3 herramientas/marionetas/separar.py <png> <carpeta>` (revisa `ver.png`) y ármalo con `python3 herramientas/marionetas/armar.py <Nombre> <carpeta> <clave> --guardar` (revisa `/tmp/<clave>-gestos.jpg`). Queda en `recursos/marionetas/<clave>.marioneta.json` con su miniatura `<clave>.webp`; agrega su renglón en `REC_MARIONETAS` (`cat` es la sección; `pro:1` si es de Pro). Los comandos con que se armaron las frutas están en `herramientas/marionetas/frutas.sh`.
+4. Si cambias un archivo que ya estaba, cámbiale el nombre: la app instalada se queda con el que ya había descargado.
 
 Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que las tuyas), así que el proyecto se ve igual aunque después cambie el recurso.
 
@@ -165,5 +170,6 @@ Los fondos y las imágenes se copian dentro del proyecto al usarlos (igual que l
 - `vendor/supabase.js`: cuentas con Supabase (licencia MIT); solo se carga si activas Bocón Pro
 - `api/`: el servidor de cuentas y cobros (funciones de Vercel): `config`, `suscribir`, `estado`, `cancelar` y `mp-webhook`; `dibujar` y `_trazo.js` son «Dibujar con IA» (el mismo estilo de la página de Trazo)
 - `supabase/esquema.sql`: la tabla de suscripciones para Supabase
-- `recursos/`: fondos, imágenes y sonidos que vienen con la app (se publican); `recursos-fuentes/`: sus originales en SVG para editarlos (no se publican)
+- `recursos/`: fondos, imágenes, marionetas y sonidos que vienen con la app (se publican); `recursos-fuentes/`: sus originales en SVG para editarlos (no se publican)
+- `herramientas/marionetas/`: separa un personaje (fruta, objeto) en piezas y lo arma como marioneta lista (no se publica).
 - `herramientas/video/`: kit para hacer videos con Bocón desde la terminal: transcribir, música de fondo, armar y exportar (no se publica; ver su LEEME)
