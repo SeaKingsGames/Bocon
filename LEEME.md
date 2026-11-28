@@ -122,7 +122,7 @@ Fondos, imágenes, marionetas, ojos, ropa, gestos, acciones y sonidos que vienen
 
 | Recurso | Gratis | Pro ✦ |
 |---|---|---|
-| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina, Casita (cuarto turquesa), Calle de la colonia | Cuarto de madrugada, Tier list, Puerta de la recámara, Mictlán, Estudio de noticias |
+| Fondos | Súper (pasillo), Sala de servidores, Sala de noche, Recámara de noche, Sala de día, Celda de cárcel, Cocina, Casita (cuarto turquesa), Calle de la colonia, Patio militar | Cuarto de madrugada, Tier list, Puerta de la recámara, Mictlán, Estudio de noticias |
 | Marionetas listas (Frutas) | Plátano, Fresa, Naranja | Piña, Sandía, Aguacate, Uvas, Mango, Coco |
 | Ojos listos | Brillantes, Puntitos, Caricatura, Con color, Con pestañas | Anime, De gato, Clásicos, Pantalla, Botones |
 | Imágenes (Súper) | Queso en bolsa, Papitas | Carne en plástico, Pan en bolsa, ¡Sin bolsa! |
