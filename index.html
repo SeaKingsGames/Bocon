@@ -978,7 +978,7 @@ details.rec-cat>.rec-grid{padding:0 10px 10px}
 <input type="file" id="fileProject" accept=".json,application/json" hidden>
 <input type="file" id="fileSlot" accept="image/png,image/webp,image/gif,image/jpeg" hidden>
 <input type="file" id="fileBulk" accept="image/png,image/webp,image/gif,image/jpeg" multiple hidden>
-<input type="file" id="filePuppet" accept=".json,application/json" hidden>
+<input type="file" id="filePuppet" accept=".json,application/json,.svg,image/svg+xml" hidden>
 <input type="file" id="fileQs" accept="audio/*,video/mp4,video/webm" multiple hidden>
 <input type="file" id="fileMedia" accept="audio/*,video/mp4,video/quicktime,video/webm,image/png,image/webp,image/gif,image/jpeg,image/svg+xml" multiple hidden>
 <input type="file" id="fileBubble" accept="image/png,image/webp,image/svg+xml" hidden>
@@ -5974,7 +5974,7 @@ $('#modal').addEventListener('click',e=>{
 function confirmModal(title,msg,ok,run){openModal({title,body:`<p class="note" style="font-size:13px">${msg}</p>`,actions:[{label:'Cancelar'},{label:ok,cls:'primary',run}]});}
 function openCharPicker(){
   const lib=LIB.map(it=>`<button type="button" class="pick sq" data-pk="lib:${it.id}"><canvas data-lib="${it.id}"></canvas>${esc(it.name)}<small>Biblioteca</small></button>`).join('');
-  openModal({title:'Agregar personaje',wide:true,body:`<div class="pgrid">${PROC_TPLS.map(k=>`<button type="button" class="pick sq" data-pk="${k}"><canvas data-tpl="${k}"></canvas>${TPL[k].label}</button>`).join('')}<button type="button" class="pick sq hot" data-pk="oneimg"><canvas data-up="3"></canvas>Desde una imagen<small>Se arma sola</small></button><button type="button" class="pick sq" data-pk="png"><canvas data-up="1"></canvas>Tus PNG<small>Por piezas</small></button><button type="button" class="pick sq" data-pk="import"><canvas data-up="2"></canvas>Importar<small>Archivo de marioneta</small></button>${lib}</div>${LIB.length?'':'<p class="note">Los personajes que guardes en la biblioteca aparecen aquí.</p>'}${recMarionetasHTML()}`,
+  openModal({title:'Agregar personaje',wide:true,body:`<div class="pgrid">${PROC_TPLS.map(k=>`<button type="button" class="pick sq" data-pk="${k}"><canvas data-tpl="${k}"></canvas>${TPL[k].label}</button>`).join('')}<button type="button" class="pick sq hot" data-pk="oneimg"><canvas data-up="3"></canvas>Desde una imagen<small>Se arma sola</small></button><button type="button" class="pick sq" data-pk="png"><canvas data-up="1"></canvas>Tus PNG<small>Por piezas</small></button><button type="button" class="pick sq" data-pk="import"><canvas data-up="2"></canvas>Importar<small>Marioneta o personaje de Trazo</small></button>${lib}</div>${LIB.length?'':'<p class="note">Los personajes que guardes en la biblioteca aparecen aquí.</p>'}${recMarionetasHTML()}`,
     onOpen:c=>{c.querySelectorAll('canvas[data-tpl]').forEach(x=>drawAvatar(x,null,'feliz',x.dataset.tpl,'saludar'));c.querySelectorAll('canvas[data-lib]').forEach(x=>drawLibThumb(x,LIB.find(i=>i.id===x.dataset.lib)));c.querySelectorAll('canvas[data-up]').forEach(x=>drawIcon(x,x.dataset.up==='1'?'up':x.dataset.up==='3'?'magic':'file'));},
     onPick:k=>{
       if(!charRoom()) return;
@@ -6226,7 +6226,7 @@ $('#fileBg').addEventListener('change',async e=>{
   try{const sc=cur();sc.bgImg=await addAsset(f,f.name);sc.bg='img';addMedia(sc.bgImg,'img');refreshAll();save();toast('Fondo listo');}catch(err){toast('No pude abrir esa imagen');}
 });
 $('#fileProject').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f) openJsonFile(f);});
-$('#filePuppet').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f) openJsonFile(f);});
+$('#filePuppet').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f) return;if(/\.svg$/i.test(f.name)||f.type==='image/svg+xml') openSvgPuppet(f);else openJsonFile(f);});
 $('#fileBubble').addEventListener('change',async e=>{
   const f=e.target.files&&e.target.files[0],o=selObj();if(!f||!o||o.kind!=='globo') return;
   try{o.bimg=await addAsset(f,f.name);o.style='imagen';refreshAll();save();toast('Globo con tu imagen');}catch(err){toast('No pude abrir esa imagen');}
@@ -6647,6 +6647,79 @@ async function importPuppetData(d){
   const acc=(d.acc||[]).map(a=>Object.assign({},a,{id:'x'+uid()},a.k==='img'?{aid:map[a.aid]}:{})).filter(a=>a.k==='img'?a.aid:ACC[a.k]),col=d.color||{};
   const ch=newChar('png',{name:d.nombre||'Marioneta',puppet:pp,acc,phue:col.phue||0,psat:col.psat==null?100:col.psat,pbri:col.pbri==null?100:col.pbri});
   cur().chars.push(ch);arrange();S.selObj=ch.id;S.sel=null;refreshAll();save();toast(ch.name+' entró a escena');
+}
+
+// ===== Personaje armable de Trazo =====
+// Trazo (trazo.seakingsstudios.com) dibuja el personaje como SVG con sus piezas en grupos (pieA, pieB, cuerpo, brazoA, brazoB, cabeza),
+// sin ojos ni boca y con guías invisibles (ojoA, ojoB, boca). Aquí cada pieza se vuelve una imagen del mismo tamaño y se arma la marioneta
+// con ojos listos y boca dibujada, como las marionetas listas.
+const ARMABLE_PARTES=['pieA','pieB','cuerpo','brazoA','brazoB','cabeza'];
+async function openSvgPuppet(f){
+  let txt='';try{txt=await f.text();}catch(_){}
+  if(!/id\s*=\s*["']cabeza["']/.test(txt)||!/id\s*=\s*["']cuerpo["']/.test(txt)){toast('Ese SVG no es un personaje armable de Trazo. Para usarlo como imagen: + Imagen');return;}
+  const base=f.name.replace(/\.marioneta\.svg$|\.svg$/i,'').replace(/^trazo-/,'').replace(/-/g,' ');
+  return importTrazoArmable(txt,base);
+}
+function alphaBox(cv){
+  const w=cv.width,h=cv.height,d=cv.getContext('2d').getImageData(0,0,w,h).data;let x0=w,y0=h,x1=-1,y1=-1;
+  for(let y=0;y<h;y+=2) for(let x=0;x<w;x+=2) if(d[(y*w+x)*4+3]>40){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+  return x1<0?null:{x0,y0,x1,y1,d,w};
+}
+const bandCx=(b,ya,yb)=>{let s=0,n=0;for(let y=Math.max(b.y0,Math.round(ya));y<=Math.min(b.y1,Math.round(yb));y+=2) for(let x=b.x0;x<=b.x1;x+=2) if(b.d[(y*b.w+x)*4+3]>40){s+=x;n++;}return n?s/n:(b.x0+b.x1)/2;};
+async function importTrazoArmable(txt,nombre){
+  if(!charRoom()) return;
+  const doc=new DOMParser().parseFromString(txt,'image/svg+xml'),root=doc.documentElement;
+  if(root.nodeName!=='svg'||doc.getElementsByTagName('parsererror').length){toast('Ese SVG no se pudo leer');return;}
+  // solo figuras: fuera código, enlaces de fuera y textos
+  root.querySelectorAll('script,style,foreignObject,image,a,iframe,text,animate,set').forEach(n=>n.remove());
+  for(const n of [root,...root.querySelectorAll('*')]) for(const a of [...n.attributes]){const k=a.name.toLowerCase();if(k.startsWith('on')||k==='style'||((k==='href'||k==='xlink:href')&&!a.value.startsWith('#'))) n.removeAttribute(a.name);}
+  const t=root.querySelector('title');if(t&&t.textContent.trim()) nombre=t.textContent.trim().slice(0,40);
+  nombre=(nombre||'Personaje de Trazo').replace(/^./,c=>c.toUpperCase());
+  const vb=(root.getAttribute('viewBox')||'').trim().split(/[\s,]+/).map(Number);
+  const [vx,vy,vw,vh]=vb.length===4&&vb.every(isFinite)&&vb[2]>0&&vb[3]>0?vb:[0,0,600,900];
+  const H=1000,sc=H/vh,W=Math.round(vw*sc);
+  // dónde van los ojos y la boca (guías invisibles), medido con el dibujo en la página
+  const caja=document.createElement('div');caja.style.cssText=`position:fixed;left:-99999px;top:0;width:${vw}px;height:${vh}px;visibility:hidden;pointer-events:none`;
+  const vivo=document.importNode(root,true);vivo.setAttribute('width',vw);vivo.setAttribute('height',vh);caja.appendChild(vivo);document.body.appendChild(caja);
+  const guia=id=>{const el=vivo.querySelector('#'+id);if(!el||!el.getBBox) return null;try{const b=el.getBBox(),m=el.getCTM();if(!b.width&&!b.height) return null;
+    const P=(x,y)=>new DOMPoint(x,y).matrixTransform(m),c=P(b.x+b.width/2,b.y+b.height/2),r=P(b.x+b.width,b.y+b.height/2),q=P(b.x+b.width/2,b.y+b.height);
+    return {x:c.x*sc,y:c.y*sc,rx:Math.hypot(r.x-c.x,r.y-c.y)*sc,ry:Math.hypot(q.x-c.x,q.y-c.y)*sc};}catch(_){return null;}};
+  const G={ojoA:guia('ojoA'),ojoB:guia('ojoB'),boca:guia('boca')};caja.remove();
+  root.querySelectorAll('#ojoA,#ojoB,#boca').forEach(n=>n.remove());
+  if(!root.querySelector('#cabeza')||!root.querySelector('#cuerpo')){toast('A ese dibujo le faltan la cabeza y el cuerpo separados');return;}
+  toast('Armando a '+nombre+'…');
+  const ser=new XMLSerializer();
+  const pintarParte=async k=>{
+    const c=root.cloneNode(true),el=c.querySelector('#'+k);if(!el) return null;
+    c.setAttribute('width',W);c.setAttribute('height',H);
+    for(const o of ARMABLE_PARTES){if(o===k) continue;const e=c.querySelector('#'+o);if(e) e.setAttribute('display','none');}
+    if(k!=='cuerpo'){ // lo que no está en ninguna pieza se queda con el cuerpo
+      const keep=new Set();for(let n=el;n&&n!==c;n=n.parentNode) keep.add(n);
+      (function esconder(n){for(const h of [...n.children]){if(h===el||h.localName==='defs') continue;if(keep.has(h)) esconder(h);else h.setAttribute('display','none');}})(c);
+    }
+    const img=await new Promise((ok,mal)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=mal;i.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(ser.serializeToString(c));});
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;cv.getContext('2d').drawImage(img,0,0,W,H);return alphaBox(cv)?cv:null;
+  };
+  const cvs={};
+  try{for(const k of ARMABLE_PARTES){const cv=await pintarParte(k);if(cv) cvs[k]=cv;}}catch(_){toast('No pude dibujar las piezas de ese SVG');return;}
+  if(!cvs.cabeza||!cvs.cuerpo){toast('A ese dibujo le faltan la cabeza y el cuerpo separados');return;}
+  const pp=newPuppet();
+  for(const [k,cv] of Object.entries(cvs)){const b=await new Promise(ok=>cv.toBlob(ok,'image/png'));pp.slots[k]=await addAsset(b,'trazo-'+k+'.png');}
+  refSize(pp);
+  const hb=alphaBox(cvs.cabeza),hw=hb.x1-hb.x0,hh=hb.y1-hb.y0;
+  pp.neck={x:Math.round((hb.x0+hb.x1)/2-W/2),y:Math.round(hb.y1-hh*.1-H/2)};
+  for(const s of ['A','B']){const cv=cvs['brazo'+s];if(!cv) continue;const b=alphaBox(cv),aw=Math.max(8,b.x1-b.x0),ah=b.y1-b.y0,g=Math.min(aw,ah*.3);
+    const sh={x:bandCx(b,b.y0,b.y0+g),y:b.y0+g*.45},hd={x:bandCx(b,b.y1-g,b.y1),y:b.y1-g*.35};
+    pp.arms[s]={sh:{x:Math.round(sh.x-W/2),y:Math.round(sh.y-H/2)},el:{x:Math.round((sh.x+hd.x)/2-W/2),y:Math.round((sh.y+hd.y)/2-H/2)}};}
+  const ojo=(g,fx)=>g&&g.rx>1?{x:Math.round(g.x-W/2),y:Math.round(g.y-H/2),r:Math.max(4,Math.round(g.rx))}:{x:Math.round(hb.x0+hw*fx-W/2),y:Math.round(hb.y0+hh*.55-H/2),r:Math.round(hw*.075)};
+  pp.eyePts=[ojo(G.ojoA,.36),ojo(G.ojoB,.64)].sort((a,b)=>a.x-b.x);
+  setVecEyes(pp,'brillantes');delete pp.eyePts;
+  setVecMouth(pp,'caricatura');const u=vecUnit(pp);
+  const bo=G.boca&&G.boca.rx>1?{x:G.boca.x,y:G.boca.y,w:G.boca.rx*2}:{x:(hb.x0+hb.x1)/2,y:hb.y0+hh*.76,w:hw*.3};
+  pp.g.bocaVec={x:Math.round(bo.x-W/2),y:Math.round(bo.y-H/2),s:Math.round(clamp(bo.w/(1.44*u),.25,2)*100)/100};
+  const ch=newChar('png',{name:nombre,puppet:pp});
+  cur().chars.push(ch);arrange();S.selObj=ch.id;S.sel=null;refreshAll();save();toast(nombre+' entró a escena');
+  return ch;
 }
 
 // ===== Proyectos: ejemplo y en blanco =====
