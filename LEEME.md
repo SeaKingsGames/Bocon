@@ -131,7 +131,7 @@ Fondos, imágenes, marionetas, ojos, ropa, gestos, acciones y sonidos que vienen
 | Imágenes (Cosas) | Vela, Control de videojuego, Calendario (ponle la fecha con texto), Mazo de juez, Contrato (firma aquí) | Polilla (no hay nada), Cuchillo clavado (pégalo al personaje y lo sigue aunque esté acostado) |
 | Imágenes (Animales) | Huellita, Osito | Oso grizzly rugiendo, Osito mareado, Rasguños de oso |
 | Imágenes (Noticias) | | Escritorio de noticias (va enfrente del personaje) |
-| Imágenes (Dibujos) | Garabato: pollo con ansiedad, Taco feliz con lentes (hecho en Trazo) | Aguacate kawaii (hecho en Trazo) |
+| Imágenes (Dibujos) | Garabato: pollo con ansiedad, Taco feliz con lentes (hecho en Trazo), Dibujo feo: ajolote enojado | Aguacate kawaii (hecho en Trazo), Dibujo bonito: ajolote enojado |
 | Imágenes (Frutas kawaii, sin boca: sirven para «Marioneta desde una imagen») | Manzana, Naranja, Limón | Fresa, Piña, Uvas, Mora azul, Kiwi, Sandía |
 | Imágenes (Día de Muertos) | | Cempasúchil |
 | Imágenes (Casa; los muebles van detrás de los personajes) | Mesa de comedor (va enfrente), Sillón de dos plazas, Cama, Mesa de centro, Refrigerador | Cama: cabecera, Cama: cobija, Sillón individual, Librero, Buró con lámpara, Comedor, Ropero, Estufa, Escritorio, Cómoda |
@@ -139,7 +139,7 @@ Fondos, imágenes, marionetas, ojos, ropa, gestos, acciones y sonidos que vienen
 | Imágenes (Juguetes) | Carrito de juguete | Muñeca, Bloques ABC |
 | Imágenes (Sustos) | Telaraña con araña | Fantasma: señora de vestido azul |
 | Imágenes (Cárcel) | Charquito de agua, Gota de agua | |
-| Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete, Taza de café, Microondas | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`); Hot cakes; Microondas y freidora de aire, Horno tostador, Tostador (2), Licuadora sonriente, Procesador de alimentos (2), Batidora de pedestal roja, Cafetera de goteo |
+| Imágenes (Cocina, Comida, Frutas y verduras) | Cartón de huevos, Cartón de huevos vacío, Plátano, Molcajete, Taza de café, Microondas, Pizza enojada | 143 íconos: utensilios, ollas y sartenes y aparatos (batidoras, licuadoras, cafeteras, arrocera…) en Cocina; panes y platillos en Comida; frutas y verduras aparte (PNG en `recursos/imagenes/cocina/`); Hot cakes; Microondas y freidora de aire, Horno tostador, Tostador (2), Licuadora sonriente, Procesador de alimentos (2), Batidora de pedestal roja, Cafetera de goteo, Taco con ansiedad, Pastel que llora |
 | Imágenes (Señales) | Prohibido el paso, Precaución (triángulo vacío), Flecha a la derecha, Letrero de madera | Peatón, Hombres trabajando, Discapacidad, Reciclaje, Señal redonda amarilla (vacía), Señal de prohibido (vacía), Información |
 | Imágenes (Efectos cartoon) | Destello de golpe, Rayo, Explosión, Gotas de agua | Espiral de mareo, Fuego verde, Nube de humo, Corazón brillante, Nube de lluvia, Bomba, Bola de fuego, Brillitos, Burbujas |
 | Imágenes (Cielo y clima) | Sol, Nube, Luna | Arcoíris, Nube de tormenta, Lluvia de corazones, Tornado, Estrella fugaz, Estrellita, Planeta Tierra |

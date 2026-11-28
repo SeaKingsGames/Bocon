@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="520" viewBox="0 0 520 520"><g stroke-linecap="round" stroke-linejoin="round" fill="none">
+<rect x="10" y="10" width="500" height="500" rx="16" fill="#ffffff" stroke="#c9ced8" stroke-width="6"/>
+<path d="M150 250 q-30 -70 40 -100 q60 -30 120 -4 q80 20 70 110 q-6 90 -100 96 q-110 10 -130 -60 q-6 -20 0 -42z" fill="#e9b4c4" stroke="#333" stroke-width="7"/>
+<path d="M170 300 q20 10 30 -6 M330 210 q14 6 10 20" stroke="#c98a9e" stroke-width="6"/>
+<path d="M150 180 l-30 -40 l10 30 l-36 -16 l26 30 M360 170 l30 -44 l-6 34 l34 -20 l-22 36" stroke="#e46a8e" stroke-width="7"/>
+<path d="M200 214 l40 16 M320 210 l-42 18" stroke="#333" stroke-width="9"/>
+<circle cx="232" cy="248" r="9" fill="#333"/><circle cx="292" cy="246" r="5" fill="#333"/>
+<path d="M232 300 q20 -16 50 4 q-12 -2 -30 4" stroke="#333" stroke-width="6"/>
+<path d="M210 346 l-4 50 M300 346 l8 46 M170 330 l-30 30" stroke="#333" stroke-width="7"/>
+<path d="M376 306 q50 10 60 -20" stroke="#333" stroke-width="7"/>
+<path d="M120 80 q20 -20 30 0 q10 20 26 0 M380 70 q14 -16 26 0" stroke="#999" stroke-width="5"/>
+<text x="296" y="440" font-family="DejaVu Sans" font-size="34" fill="#d23" font-weight="bold" transform="rotate(-8 296 440)">AJOLOTE</text>
+<path d="M330 404 L300 362 M300 362 l2 22 M300 362 l20 6" stroke="#d23" stroke-width="5"/>
+<text x="64" y="470" font-family="DejaVu Sans" font-size="26" fill="#d23" transform="rotate(4 64 470)">enojado &gt;:(</text>
+</g></svg>
