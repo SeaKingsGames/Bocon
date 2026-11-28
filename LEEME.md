@@ -114,6 +114,7 @@ Fondos, imágenes, marionetas, ojos, ropa, gestos, acciones y sonidos que vienen
 
 - **Fondos:** Escena → Fondo → *Fondos de Bocón…* (también en el menú Agregar). Cada fondo trae versión vertical y horizontal y se cambia sola si cambias el formato del video.
 - **Imágenes:** *+ Imagen* abre una ventana para subir la tuya o usar una de Bocón.
+- **Personajes armables de Trazo (Pro en Trazo):** en Trazo, modo *Personaje armable* → *Marioneta para Bocón* baja un `.marioneta.svg` con las piezas en grupos (`pieA`, `pieB`, `cuerpo`, `brazoA`, `brazoB`, `cabeza`) y guías invisibles de ojos y boca (`ojoA`, `ojoB`, `boca`). En Bocón: *+ Personaje → Importar*. `importTrazoArmable()` pinta cada pieza del mismo tamaño, arma la marioneta (cuello, hombros) y le pone ojos listos y boca dibujada. Los fondos de Trazo («Fondo para Bocón») van en *Fondo → Subir imagen*.
 - **Marionetas listas:** *+ Personaje* → abajo, *Marionetas listas*. Ya traen brazos y pies que se mueven, ojos listos y boca; se bajan al elegirlas y quedan dentro del proyecto.
 - **Ojos listos:** *Editar marioneta → Ojos y cejas → Ojos listos*. Ojos dibujados con código que hacen solos todos los gestos (parpadean, miran, se enojan, se asustan…), para personajes que no traen ojos; se les cambia color, tamaño, separación, color del párpado y cejas. *Marioneta desde una imagen* se los pone sola si la imagen no trae ojos.
 - **Gestos y acciones:** salen junto a los demás en el panel del personaje.
